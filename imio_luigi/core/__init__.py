@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from imio_luigi.core.cleanup import (
+from imio_luigi.core.task_cleanup import (
     DropColumnInMemoryTask,
     DropColumnTask,
     StringToListInMemoryTask,
     StringToListTask,
 )
-from imio_luigi.core.database import (
+from imio_luigi.core.task_database import (
     GetFromMySQLTask,
     JoinFromMySQLInMemoryTask,
     JoinFromMySQLTask,
 )
-from imio_luigi.core.filesystem import WalkFS, WriteToJSONTask
-from imio_luigi.core.mapping import (
+from imio_luigi.core.task_filesystem import WalkFS, WriteToJSONTask
+from imio_luigi.core.task_mapping import (
     MappingKeysInMemoryTask,
     MappingKeysTask,
     MappingValueInMemoryTask,
@@ -21,29 +21,29 @@ from imio_luigi.core.mapping import (
     MappingValueWithFileTask,
 )
 from imio_luigi.core.task_access import GetFromAccessJSONTask
-from imio_luigi.core.transform import (
+from imio_luigi.core.task_transform import (
     CreateSubElementInMemoryTask,
     CreateSubElementsFromSubElementsInMemoryTask,
     CreateSubElementsFromSubElementsTask,
     CreateSubElementTask,
 )
-from imio_luigi.core.validation import JSONSchemaValidationTask
+from imio_luigi.core.task_validation import JSONSchemaValidationTask
 from luigi.mock import MockTarget as InMemoryTarget
 
 
 __all__ = (
     "CreateSubElementInMemoryTask",
     "CreateSubElementTask",
-    "CreateSubElementsFromSubElementsTask",
     "CreateSubElementsFromSubElementsInMemoryTask",
+    "CreateSubElementsFromSubElementsTask",
     "DropColumnInMemoryTask",
     "DropColumnTask",
     "GetFromAccessJSONTask",
     "GetFromMySQLTask",
     "InMemoryTarget",
     "JSONSchemaValidationTask",
-    "JoinFromMySQLTask",
     "JoinFromMySQLInMemoryTask",
+    "JoinFromMySQLTask",
     "MappingKeysInMemoryTask",
     "MappingKeysTask",
     "MappingValueInMemoryTask",
