@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from imio_luigi.core.target_rest import (
+    DeleteRESTTarget,
+    PatchRESTTarget,
+    PostRESTTarget,
+    PutRESTTarget,
+)
+from imio_luigi.core.task_access import GetFromAccessJSONTask
 from imio_luigi.core.task_cleanup import (
     DropColumnInMemoryTask,
     DropColumnTask,
@@ -20,7 +27,7 @@ from imio_luigi.core.task_mapping import (
     MappingValueWithFileInMemoryTask,
     MappingValueWithFileTask,
 )
-from imio_luigi.core.task_access import GetFromAccessJSONTask
+from imio_luigi.core.task_rest import DeleteRESTTask, PatchRESTTask, PostRESTTask
 from imio_luigi.core.task_transform import (
     CreateSubElementInMemoryTask,
     CreateSubElementsFromSubElementsInMemoryTask,
@@ -36,6 +43,8 @@ __all__ = (
     "CreateSubElementTask",
     "CreateSubElementsFromSubElementsInMemoryTask",
     "CreateSubElementsFromSubElementsTask",
+    "DeleteRESTTarget",
+    "DeleteRESTTask",
     "DropColumnInMemoryTask",
     "DropColumnTask",
     "GetFromAccessJSONTask",
@@ -50,6 +59,11 @@ __all__ = (
     "MappingValueTask",
     "MappingValueWithFileInMemoryTask",
     "MappingValueWithFileTask",
+    "PatchRESTTarget",
+    "PatchRESTTask",
+    "PostRESTTarget",
+    "PostRESTTask",
+    "PutRESTTarget",
     "StringToListInMemoryTask",
     "StringToListTask",
     "WalkFS",
