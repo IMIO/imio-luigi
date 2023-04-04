@@ -35,6 +35,7 @@ from imio_luigi.core.task_transform import (
     CreateSubElementTask,
 )
 from imio_luigi.core.task_validation import JSONSchemaValidationTask
+from imio_luigi.core.utils import frozendict_to_dict
 from luigi.mock import MockTarget as InMemoryTarget
 
 
@@ -68,4 +69,5 @@ __all__ = (
     "StringToListTask",
     "WalkFS",
     "WriteToJSONTask",
+    "frozendict_to_dict",
 )

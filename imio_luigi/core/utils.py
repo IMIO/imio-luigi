@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from luigi.freezing import FrozenOrderedDict
+
 CACHE = {}
 
 
@@ -31,3 +33,19 @@ def mock_filename(task, name):
         return f"{task.task_namespace}-{task.__class__.__name__}-" f"{name}-{task.key}"
     else:
         return f"{task.__class__.__name__}-{name}-{task.key}"
+
+
+def frozendict_to_dict(fdict):
+    """Convert a frozen dict into a regular dict"""
+    new_dict = dict(fdict)
+    for key, value in new_dict.items():
+        if isinstance(value, FrozenOrderedDict):
+            value = frozendict_to_dict(value)
+            new_dict[key] = value
+        if isinstance(value, (set, tuple, list)):
+            value = [
+                isinstance(v, FrozenOrderedDict) and frozendict_to_dict(v) or v
+                for v in value
+            ]
+            new_dict[key] = value
+    return new_dict
