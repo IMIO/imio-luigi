@@ -28,8 +28,11 @@ setup(
     license="GPL version 2",
     packages=find_packages(exclude=("docs")),
     install_requires=[
-        "setuptools",
+        "jsonschema",
         "luigi",
+        "PyMySQL",
+        "setuptools",
+        "sqlalchemy",
     ],
     extras_require={
         "test": [
