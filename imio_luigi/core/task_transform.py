@@ -10,6 +10,48 @@ import luigi
 import re
 
 
+class AddDataTask(luigi.Task):
+    """
+    Add data from a static file
+    """
+
+    @property
+    @abc.abstractmethod
+    def key(self):
+        """The unique id of this record"""
+        return None
+
+    @property
+    @abc.abstractmethod
+    def filepath(self):
+        """The filepath to the source data file"""
+        return None
+
+    @property
+    @abc.abstractmethod
+    def output(self):
+        """The output target"""
+        return None
+
+    def transform_data(self, data):
+        with open(self.filepath, "r") as source:
+            new_data = json.load(source)
+            for key, value in new_data.items():
+                data[key] = value
+        return data
+
+    def run(self):
+        with self.input().open("r") as input_f:
+            with self.output().open("w") as output_f:
+                data = json.load(input_f)
+                json.dump(self.transform_data(data), output_f)
+
+
+class AddDataInMemoryTask(AddDataTask):
+    def output(self):
+        return MockTarget(mock_filename(self, "AddData"), mirror_on_stderr=True)
+
+
 class CreateSubElementTask(luigi.Task):
     """
     Transform some attributes into a sub element

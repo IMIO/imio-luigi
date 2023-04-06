@@ -31,6 +31,8 @@ from imio_luigi.core.task_mapping import (
 )
 from imio_luigi.core.task_rest import DeleteRESTTask, PatchRESTTask, PostRESTTask
 from imio_luigi.core.task_transform import (
+    AddDataTask,
+    AddDataInMemoryTask,
     CreateSubElementInMemoryTask,
     CreateSubElementsFromSubElementsInMemoryTask,
     CreateSubElementsFromSubElementsTask,
@@ -44,6 +46,8 @@ from luigi.mock import MockTarget as InMemoryTarget
 
 
 __all__ = (
+    "AddDataInMemoryTask",
+    "AddDataTask",
     "CreateSubElementInMemoryTask",
     "CreateSubElementTask",
     "CreateSubElementsFromSubElementsInMemoryTask",
