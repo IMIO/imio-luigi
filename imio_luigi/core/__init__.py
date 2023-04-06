@@ -29,7 +29,13 @@ from imio_luigi.core.task_mapping import (
     MappingValueWithFileInMemoryTask,
     MappingValueWithFileTask,
 )
-from imio_luigi.core.task_rest import DeleteRESTTask, PatchRESTTask, PostRESTTask
+from imio_luigi.core.task_rest import (
+    DeleteRESTTask,
+    GetFromRESTServiceTask,
+    GetFromRESTServiceInMemoryTask,
+    PatchRESTTask,
+    PostRESTTask,
+)
 from imio_luigi.core.task_transform import (
     AddDataTask,
     AddDataInMemoryTask,
@@ -58,6 +64,8 @@ __all__ = (
     "DropColumnTask",
     "GetFromAccessJSONTask",
     "GetFromMySQLTask",
+    "GetFromRESTServiceInMemoryTask",
+    "GetFromRESTServiceTask",
     "InMemoryTarget",
     "JSONSchemaValidationTask",
     "JoinFromMySQLInMemoryTask",
