@@ -120,6 +120,11 @@ class BaseRESTTask(luigi.Task):
     def complete(self):
         raise NotImplementedError("Complete must be defined")
 
+    @property
+    def request_url(self):
+        """Method that can be overrided if necessary to construct the request URL"""
+        return self.url
+
     def test_complete(self):
         """
         Method that make a request to validate that the change was done.
@@ -161,7 +166,7 @@ class PostRESTTask(BaseRESTTask):
 
     def output(self):
         return PostRESTTarget(
-            self.url,
+            self.request_url,
             self.json_body,
             login=self.login,
             password=self.password,
@@ -179,7 +184,7 @@ class PatchRESTTask(BaseRESTTask):
 
     def output(self):
         return PatchRESTTarget(
-            self.url,
+            self.request_url,
             self.json_body,
             login=self.login,
             password=self.password,
@@ -197,5 +202,5 @@ class DeleteRESTTask(BaseRESTTask):
 
     def output(self):
         return DeleteRESTTarget(
-            self.url, self.json_body, login=self.login, password=self.password
+            self.request_url, self.json_body, login=self.login, password=self.password
         )
