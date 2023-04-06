@@ -12,6 +12,8 @@ from imio_luigi.core.task_cleanup import (
     DropColumnTask,
     StringToListInMemoryTask,
     StringToListTask,
+    ValueFixerTask,
+    ValueFixerInMemoryTask,
 )
 from imio_luigi.core.task_database import (
     GetFromMySQLTask,
@@ -67,6 +69,8 @@ __all__ = (
     "PutRESTTarget",
     "StringToListInMemoryTask",
     "StringToListTask",
+    "ValueFixerInMemoryTask",
+    "ValueFixerTask",
     "WalkFS",
     "WriteToJSONTask",
     "frozendict_to_dict",

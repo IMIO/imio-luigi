@@ -115,3 +115,70 @@ class DropColumnTask(luigi.Task):
 class DropColumnInMemoryTask(DropColumnTask):
     def output(self):
         return MockTarget(mock_filename(self, "DropColumn"), mirror_on_stderr=True)
+
+
+class ValueFixerTask(luigi.Task):
+    """
+    Task that allow to fix incorrect values based on a set of rules
+    """
+
+    ignore_missing = True  # Define if an error must be thrown if a key is missing
+
+    @property
+    @abc.abstractmethod
+    def key(self):
+        """The unique id of this record"""
+        return None
+
+    @property
+    @abc.abstractmethod
+    def rules_filepath(self):
+        """
+        File path to the rules files
+
+        Excepted content format :
+        {
+            "key": [
+                {
+                    "regexp": "^regexp$",
+                    "replacement": "new_value"
+                }
+            ]
+        }
+        """
+        return None
+
+    @property
+    @abc.abstractmethod
+    def output(self):
+        """The output target"""
+        return None
+
+    @property
+    def _rules(self):
+        with open(self.rules_filepath, "r") as f:
+            return json.load(f)
+
+    def _apply_rule(self, value, rule):
+        value = re.sub(rule["regexp"], rule["replacement"], value)
+        return value
+
+    def transform_data(self, data):
+        for key, rules in self._rules.items():
+            if key not in data and self.ignore_missing is False:
+                raise KeyError(f"Missing key 'key'")
+            if key in data:
+                for rule in rules:
+                    data[key] = self._apply_rule(data[key], rule)
+        return data
+
+    def run(self):
+        with self.input().open("r") as input_f:
+            with self.output().open("w") as output_f:
+                data = json.load(input_f)
+                json.dump(self.transform_data(data), output_f)
+
+
+class ValueFixerInMemoryTask(ValueFixerTask):
+    def output(self):
+        return MockTarget(mock_filename(self, "ValueFixer"), mirror_on_stderr=True)
