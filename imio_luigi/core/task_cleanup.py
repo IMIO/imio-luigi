@@ -6,6 +6,7 @@ from luigi.mock import MockTarget
 import abc
 import json
 import luigi
+import re
 
 
 class StringToListTask(luigi.Task):
@@ -39,6 +40,10 @@ class StringToListTask(luigi.Task):
         """The output target"""
         return None
 
+    def _recursive_split(self, value, separators):
+        regexp = f"({'|'.join(separators)})"
+        return [v for v in re.split(regexp, value) if v and v not in separators]
+
     def transform_data(self, data):
         value = data.get(self.attribute_key, None)
         if isinstance(value, list):
@@ -49,7 +54,7 @@ class StringToListTask(luigi.Task):
             return data
         separators = [s for s in self.separators if s in value]
         if len(separators) > 0:
-            value = value.split(separators[0])
+            value = self._recursive_split(value, separators)
         else:
             value = [value]
         data[self.attribute_key] = value
