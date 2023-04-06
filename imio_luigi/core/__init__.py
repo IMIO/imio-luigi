@@ -35,6 +35,8 @@ from imio_luigi.core.task_transform import (
     CreateSubElementsFromSubElementsInMemoryTask,
     CreateSubElementsFromSubElementsTask,
     CreateSubElementTask,
+    UpdateReferenceTask,
+    UpdateReferenceInMemoryTask,
 )
 from imio_luigi.core.task_validation import JSONSchemaValidationTask
 from imio_luigi.core.utils import frozendict_to_dict
@@ -69,6 +71,8 @@ __all__ = (
     "PutRESTTarget",
     "StringToListInMemoryTask",
     "StringToListTask",
+    "UpdateReferenceInMemoryTask",
+    "UpdateReferenceTask",
     "ValueFixerInMemoryTask",
     "ValueFixerTask",
     "WalkFS",

@@ -7,6 +7,7 @@ import abc
 import copy
 import json
 import luigi
+import re
 
 
 class CreateSubElementTask(luigi.Task):
@@ -155,3 +156,90 @@ class CreateSubElementsFromSubElementsInMemoryTask(
             mock_filename(self, "CreateSubElementsFromSubElements"),
             mirror_on_stderr=True,
         )
+
+
+class UpdateReferenceTask(luigi.Task):
+    """Task that allow to update reference to match a Regexp"""
+
+    @property
+    @abc.abstractmethod
+    def key(self):
+        """The unique id of this record"""
+        return None
+
+    @property
+    @abc.abstractmethod
+    def rules_filepath(self):
+        """
+        File path to the rules files
+
+        Excepted content format :
+        {
+            "reference_key": [
+                {
+                    "conditions": {
+                        "key1": "condition",
+                        "key2": "condition"
+                    },
+                    "regexp": "^regexp$",
+                    "replacement": "new_value",
+                    "expected_regexp": "^regexp$"
+                }
+            ]
+        }
+
+        conditions : A list a matching condition that is required
+                    to apply this regexp
+        regexp : The regexp that need to match the element that should be
+                 replaced
+        replacement : The new value
+        expected_regexp : The regexp that validate the new value result
+        """
+        return None
+
+    @property
+    @abc.abstractmethod
+    def output(self):
+        """The output target"""
+        return None
+
+    @property
+    def _rules(self):
+        with open(self.rules_filepath, "r") as f:
+            return json.load(f)
+
+    def _apply_rule(self, data, key, rule):
+        value = data[key]
+        # Verify condition
+        for c_key, condition in rule["conditions"].items():
+            if data[c_key] != condition:
+                return value
+        # Verify result before
+        if re.match(rule["expected_regexp"], value):
+            return value
+        value = re.sub(rule["regexp"], rule["replacement"], value)
+        if not re.match(rule["expected_regexp"], value):
+            raise ValueError(
+                f"Value '{value}' does not match regexp '{rule['expected_regexp']}'"
+            )
+        return value
+
+    def transform_data(self, data):
+        for key, rules in self._rules.items():
+            if key not in data and self.ignore_missing is False:
+                raise KeyError(f"Missing key 'key'")
+            if key in data:
+                for rule in rules:
+                    data[key] = self._apply_rule(data, key, rule)
+        return data
+
+    def run(self):
+        with self.input().open("r") as input_f:
+            with self.output().open("w") as output_f:
+                data = json.load(input_f)
+                json.dump(self.transform_data(data), output_f)
+
+
+class UpdateReferenceInMemoryTask(UpdateReferenceTask):
+    def output(self):
+        return MockTarget(mock_filename(self, "UpdateReference"), mirror_on_stderr=True)
