@@ -4,6 +4,7 @@
 *.mo
 *.py?
 *.swp
+*.cfg
 # dirs
 bin/
 buildout-cache/
@@ -18,6 +19,7 @@ parts/
 src/*
 var/
 man/
+data/
 # files
 .installed.cfg
 .mr.developer.cfg
