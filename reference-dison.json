@@ -1,0 +1,12 @@
+{
+  "reference": [
+    {
+      "conditions": {
+        "@type": "PreliminaryNotice"
+      },
+      "regexp": "^",
+      "replacement": "AP/",
+      "expected_regexp": "AP/\\d{1,}/\\d{1,}"
+    }
+  ]
+}

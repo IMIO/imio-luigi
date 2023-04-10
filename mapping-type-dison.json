@@ -1,0 +1,16 @@
+{
+  "keys": [
+    {"key": "1", "value": "CODT_UrbanCertificateOne"},
+    {"key": "2", "value": "CODT_UrbanCertificateTwo"},
+    {"key": "B", "value": "CODT_BuildLicence"},
+    {"key": "A", "value": "PreliminaryNotice"},
+    {"key": "E", "value": "Permis d'Environnement ?? quid classe 1 / 2"},
+    {"key": "I", "value": "Déclaration Impétrants ??"},
+    {"key": "L", "value": "Permis de Lotir ??"},
+    {"key": "N", "value": "CODT_NotaryLetter"},
+    {"key": "R", "value": "Déclaration Urbanistique ??"},
+    {"key": "S", "value": "CODT_ParcelOutLicence"},
+    {"key": "U", "value": "CODT_UniqueLicence"},
+    {"key": "Z", "value": "Autre Dossier >> MiscDemand ??"}
+  ]
+}
