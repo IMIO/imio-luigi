@@ -1,0 +1,297 @@
+{
+  "$id": "licence.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "An Urban Licence",
+  "type": "object",
+  "properties": {
+    "@type": {
+      "type": "string",
+      "enum": [
+        "CODT_UrbanCertificateOne",
+        "UrbanCertificateOne",
+        "CODT_UrbanCertificateTwo",
+        "UrbanCertificateTwo",
+        "CODT_Article127",
+        "Article127",
+        "EnvClassOne",
+        "EnvClassTwo",
+        "EnvClassThree",
+        "EnvClassBordering",
+        "CODT_BuildLicence",
+        "PreliminaryNotice",
+        "CODT_NotaryLetter",
+        "CODT_ParcelOutLicence",
+        "CODT_UniqueLicence",
+        "UniqueLicence",
+        "CODT_IntegratedLicence",
+        "IntegratedLicence",
+        "MiscDemand"
+      ]
+    },
+    "reference": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "workLocations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "street"
+        ]
+      }
+    },
+    "foldermanagers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "__children__": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "oneOf": [
+          {"$ref": "#/definitions/urbanAttachment"},
+          {"$ref": "#/definitions/urbanParcel"},
+          {"$ref": "#/definitions/urbanEvent"},
+          {"$ref": "#/definitions/urbanApplicant"}
+        ]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "@type",
+    "reference",
+    "title",
+    "workLocations",
+    "foldermanagers"
+  ],
+  "definitions": {
+    "urbanAttachment": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string",
+          "enum": [
+            "File"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "file": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string"
+            },
+            "encoding": {
+              "type": "string",
+              "enum": [
+                "base64"
+              ]
+            },
+            "filename": {
+              "type": "string"
+            },
+            "content-type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "data",
+            "encoding",
+            "filename",
+            "content-type"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "@type",
+        "title",
+        "file"
+      ]
+    },
+    "urbanParcel": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string",
+          "enum": [
+            "Parcel"
+          ]
+        },
+        "division": {
+          "type": "string"
+        },
+        "section": {
+          "type": "string"
+        },
+        "radical": {
+          "type": "string"
+        },
+        "bis": {
+          "type": "string"
+        },
+        "exposant": {
+          "type": "string"
+        },
+        "puissance": {
+          "type": "string"
+        },
+        "partie": {
+          "type": "boolean"
+        },
+        "isOfficialParcel": {
+          "type": "boolean"
+        },
+        "outdated": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "@type"
+      ]
+    },
+    "urbanEvent": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string",
+          "enum": [
+            "UrbanEvent"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "depositType": {
+          "type": "string",
+          "enum": [
+            "recommande",
+            "surplace",
+            "par-courrier-recommande-avec-accuse-de-reception",
+            "depose-a-ladministration-communale-contre-recepisse"
+          ]
+        },
+        "eventDate": {
+          "type": "string",
+          "regex": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\+[0-9]{2}:[0-9]{2}"
+        },
+        "decisionDate": {
+          "type": "string",
+          "regex": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\+[0-9]{2}:[0-9]{2}"
+        },
+        "urbaneventtypes": {
+          "type": "string",
+          "regex": "http.*/eventconfigs/.*"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "@type",
+        "title",
+        "eventDate",
+        "urbaneventtypes"
+      ]
+    },
+    "urbanApplicant": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string",
+          "enum": [
+            "Applicant"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "name1": {
+          "type": "string"
+        },
+        "name2": {
+          "type": "string"
+        },
+        "personTitle": {
+          "type": "string",
+          "enum": [
+              "notitle",
+              "madam",
+              "miss",
+              "mister",
+              "madam_and_mister",
+              "master",
+              "masters",
+              "misters",
+              "ladies",
+              "consorts",
+              "mesdemoiselles",
+              "mesdames-et-messieurs",
+              "mademoiselle-et-monsieur",
+              "madam_or_mister"
+          ]
+        },
+        "country": {
+          "type": "string",
+          "enum": [
+            "germany",
+            "belgium",
+            "france",
+            "luxembourg",
+            "netherlands"
+          ]
+        },
+        "city": {
+          "type": "string"
+        },
+        "street": {
+          "type": "string"
+        },
+        "number": {
+          "type": "string"
+        },
+        "zipcode": {
+          "type": ["string", "number"]
+        },
+        "society": {
+          "type": "string"
+        },
+        "fax": {
+          "type": "string"
+        },
+        "gsm": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "@type",
+        "name1"
+      ]
+    }
+  }
+}
