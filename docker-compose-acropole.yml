@@ -1,0 +1,18 @@
+---
+version: '3.4'
+
+services:
+  db:
+    image: mysql:5.5.49
+    command: "--lower_case_table_names=1"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=password"
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./data:/data"
+      - "mysql_db:/var/lib/mysql"
+      - "./acropole.cnf:/etc/mysql/conf.d/custom.cnf"
+
+volumes:
+  mysql_db:

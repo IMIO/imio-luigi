@@ -19,3 +19,7 @@ import-local:
 
 test:
 	bin/nosetests imio_luigi
+
+
+acropole-db:
+	docker-compose -f docker-compose-acropole.yml -p acropole up
