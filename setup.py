@@ -28,9 +28,10 @@ setup(
     license="GPL version 2",
     packages=find_packages(exclude=("docs")),
     install_requires=[
+        "PyMySQL",
+        "click",
         "jsonschema",
         "luigi",
-        "PyMySQL",
         "setuptools",
         "sqlalchemy",
     ],
@@ -42,4 +43,9 @@ setup(
             "sphinx",
         ],
     },
+    entry_points={
+        'console_scripts': [
+            "failure_report = imio_luigi.report.failure:main",
+        ],
+    }
 )

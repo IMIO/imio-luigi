@@ -20,6 +20,7 @@ src/*
 var/
 man/
 data/
+failures/
 # files
 .installed.cfg
 .mr.developer.cfg
