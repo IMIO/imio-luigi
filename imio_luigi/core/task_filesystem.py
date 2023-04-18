@@ -43,7 +43,10 @@ class WriteToJSONTask(luigi.Task):
     @property
     def filepath(self):
         """Computed filepath based on the export directory filepath and the key"""
-        return os.path.join(self.export_filepath, f"{self.key}.json")
+        key = self.key
+        if key.startswith("/"):
+            key = key[1:]
+        return os.path.join(self.export_filepath, f"{key}.json")
 
     def output(self):
         return luigi.local_target.LocalTarget(path=self.filepath)
