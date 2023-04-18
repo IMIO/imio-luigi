@@ -192,8 +192,19 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
     def request_url(self):
         return f"{self.url}/@address"
 
+    def on_failure(self, data, errors):
+        if "description" not in data:
+            data["description"] = {
+                "content-type": "text/html",
+                "data": "",
+            }
+        for error in errors:
+            data["description"]["data"] += f"<p>{error}</p>\r\n"
+        return data
+
     def transform_data(self, data):
         new_work_locations = []
+        errors = []
         for worklocation in data["workLocations"]:
             param_values = [
                 str(v)
@@ -203,18 +214,21 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
             params = {"term": " ".join(param_values)}
             r = self.request(parameters=params)
             if r.status_code != 200:
-                raise ValueError(f"Response code is '{r.status_code}', expected 200")
+                errors.append(f"Response code is '{r.status_code}', expected 200")
+                continue
             result = r.json()
             if result["items_total"] == 0:
-                raise ValueError(
-                    f"No result for location search on query '{params['term']}'"
+                errors.append(
+                    f"Aucun résultat pour l'adresse: '{params['term']}'"
                 )
+                continue
             elif result["items_total"] > 1:
                 match = find_address_match(result["items"], worklocation["street"])
                 if not match:
-                    raise ValueError(
-                        f"Multiple results for location search on query '{params['term']}'"
+                    errors.append(
+                        f"Plusieurs résultats pour l'adresse: '{params['term']}'"
                     )
+                    continue
             else:
                 match = result["items"][0]
             new_work_locations.append(
@@ -224,7 +238,7 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
                 }
             )
         data["workLocations"] = new_work_locations
-        return data
+        return data, errors
 
 
 class MappingType(core.MappingValueWithFileInMemoryTask):

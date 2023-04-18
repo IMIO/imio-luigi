@@ -24,6 +24,7 @@ class GetFromRESTServiceTask(luigi.Task):
     password = luigi.OptionalParameter(
         default="", visibility=ParameterVisibility.PRIVATE
     )
+    log_failure = False  # Log in case of failure instead of raising an error
 
     _me_mapping = {
         "GET": requests.get,
@@ -32,6 +33,14 @@ class GetFromRESTServiceTask(luigi.Task):
         "DELETE": requests.delete,
         "PUT": requests.put,
     }
+
+    def log_failure_output(self):
+        fname = self.key.replace("/", "-")
+        fpath = (
+            f"./failures/{self.task_namespace}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     @property
     def request_url(self):
@@ -61,14 +70,57 @@ class GetFromRESTServiceTask(luigi.Task):
 
     @abc.abstractmethod
     def transform_data(self, data):
-        """Method that need to be overrided to define transformation"""
+        """Method that need to be overrided to define transformation
+
+        return the transformed data and a list that may contains errors
+        """
         return None
+
+    def on_failure(self, data):
+        """Method that can be overrided on failure to do something specific
+        This method is only called if `log_failure` is True
+
+        data must be returned"""
+        return data
+
+    def _handle_exception(self, data, error, output_f):
+        """Method called when an exception occured"""
+        if not self.log_failure:
+            raise error
+        data = self.on_failure(data, [str(error)])
+        json.dump(data, output_f)
+        with self.log_failure_output().open("w") as f:
+            error = {
+                "error": str(error),
+                "data": data,
+            }
+            f.write(json.dumps(error))
+
+    def _handle_failure(self, data, errors, output_f):
+        """Method called when errors occured but they are handled"""
+        if not self.log_failure:
+            raise ValueError(", ".join(errors))
+        data = self.on_failure(data, errors)
+        json.dump(data, output_f)
+        with self.log_failure_output().open("w") as f:
+            error = {
+                "error": ", ".join(errors),
+                "data": data,
+            }
+            f.write(json.dumps(error))
 
     def run(self):
         with self.input().open("r") as input_f:
             with self.output().open("w") as output_f:
                 data = json.load(input_f)
-                json.dump(self.transform_data(data), output_f)
+                try:
+                    result, errors = self.transform_data(data)
+                    if len(errors) > 0:
+                        self._handle_failure(result, errors, output_f)
+                    else:
+                        json.dump(result, output_f)
+                except Exception as e:
+                    self._handle_exception(data, e, output_f)
 
 
 class GetFromRESTServiceInMemoryTask(GetFromRESTServiceTask):
