@@ -158,6 +158,7 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
     subelements_destination_key = "workLocations"
     mapping_keys = {}
     subelement_base = {}
+    log_failure = True
 
     def transform_data(self, data):
         if self.subelements_destination_key not in data:
@@ -184,6 +185,7 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
 class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
     task_namespace = "dison"
     key = luigi.Parameter()
+    log_failure = True
 
     def requires(self):
         return CreateWorkLocation(key=self.key)
@@ -285,6 +287,7 @@ class ValidateData(core.JSONSchemaValidationTask):
     task_namespace = "dison"
     key = luigi.Parameter()
     schema_path = "./imio_luigi/urban/schema/licence.json"
+    log_failure = True
 
     def requires(self):
         return DropColumns(key=self.key)
@@ -294,6 +297,7 @@ class UpdateReference(core.UpdateReferenceInMemoryTask):
     task_namespace = "dison"
     key = luigi.Parameter()
     rules_filepath = "./reference-dison.json"
+    log_failure = True
 
     def requires(self):
         return ValidateData(key=self.key)
