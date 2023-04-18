@@ -25,3 +25,11 @@ class GetFromAccessJSONTask(luigi.Task):
                 if self.columns != ["*"]:
                     data = {k: v for k, v in data.items() if k in self.columns}
                 yield data
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.task_namespace}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)

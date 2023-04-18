@@ -65,7 +65,17 @@ class GetFromAccess(core.GetFromAccessJSONTask):
 
     def run(self):
         for row in self.query():
-            yield Transform(key=row["Numero"], data=row)
+            try:
+                if not re.match("^(\d|\w|/|-|\.|\*|_)*$", row["Numero"]):
+                    raise ValueError(f"Wrong key {row['Numero']}")
+                yield Transform(key=row["Numero"], data=row)
+            except Exception as e:
+                with self.log_failure_output().open("w") as f:
+                    error = {
+                        "error": str(e),
+                        "data": row,
+                    }
+                    f.write(json.dumps(error))
 
 
 class Transform(luigi.Task):
