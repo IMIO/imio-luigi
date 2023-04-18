@@ -126,6 +126,7 @@ class CreateSubElementsFromSubElementsTask(luigi.Task):
 
     create_container = True  # Do not raise an error if the container key does not exist
     ignore_missing = True  # Define if an error must be thrown if a key is missing
+    log_failure = False  # Log in case of failure instead of raising an error
 
     @property
     @abc.abstractmethod
@@ -163,6 +164,34 @@ class CreateSubElementsFromSubElementsTask(luigi.Task):
         """The output target"""
         return None
 
+    def on_failure(self, data, errors):
+        """Method that can be overrided on failure to do something specific
+        This method is only called if `log_failure` is True
+
+        data must be returned"""
+        return data
+
+    def _handle_exception(self, data, error, output_f):
+        """Method called when an exception occured"""
+        if not self.log_failure:
+            raise error
+        data = self.on_failure(data, [str(error)])
+        json.dump(data, output_f)
+        with self.log_failure_output().open("w") as f:
+            error = {
+                "error": str(error),
+                "data": data,
+            }
+            f.write(json.dumps(error))
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.task_namespace}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
     def _create_subelement(self, base):
         new_element = copy.deepcopy(self.subelement_base)
         for key, destination in self.mapping_keys.items():
@@ -187,7 +216,11 @@ class CreateSubElementsFromSubElementsTask(luigi.Task):
         with self.input().open("r") as input_f:
             with self.output().open("w") as output_f:
                 data = json.load(input_f)
-                json.dump(self.transform_data(data), output_f)
+                try:
+                    data = self.transform_data(data)
+                    json.dump(data, output_f)
+                except Exception as e:
+                    self._handle_exception(data, e, output_f)
 
 
 class CreateSubElementsFromSubElementsInMemoryTask(
@@ -202,6 +235,8 @@ class CreateSubElementsFromSubElementsInMemoryTask(
 
 class UpdateReferenceTask(luigi.Task):
     """Task that allow to update reference to match a Regexp"""
+
+    log_failure = False  # Log in case of failure instead of raising an error
 
     @property
     @abc.abstractmethod
@@ -250,6 +285,47 @@ class UpdateReferenceTask(luigi.Task):
         with open(self.rules_filepath, "r") as f:
             return json.load(f)
 
+    def on_failure(self, data, errors):
+        """Method that can be overrided on failure to do something specific
+        This method is only called if `log_failure` is True
+
+        data must be returned"""
+        return data
+
+    def log_failure_output(self):
+        fname = self.key.replace("/", "-")
+        fpath = (
+            f"./failures/{self.task_namespace}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
+    def _handle_exception(self, data, error, output_f):
+        """Method called when an exception occured"""
+        if not self.log_failure:
+            raise error
+        data = self.on_failure(data, [str(error)])
+        json.dump(data, output_f)
+        with self.log_failure_output().open("w") as f:
+            error = {
+                "error": str(error),
+                "data": data,
+            }
+            f.write(json.dumps(error))
+
+    def _handle_failure(self, data, errors, output_f):
+        """Method called when errors occured but they are handled"""
+        if not self.log_failure:
+            raise ValueError(", ".join(errors))
+        data = self.on_failure(data, errors)
+        json.dump(data, output_f)
+        with self.log_failure_output().open("w") as f:
+            error = {
+                "error": ", ".join(errors),
+                "data": data,
+            }
+            f.write(json.dumps(error))
+
     def _apply_rule(self, data, key, rule):
         value = data[key]
         # Verify condition
@@ -267,19 +343,28 @@ class UpdateReferenceTask(luigi.Task):
         return value
 
     def transform_data(self, data):
+        errors = []
         for key, rules in self._rules.items():
             if key not in data and self.ignore_missing is False:
-                raise KeyError(f"Missing key 'key'")
+                errors.append(f"Missing key '{key}'")
+                continue
             if key in data:
                 for rule in rules:
                     data[key] = self._apply_rule(data, key, rule)
-        return data
+        return data, errors
 
     def run(self):
         with self.input().open("r") as input_f:
             with self.output().open("w") as output_f:
                 data = json.load(input_f)
-                json.dump(self.transform_data(data), output_f)
+                try:
+                    data, errors = self.transform_data(data)
+                    if len(errors) > 0:
+                        self._handle_failure(data, errors, output_f)
+                    else:
+                        json.dump(data, output_f)
+                except Exception as e:
+                    self._handle_exception(data, e, output_f)
 
 
 class UpdateReferenceInMemoryTask(UpdateReferenceTask):
