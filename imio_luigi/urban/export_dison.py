@@ -2,10 +2,12 @@
 
 from imio_luigi import core, utils
 from imio_luigi.urban.address import find_address_match
+from imio_luigi.urban import tools
 
 import json
 import logging
 import luigi
+import re
 
 
 logger = logging.getLogger("luigi-interface")
@@ -257,10 +259,75 @@ class CadastreSplit(core.StringToListInMemoryTask):
     task_namespace = "dison"
     key = luigi.Parameter()
     attribute_key = "cadastre"
-    separators = [",", " ET "]
+    separators = [",", " ET ", "et"]
 
     def requires(self):
         return MappingType(key=self.key)
+
+
+class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
+    task_namespace = "dison"
+    key = luigi.Parameter()
+    log_failure = True
+
+    def requires(self):
+        return CadastreSplit(key=self.key)
+
+    @property
+    def request_url(self):
+        return f"{self.url}/@parcel"
+
+    def on_failure(self, data, errors):
+        if "description" not in data:
+            data["description"] = {
+                "content-type": "text/html",
+                "data": "",
+            }
+        for error in errors:
+            # cleanup
+            error = error.replace(", 'browse_old_parcels': True", "")
+            error = error.replace("'", "")
+            data["description"]["data"] += f"<p>{error}</p>\r\n"
+        return data
+
+    def transform_data(self, data):
+        errors = []
+        for cadastre in data["cadastre"]:
+            try:
+                params = tools.extract_cadastre(cadastre)
+            except ValueError:
+                errors.append(f"Valeur incorrecte pour la parcelle: {cadastre}")
+                continue
+            if "Section" in data:
+                params["section"] = data["Section"]
+            params["browse_old_parcels"] = True
+            r = self.request(parameters=params)
+            if r.status_code != 200:
+                errors.append(f"Response code is '{r.status_code}', expected 200")
+                continue
+            result = r.json()
+            if result["items_total"] == 0:
+                errors.append(f"Aucun résultat pour la parcelle '{params}'")
+                continue
+            elif result["items_total"] > 1:
+                errors.append(
+                    f"Plusieurs résultats pour la parcelle '{params}'"
+                )
+                continue
+            if not "__children__" in data:
+                data["__children__"] = []
+            new_cadastre = result["items"][0]
+            new_cadastre["@type"] = "Parcel"
+            new_cadastre["id"] = new_cadastre["capakey"].replace("/", "_")
+            if "old" in new_cadastre:
+                new_cadastre["outdated"] = new_cadastre["old"]
+            else:
+                new_cadastre["outdated"] = False
+            for key in ("divname", "natures", "locations", "owners", "capakey", "old"):
+                if key in new_cadastre:
+                    del new_cadastre[key]
+            data["__children__"].append(new_cadastre)
+        return data, errors
 
 
 class DropColumns(core.DropColumnInMemoryTask):
@@ -272,7 +339,7 @@ class DropColumns(core.DropColumnInMemoryTask):
         "C_Code",
         "C_Adres",
         "C_Num",
-        "cadastre",  # temporary
+        "cadastre",
         "UR_Avis",  # temporary
         "A_Nom",  # temporary
         "A_Prenom",  # temporary
@@ -280,7 +347,7 @@ class DropColumns(core.DropColumnInMemoryTask):
     ]
 
     def requires(self):
-        return CadastreSplit(key=self.key)
+        return TransformCadastre(key=self.key)
 
 
 class ValidateData(core.JSONSchemaValidationTask):

@@ -30,7 +30,7 @@ def _cache(ignore_args=False):
 
 def mock_filename(task, name):
     if task.task_namespace:
-        return f"{task.task_namespace}-{task.__class__.__name__}-" f"{name}-{task.key}"
+        return f"{task.task_namespace}-{task.__class__.__name__}-{name}-{task.key}"
     else:
         return f"{task.__class__.__name__}-{name}-{task.key}"
 
