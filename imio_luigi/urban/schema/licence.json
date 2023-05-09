@@ -49,6 +49,13 @@
         "data"
       ]
     },
+    "wf_transitions": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "string"
+      }
+    },
     "workLocations": {
       "type": "array",
       "minItems": 0,
