@@ -100,7 +100,7 @@ class DropColumnTask(luigi.Task):
     def transform_data(self, data):
         for key in self.drop_keys:
             if key not in data and self.ignore_missing is False:
-                raise KeyError(f"Missing key 'key'")
+                raise KeyError(f"Missing key '{key}'")
             if key in data:
                 del data[key]
         return data
@@ -166,7 +166,7 @@ class ValueFixerTask(luigi.Task):
     def transform_data(self, data):
         for key, rules in self._rules.items():
             if key not in data and self.ignore_missing is False:
-                raise KeyError(f"Missing key 'key'")
+                raise KeyError(f"Missing key '{key}'")
             if key in data:
                 for rule in rules:
                     data[key] = self._apply_rule(data[key], rule)
