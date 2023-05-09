@@ -9,6 +9,8 @@ from imio_luigi.core.target_rest import (
 from imio_luigi.core.task_access import GetFromAccessJSONTask
 from imio_luigi.core.task_basic import InMemoryTask
 from imio_luigi.core.task_cleanup import (
+    ConvertDateInMemoryTask,
+    ConvertDateTask,
     DropColumnInMemoryTask,
     DropColumnTask,
     StringToListInMemoryTask,
@@ -55,6 +57,8 @@ from luigi.mock import MockTarget as InMemoryTarget
 __all__ = (
     "AddDataInMemoryTask",
     "AddDataTask",
+    "ConvertDateInMemoryTask",
+    "ConvertDateTask",
     "CreateSubElementInMemoryTask",
     "CreateSubElementTask",
     "CreateSubElementsFromSubElementsInMemoryTask",
