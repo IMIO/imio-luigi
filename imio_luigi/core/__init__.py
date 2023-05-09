@@ -7,13 +7,14 @@ from imio_luigi.core.target_rest import (
     PutRESTTarget,
 )
 from imio_luigi.core.task_access import GetFromAccessJSONTask
+from imio_luigi.core.task_basic import InMemoryTask
 from imio_luigi.core.task_cleanup import (
     DropColumnInMemoryTask,
     DropColumnTask,
     StringToListInMemoryTask,
     StringToListTask,
-    ValueFixerTask,
     ValueFixerInMemoryTask,
+    ValueFixerTask,
 )
 from imio_luigi.core.task_database import (
     GetFromMySQLTask,
@@ -67,6 +68,7 @@ __all__ = (
     "GetFromRESTServiceInMemoryTask",
     "GetFromRESTServiceTask",
     "InMemoryTarget",
+    "InMemoryTask",
     "JSONSchemaValidationTask",
     "JoinFromMySQLInMemoryTask",
     "JoinFromMySQLTask",
