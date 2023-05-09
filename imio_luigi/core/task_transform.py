@@ -207,6 +207,10 @@ class CreateSubElementsFromSubElementsTask(luigi.Task):
             if self.create_container is False:
                 raise KeyError(f"Missing key {self.subelements_destination_key}")
             data[self.subelements_destination_key] = []
+        if self.subelements_source_key not in data:
+            if self.ignore_missing is False:
+                raise KeyError(f"Missing key {self.subelements_source_key}")
+            return data
         for element in data[self.subelements_source_key]:
             new_element = self._create_subelement(element)
             data[self.subelements_destination_key].append(new_element)
