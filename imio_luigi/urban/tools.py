@@ -2,6 +2,10 @@
 
 import re
 
+PARTIES_KEYS = ("(pie)", "(partie)", "partie", "parties", "pie", "PIE", "pies")
+PARTIES_REGEXP = "|".join(PARTIES_KEYS).replace("(", "\(").replace(")", "\)")
+CADASTRE_REGEXP = f"\d{{1,4}} {{0,1}}\w{{1}} {{0,1}}\d{{0,2}} {{0,1}}(?:{PARTIES_REGEXP}){{0,1}}"
+
 
 def extract_cadastre(value):
     """Extract cadastre informations from a string"""
@@ -10,7 +14,7 @@ def extract_cadastre(value):
 
     def _return_value(value, counter, puissance=False):
         partie = False
-        for key in ("(pie)", "(partie)", "partie", "parties", "pie", "PIE"):
+        for key in PARTIES_KEYS:
             if key in value:
                 value = value.replace(key, "")
                 partie = True
@@ -25,16 +29,9 @@ def extract_cadastre(value):
             result["puissance"] = value[counter + 1 :]
         return result
 
-    if re.match("^\d{3}\w{1}(partie|parties|pie|PIE|\(pie\)|\(partie\)){0,1}$", value):
-        return _return_value(value, 3)
-    if re.match("^\d{2}\w{1}(partie|parties|pie|PIE|\(pie\)|\(partie\)){0,1}$", value):
-        return _return_value(value, 2)
-    if re.match(
-        "^\d{3}\w{1}\d{1,2}(partie|parties|pie|PIE|\(pie\)|\(partie\)){0,1}$", value
-    ):
-        return _return_value(value, 3, puissance=True)
-    if re.match(
-        "^\d{2}\w{1}\d{1,2}(partie|parties|pie|PIE|\(pie\)|\(partie\)){0,1}$", value
-    ):
-        return _return_value(value, 2, puissance=True)
+    for i in reversed(range(1, 5)):
+        if re.match(f"^\d{{{i}}}\w{{1}}({PARTIES_REGEXP}){{0,1}}$", value):
+            return _return_value(value, i)
+        if re.match(f"^\d{{{i}}}\w{{1}}\d{{1,2}}({PARTIES_REGEXP}){{0,1}}$", value):
+            return _return_value(value, i, puissance=True)
     raise ValueError(f"Can not parse value '{value}'")
