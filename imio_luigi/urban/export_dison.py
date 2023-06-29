@@ -575,9 +575,11 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
                 continue
             result = r.json()
             if result["items_total"] == 0:
+                del params["browse_old_parcels"]
                 errors.append(f"Aucun résultat pour la parcelle '{params}'")
                 continue
             elif result["items_total"] > 1:
+                del params["browse_old_parcels"]
                 errors.append(f"Plusieurs résultats pour la parcelle '{params}'")
                 continue
             if not "__children__" in data:
