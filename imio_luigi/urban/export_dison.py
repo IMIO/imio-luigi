@@ -523,11 +523,11 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         return data, errors
 
 
-class CadastreSplit(core.StringToListInMemoryTask):
+class CadastreSplit(core.StringToListRegexpInMemoryTask):
     task_namespace = "dison"
     key = luigi.Parameter()
     attribute_key = "cadastre"
-    separators = [",", " ET ", "et"]
+    separators = [tools.CADASTRE_REGEXP]
 
     def requires(self):
         return TransformWorkLocation(key=self.key)
