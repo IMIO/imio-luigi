@@ -6,6 +6,7 @@ from imio_luigi.core.target_rest import (
     PostRESTTarget,
 )
 from imio_luigi.core.utils import mock_filename
+from imio_luigi.core.utils import _cache_request
 from luigi.mock import MockTarget
 from luigi.parameter import ParameterVisibility
 
@@ -49,18 +50,22 @@ class GetFromRESTServiceTask(luigi.Task):
 
     def request(self, parameters=None):
         """Perform the REST request"""
-        me = self._me_mapping.get(self.method)
         if parameters is None:
             parameters = self.parameters
         auth = None
         if self.login and self.password:
             auth = (self.login, self.password)
-        return me(
+        return self._request(
             self.request_url,
             headers={"Accept": self.accept},
             auth=auth,
             params=parameters,
         )
+
+    @_cache_request()
+    def _request(self, *args, **kwargs):
+        me = self._me_mapping.get(self.method)
+        return me(*args, **kwargs)
 
     @property
     @abc.abstractmethod
