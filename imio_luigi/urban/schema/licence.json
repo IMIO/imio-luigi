@@ -20,12 +20,14 @@
         "CODT_BuildLicence",
         "PreliminaryNotice",
         "CODT_NotaryLetter",
+        "ParcelOutLicence",
         "CODT_ParcelOutLicence",
         "CODT_UniqueLicence",
         "UniqueLicence",
         "CODT_IntegratedLicence",
         "IntegratedLicence",
-        "MiscDemand"
+        "MiscDemand",
+        "Declaration"
       ]
     },
     "reference": {
@@ -231,16 +233,16 @@
           "type": "string",
           "regex": "[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\+[0-9]{2}:[0-9]{2}"
         },
+        "decision": {
+          "type": "string"
+        },
         "urbaneventtypes": {
-          "type": "string",
-          "regex": "http.*/eventconfigs/.*"
+          "type": "string"
         }
       },
       "additionalProperties": false,
       "required": [
         "@type",
-        "title",
-        "eventDate",
         "urbaneventtypes"
       ]
     },
