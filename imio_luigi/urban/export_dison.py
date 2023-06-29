@@ -273,9 +273,12 @@ class AddEvents(core.InMemoryTask):
             ),
             "Article127": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
             "ParcelOutLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
+            "CODT_ParcelOutLicence": ("delivrance-du-permis-octroi-ou-refus-codt", "UrbanEvent"),
             "Declaration": ("deliberation-college", "UrbanEvent"),
             "UrbanCertificateOne": ("octroi-cu1", "UrbanEvent"),
             "UrbanCertificateTwo": ("octroi-cu2", "UrbanEvent"),
+            "UniqueLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
+            "CODT_UniqueLicence": ("delivrance-permis", "UrbanEvent"),
             "MiscDemand": ("deliberation-college", "UrbanEvent"),
             "EnvClassOne": ("decision", "UrbanEvent"),
             "EnvClassTwo": ("decision", "UrbanEvent"),
@@ -359,6 +362,15 @@ class AddAttachments(core.InMemoryTask):
             "PreliminaryNotice": "AVIS PREALABLES/DOSSIERS",
             "CODT_BuildLicence": "URBA/DOSSIERS",
             "BuildLicence": "URBA/DOSSIERS",
+            "EnvClassOne": "ENVIRONNEMENT/DOSSIERS",
+            "EnvClassTwo": "ENVIRONNEMENT/DOSSIERS",
+            "EnvClassThree": "ENVIRONNEMENT/DOSSIERS",
+            "ParcelOutLicence": "LOTISSEMENT/DOSSIERS",
+            "CODT_ParcelOutLicence": "URBANISATION/DOSSIERS",
+            "Declaration": "REGISTRE-PU/DOSSIERS",
+            "CODT_UniqueLicence": "UNIQUE/DOSSIERS",
+            "UniqueLicence": "UNIQUE/DOSSIERS",
+            "MiscDemand": "AUTRE DOSSIER/DOSSIERS",
         }
         return data[type]
 
