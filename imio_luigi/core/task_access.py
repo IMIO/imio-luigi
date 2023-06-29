@@ -17,10 +17,14 @@ class GetFromAccessJSONTask(luigi.Task):
         """The path to the table json dump"""
         return None
 
-    def query(self):
+    def query(self, min_range=None, max_range=None):
         """Return each row as a dict object"""
         with open(self.filepath, "r") as f:
-            for line in f.readlines():
+            for nbr, line in enumerate(f):
+                if min_range and nbr < min_range:
+                    continue
+                if max_range and nbr > max_range:
+                    break
                 data = json.loads(line)
                 if self.columns != ["*"]:
                     data = {k: v for k, v in data.items() if k in self.columns}
