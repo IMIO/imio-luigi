@@ -48,11 +48,29 @@ class GetFromAccess(core.GetFromAccessJSONTask):
         "TutRefus",
         "Memo_Urba",
         "Ordre",
+        "Classe",
     ]
 
     def run(self):
-        for row in self.query():
+        min_range = None
+        max_range = None
+        if self.line_range:
+            if not re.match("\d{1,}-\d{1,}", self.line_range):
+                raise ValueError("Wrong Line Range")
+            line_range = self.line_range.split("-")
+            min_range = int(line_range[0])
+            max_range = int(line_range[1])
+        replacements = {
+            "/": "-",
+            " ": "_",
+        }
+        for row in self.query(min_range=min_range, max_range=max_range):
             try:
+                if "Numero" not in row:
+                    raise ValueError("Missing 'Numero'")
+                for k, v in replacements.items():
+                    if k in row["Numero"]:
+                        row["Numero"] = row["Numero"].replace(k, v)
                 if not re.match("^(\d|\w|/|-|\.|\*|_)*$", row["Numero"]):
                     raise ValueError(f"Wrong key {row['Numero']}")
                 if row["Rec"] == "/":
@@ -622,6 +640,8 @@ class DropColumns(core.DropColumnInMemoryTask):
         "TutRefus",
         "Memo_Urba",
         "Ordre",
+        "Recepisse",
+        "Classe",
         "MT",  # temporary
     ]
 
