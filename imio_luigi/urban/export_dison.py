@@ -409,6 +409,12 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
     }
     subelement_base = {"@type": "Applicant"}
 
+    def transform_data(self, data):
+        result = super().transform_data(data)
+        # Filter applicants without name
+        result["__children__"] = [c for c in result["__children__"] if "name1" in c]
+        return result
+
     def requires(self):
         return AddTransitions(key=self.key)
 
