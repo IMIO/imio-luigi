@@ -584,7 +584,8 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
                 data["__children__"] = []
             new_cadastre = result["items"][0]
             new_cadastre["@type"] = "Parcel"
-            new_cadastre["id"] = new_cadastre["capakey"].replace("/", "_")
+            if "capakey" in new_cadastre:
+                new_cadastre["id"] = new_cadastre["capakey"].replace("/", "_")
             if "old" in new_cadastre:
                 new_cadastre["outdated"] = new_cadastre["old"]
             else:
