@@ -21,6 +21,10 @@ var/
 man/
 data/
 failures/
+build/
+result-*
+.cache/
+*.json
 # files
 .installed.cfg
 .mr.developer.cfg
