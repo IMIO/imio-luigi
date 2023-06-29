@@ -75,7 +75,7 @@ class CreateSubElementTask(luigi.Task):
     @property
     @abc.abstractmethod
     def mapping_keys(self):
-        """The mappin keys that will be moved to the sub element"""
+        """The mapping keys that will be moved to the sub element"""
         return None
 
     @property

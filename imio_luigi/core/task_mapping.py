@@ -85,11 +85,19 @@ class MappingValueTask(luigi.Task):
         """The output target"""
         return None
 
+    def custom_transform(self, data):
+        """Method that can be overrided for custom transformation
+        Should return transformed data if some transformation where made"""
+        return None
+
     def transform_data(self, data):
         if self.mapping_key not in data and self.ignore_missing is False:
             raise KeyError(f"Missing key {self.mapping_key}")
         if self.mapping_key not in data:
             return data
+        custom = self.custom_transform(data)
+        if custom is not None:
+            return custom
         new_value = self.mapping.get(data[self.mapping_key], None)
         if new_value is None and self.ignore_missing_mapping is False:
             raise KeyError(f"Missing key {data[self.mapping_key]}")
@@ -144,11 +152,19 @@ class MappingValueWithFileTask(luigi.Task):
         """The output target"""
         return None
 
+    def custom_transform(self, data):
+        """Method that can be overrided for custom transformation
+        Should return transformed data if some transformation where made"""
+        return None
+
     def transform_data(self, data):
         if self.mapping_key not in data and self.ignore_missing is False:
             raise KeyError(f"Missing key {self.mapping_key}")
         if self.mapping_key not in data:
             return data
+        custom = self.custom_transform(data)
+        if custom is not None:
+            return custom
         new_value = self.mapping.get(data[self.mapping_key], None)
         if new_value is None and self.ignore_missing_mapping is False:
             raise KeyError(f"Missing key {data[self.mapping_key]}")
