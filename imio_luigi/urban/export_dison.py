@@ -75,6 +75,8 @@ class GetFromAccess(core.GetFromAccessJSONTask):
                     raise ValueError(f"Wrong key {row['Numero']}")
                 if row["Rec"] == "/":
                     raise ValueError("Wrong type '/'")
+                if "URBAN/" in row["Numero"]:
+                    continue
                 yield Transform(key=row["Numero"], data=row)
             except Exception as e:
                 with self.log_failure_output().open("w") as f:
