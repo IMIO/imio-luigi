@@ -73,6 +73,36 @@ class StringToListInMemoryTask(StringToListTask):
         return MockTarget(mock_filename(self, "StringToList"), mirror_on_stderr=True)
 
 
+class StringToListRegexpTask(StringToListTask):
+    def _recursive_split(self, value, separators):
+        result = []
+        for regexp in separators:
+            result.extend(re.findall(regexp, value))
+        return result
+
+    def transform_data(self, data):
+        value = data.get(self.attribute_key, None)
+        if isinstance(value, list):
+            return data
+        if value is None and self.ignore_missing is False:
+            raise KeyError("Missing key {0}".format(self.attribute_key))
+        elif value is None and self.ignore_missing is True:
+            return data
+
+        separators = [s for s in self.separators if re.search(s, value)]
+        if len(separators) > 0:
+            value = self._recursive_split(value, separators)
+        else:
+            value = [value]
+        data[self.attribute_key] = value
+        return data
+
+
+class StringToListRegexpInMemoryTask(StringToListRegexpTask):
+    def output(self):
+        return MockTarget(mock_filename(self, "StringToListRegexp"), mirror_on_stderr=True)
+
+
 class DropColumnTask(luigi.Task):
     """
     Drop columns
