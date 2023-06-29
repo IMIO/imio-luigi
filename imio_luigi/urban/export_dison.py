@@ -682,20 +682,10 @@ class ValidateData(core.JSONSchemaValidationTask):
         return DropColumns(key=self.key)
 
 
-class UpdateReference(core.UpdateReferenceInMemoryTask):
-    task_namespace = "dison"
-    key = luigi.Parameter()
-    rules_filepath = "./reference-dison.json"
-    log_failure = True
-
-    def requires(self):
-        return ValidateData(key=self.key)
-
-
 class WriteToJSON(core.WriteToJSONTask):
     task_namespace = "dison"
     export_filepath = "./result-dison"
     key = luigi.Parameter()
 
     def requires(self):
-        return UpdateReference(key=self.key)
+        return ValidateData(key=self.key)
