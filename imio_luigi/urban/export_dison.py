@@ -17,6 +17,7 @@ logger = logging.getLogger("luigi-interface")
 class GetFromAccess(core.GetFromAccessJSONTask):
     task_namespace = "dison"
     filepath = luigi.Parameter()
+    line_range = luigi.Parameter(default=None)
     columns = [
         "Numero",
         "LibNat",
