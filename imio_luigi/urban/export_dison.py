@@ -52,6 +52,11 @@ class GetFromAccess(core.GetFromAccessJSONTask):
         "Classe",
     ]
 
+    def _complete(self, key):
+        """Method to speed up process that verify if output exist or not"""
+        task = WriteToJSON(key=key)
+        return task.complete()
+
     def run(self):
         min_range = None
         max_range = None
@@ -71,6 +76,8 @@ class GetFromAccess(core.GetFromAccessJSONTask):
                     raise ValueError("Missing 'Numero'")
                 if not re.match("^(\d|\w|/|-|\.|\*|_| |)*$", row["Numero"]):
                     raise ValueError(f"Wrong key {row['Numero']}")
+                if self._complete(row["Numero"]) is True:
+                    continue
                 if row["Rec"] in ("I", ):  # ignored types
                     continue
                 if row["Rec"] == "/":
