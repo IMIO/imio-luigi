@@ -122,7 +122,7 @@ class Transform(luigi.Task):
 class ValueCleanup(core.ValueFixerInMemoryTask):
     task_namespace = "dison"
     key = luigi.Parameter()
-    rules_filepath = "./fix-dison.json"
+    rules_filepath = "./config/dison/fix-dison.json"
 
     def input(self):
         return core.InMemoryTarget(f"Transform-{self.key}", mirror_on_stderr=True)
@@ -157,7 +157,7 @@ class ConvertDates(core.ConvertDateInMemoryTask):
 class AddExtraData(core.AddDataInMemoryTask):
     task_namespace = "dison"
     key = luigi.Parameter()
-    filepath = "./add-data-dison.json"
+    filepath = "./config/dison/add-data-dison.json"
 
     def requires(self):
         return ConvertDates(key=self.key)
@@ -175,7 +175,7 @@ class MappingCountry(utils.MappingCountryInMemoryTask):
 class MappingType(core.MappingValueWithFileInMemoryTask):
     task_namespace = "dison"
     key = luigi.Parameter()
-    mapping_filepath = "./mapping-type-dison.json"
+    mapping_filepath = "./config/dison/mapping-type-dison.json"
     mapping_key = "@type"
 
     def requires(self):
@@ -185,7 +185,7 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
 class MappingAvis(core.MappingValueWithFileInMemoryTask):
     task_namespace = "dison"
     key = luigi.Parameter()
-    mapping_filepath = "./mapping-avis-dison.json"
+    mapping_filepath = "./config/dison/mapping-avis-dison.json"
     mapping_key = "UR_Avis"
 
     def requires(self):
