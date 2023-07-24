@@ -2,24 +2,33 @@
 
 from luigi.freezing import FrozenOrderedDict
 
+import copy
+import hashlib
 import json
 import os
-import hashlib
+import re
 
 CACHE = {}
-FSCACHE = {}
+FSCACHE = None
 
 
 def _cache_key(func, *args, **kwargs):
     return (func, args, frozenset(kwargs.items()))
 
 
-def _cache_key_md5(func, *args, **kwargs):
-    func_md5 = hashlib.md5(func.__name__.encode()).hexdigest()
+def _cache_key_md5(func, *args, ignore_self=False, **kwargs):
+    if ignore_self is True:
+        func_md5 = hashlib.md5(
+            "{0}-{1}".format(args[0].__class__.__name__, func.__name__).encode()
+        ).hexdigest()
+        arguments = list(copy.deepcopy(args[1:]))
+    else:
+        func_md5 = hashlib.md5(func.__name__.encode()).hexdigest()
+        arguments = list(copy.deepcopy(args))
+
     for k, v in kwargs.items():
-        if isinstance(v, dict):
-            kwargs[k] = frozenset(v.items())
-    args_md5 = hashlib.md5(str((args, frozenset(kwargs.items()))).encode()).hexdigest()
+        arguments.append((k, v))
+    args_md5 = hashlib.md5(json.dumps(arguments).encode()).hexdigest()
     return f"{func_md5}-{args_md5}"
 
 
@@ -51,30 +60,50 @@ class MockedRequestResponse(object):
         return self.json_result
 
 
-def _get_cache_from_fs():
+def _initiliaze_fs_cache():
+    global FSCACHE
+
     if not os.path.exists(".cache"):
         os.mkdir(".cache")
-    for fname in os.listdir(".cache"):
-        with open(os.path.join(".cache", fname), "r") as f:
-            FSCACHE[fname] = json.load(f)
+    FSCACHE = {}
 
 
-def _cache_on_fs(key):
-    with open(os.path.join(".cache", key), "w") as f:
-        json.dump(FSCACHE[key], f)
+def _get_cache_path(cache_key):
+    """Return path et filename for cache"""
+    func, key = cache_key.split("-")
+    key_path = re.findall(".{1,4}", key)
+    return os.path.join(".cache", func, *key_path[:-1]), key_path[-1]
+
+
+def _get_cache_from_fs(cache_key):
+    if cache_key in FSCACHE:
+        return FSCACHE[cache_key]
+    path, fname = _get_cache_path(cache_key)
+    fpath = os.path.join(path, fname)
+    if os.path.exists(fpath):
+        with open(fpath, "r") as f:
+            FSCACHE[cache_key] = json.load(f)
+        return FSCACHE[cache_key]
+
+
+def _cache_on_fs(cache_key):
+    path, fname = _get_cache_path(cache_key)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(os.path.join(path, fname), "w") as f:
+        json.dump(FSCACHE[cache_key], f)
 
 
 def _cache_request(expected_codes=(200, 301), ignore_self=True):
-    if not FSCACHE:
-        _get_cache_from_fs()
+    if FSCACHE is None:
+        _initiliaze_fs_cache()
+
     def decorator(func):
         def replacement(*args, **kwargs):
-            if ignore_self is True:
-                cache_key = _cache_key_md5(func, *args[1:], **kwargs)
-            else:
-                cache_key = _cache_key_md5(func, *args, **kwargs)
-            if cache_key in FSCACHE:
-                cache = FSCACHE[cache_key]
+            cache_key = _cache_key_md5(func, *args, ignore_self=ignore_self, **kwargs)
+            cache = _get_cache_from_fs(cache_key)
+            print(func, args, kwargs, cache_key)
+            if cache:
                 return MockedRequestResponse(cache["status_code"], cache["json"])
             result = func(*args, **kwargs)
             if result.status_code in expected_codes:
