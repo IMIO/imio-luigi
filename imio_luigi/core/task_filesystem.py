@@ -46,6 +46,15 @@ class WriteToJSONTask(luigi.Task):
         key = self.key
         if key.startswith("/"):
             key = key[1:]
+        replacements = {
+            "/": "-",
+            " ": "_",
+            "*": "-",
+        }
+
+        for k, v in replacements.items():
+            if k in key:
+                key = key.replace(k, v)
         return os.path.join(self.export_filepath, f"{key}.json")
 
     def output(self):
