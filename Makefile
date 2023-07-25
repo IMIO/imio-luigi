@@ -15,18 +15,18 @@ update:
 
 .PHONY: run-local-dison
 run-local-dison:
-	LUIGI_CONFIG_PATH=$(CURDIR)/dison.cfg bin/luigi --module imio_luigi.urban.export_dison dison.GetFromAccess --counter="500" --filepath ./data/dison/AgoraWin/json/URBA.json --local-scheduler
+	LUIGI_CONFIG_PATH=$(CURDIR)/dison.cfg luigi --module imio_luigi.urban.export_dison dison.GetFromAccess --counter="500" --filepath ./data/dison/AgoraWin/json/URBA.json --local-scheduler
 
 .PHONY: run-local-acropole
 run-local-acropole:
-	bin/luigi --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --local-scheduler
+	luigi --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --local-scheduler
 
 .PHONY: import-local
 import-local:
-	LUIGI_CONFIG_PATH=./dison.cfg bin/luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-dison --local-scheduler
+	LUIGI_CONFIG_PATH=./dison.cfg luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-dison --local-scheduler
 
 test:
-	bin/nosetests imio_luigi
+	nosetests imio_luigi
 
 acropole-db:
 	docker-compose -f docker-compose-acropole.yml -p acropole up
