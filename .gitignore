@@ -37,6 +37,7 @@ pip-selfcheck.json
 report.html
 .vscode/
 package-lock.json
+.python-version
 # excludes
 !.coveragerc
 !.editorconfig

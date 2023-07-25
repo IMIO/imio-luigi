@@ -1,9 +1,17 @@
+SHELL:=/bin/bash
+PROJECT=imio-luigi
+VERSION=3.10.12
+VENV=${PROJECT}
+VENV_DIR=$(shell pyenv root)/versions/${VENV}
+PYTHON=${VENV_DIR}/bin/python
+
 init:
-	virtualenv-3.8 .
-	bin/pip install -r requirements.txt
+	pyenv virtualenv ${VERSION} ${VENV}
+	echo ${VENV} > .python-version
+	$(PYTHON) -m pip install install -r requirements.txt
 
 update:
-	bin/pip install -r requirements.txt
+	$(PYTHON) -m pip install -r requirements.txt
 
 .PHONY: run-local-dison
 run-local-dison:
