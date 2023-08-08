@@ -45,6 +45,10 @@ class StringToListTask(luigi.Task):
         regexp = f"({'|'.join(separators)})"
         return [v for v in re.split(regexp, value) if v and v not in separators]
 
+    def fix_item(self, item):
+        """Called on every item after splitting to fix or transform each item"""
+        return item
+
     def transform_data(self, data):
         value = data.get(self.attribute_key, None)
         if isinstance(value, list):
@@ -58,7 +62,7 @@ class StringToListTask(luigi.Task):
             value = self._recursive_split(value, separators)
         else:
             value = [value]
-        data[self.attribute_key] = value
+        data[self.attribute_key] = [self.fix_item(item) for item in value]
         return data
 
     def run(self):
