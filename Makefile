@@ -17,6 +17,14 @@ update:
 run-local-dison:
 	LUIGI_CONFIG_PATH=$(CURDIR)/dison.cfg luigi --module imio_luigi.urban.export_dison dison.GetFromAccess --counter="500" --filepath ./data/dison/AgoraWin/json/URBA.json --local-scheduler
 
+.PHONY: run-local-arlon
+run-local-arlon:
+	LUIGI_CONFIG_PATH=$(CURDIR)/arlon.cfg luigi --module imio_luigi.urban.export_arlon arlon.GetFromAccess --filepath ./data/arlon/json/REGISTRES.json --local-scheduler
+
+.PHONY: clear-arlon
+clear-arlon:
+	rm -rf result-arlon/ failures/arlon-*
+
 .PHONY: run-local-acropole
 run-local-acropole:
 	luigi --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --local-scheduler
