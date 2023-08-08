@@ -27,7 +27,8 @@
         "CODT_IntegratedLicence",
         "IntegratedLicence",
         "MiscDemand",
-        "Declaration"
+        "Declaration",
+        "PatrimonyCertificate"
       ]
     },
     "reference": {
