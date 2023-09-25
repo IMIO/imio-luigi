@@ -1,0 +1,15 @@
+{
+  "keys": [
+    {"key": "F", "value": "favorable"},
+    {"key": "D", "value": "defavorable"},
+    {"key": "RF", "value": "favorable-defaut"},
+    {"key": "FC", "value": "favorable-conditionnel"},
+    {"key": "C", "value": "Conditionné"},
+    {"key": "DA", "value": "Dérogation Acceptée"},
+    {"key": "DR", "value": "Dérogation Refusée"},
+    {"key": "IN", "value": "Incomplet"},
+    {"key": "PB", "value": "Permis B"},
+    {"key": "R", "value": "Refus"},
+    {"key": "SR", "value": "Sans Réponse"}
+  ]
+}
