@@ -28,15 +28,19 @@ class GetFromDatabaseTask(luigi.Task):
     def tablename(self):
         return None
 
-    @property
-    def sql_query(self):
+    def sql_query(self, limit=None, offset=None):
         columns = ",".join(self.columns)
-        return f"select {columns} from {self.tablename}"
+        query = f"select {columns} from {self.tablename}"
+        if limit:
+            query += f" limit {limit}"
+        if offset:
+            query += f" offset {offset}"
+        return query
 
-    def query(self):
+    def query(self, limit=None, offset=None):
         engine = sqlalchemy.create_engine(self.url)
         with engine.connect() as connection:
-            result = connection.execute(sqlalchemy.text(self.sql_query)).fetchall()
+            result = connection.execute(sqlalchemy.text(self.sql_query(limit, offset))).fetchall()
         return result
 
 
@@ -68,10 +72,14 @@ class JoinFromMySQLTask(GetFromMySQLTask):
     def sql_condition(self):
         return None
 
-    @property
-    def sql_query(self):
+    def sql_query(self, limit=None, offset=None):
         columns = ",".join(self.columns)
-        return f"select {columns} from {self.tablename} where {self.sql_condition()}"
+        query = f"select {columns} from {self.tablename} where {self.sql_condition()}"
+        if limit:
+            query += f" limit {limit}"
+        if offset:
+            query += f" offset {offset}"
+        return query
 
     def run(self):
         with self.input().open("r") as input_f:
