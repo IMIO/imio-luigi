@@ -43,6 +43,14 @@ class GetFromDatabaseTask(luigi.Task):
             result = connection.execute(sqlalchemy.text(self.sql_query(limit, offset))).fetchall()
         return result
 
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.task_namespace}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
 
 class GetFromMySQLTask(GetFromDatabaseTask):
     encoding = None
