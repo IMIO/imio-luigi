@@ -173,13 +173,14 @@ class ValueFixerTask(luigi.Task):
 
         Excepted content format :
         {
-            "key": [
+            "key_to_fix": [
                 {
                     "regexp": "^regexp$",
                     "replacement": "new_value"
                 }
             ]
         }
+        key_to_fix : key in data that will be fix
         """
         return None
 
