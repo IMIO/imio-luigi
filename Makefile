@@ -105,3 +105,7 @@ test:
 
 acropole-db:
 	docker-compose -f docker-compose-acropole.yml -p acropole up
+
+.PHONY: run-local-libreoffice-upgrade-templates
+run-local-libreoffice-upgrade-templates:
+	LUIGI_CONFIG_PATH=./config/local.cfg luigi --module imio_luigi.urban.libreoffice libreoffice.UpgradeTemplatesTask --local-scheduler
