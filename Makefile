@@ -34,6 +34,13 @@ run-local-ecaussinnes:
 clear-ecaussinnes:
 	rm -rf result-ecaussinnes/ failures/ecaussinnes-*
 
+.PHONY: run-local-gracehollogne
+run-local-gracehollogne:
+	LUIGI_CONFIG_PATH=$(CURDIR)/gracehollogne.cfg luigi --module imio_luigi.urban.export_gracehollogne gracehollogne.GetFromAccess --count=100 --filepath ./data/gracehollogne/customer_ouput_formated.json --local-scheduler
+
+.PHONY: clear-gracehollogne
+clear-gracehollogne:
+	rm -rf result-gracehollogne/ failures/gracehollogne-*
 .PHONY: run-local-acropole
 run-local-acropole:
 	luigi --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --local-scheduler
