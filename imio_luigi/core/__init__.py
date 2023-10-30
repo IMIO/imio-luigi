@@ -26,6 +26,7 @@ from imio_luigi.core.task_database import (
     JoinFromMySQLTask,
 )
 from imio_luigi.core.task_csv import GetFromCSVFile
+from imio_luigi.core.task_xml import (GetFromXMLFile, GetFromListXMLFile)
 from imio_luigi.core.task_filesystem import WalkFS, WriteToJSONTask
 from imio_luigi.core.task_mapping import (
     MappingKeysInMemoryTask,
@@ -75,6 +76,8 @@ __all__ = (
     "GetFromRESTServiceInMemoryTask",
     "GetFromRESTServiceTask",
     "GetFromCSVFile",
+    "GetFromXMLFile",
+    "GetFromListXMLFile",
     "InMemoryTarget",
     "InMemoryTask",
     "JSONSchemaValidationTask",
