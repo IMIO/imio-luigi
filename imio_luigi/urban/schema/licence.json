@@ -38,6 +38,9 @@
     "title": {
       "type": "string"
     },
+    "licenceSubject": {
+      "type": "string"
+    },
     "description": {
       "type": "object",
       "properties": {
