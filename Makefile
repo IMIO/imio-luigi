@@ -25,6 +25,15 @@ run-local-arlon:
 clear-arlon:
 	rm -rf result-arlon/ failures/arlon-*
 
+
+.PHONY: run-local-ecaussinnes
+run-local-ecaussinnes:
+	LUIGI_CONFIG_PATH=$(CURDIR)/ecaussinnes.cfg luigi --module imio_luigi.urban.export_ecaussinnes ecaussinnes.GetFromXML --filepath ./data/ecaussinnes/ --local-scheduler
+
+.PHONY: clear-ecaussinnes
+clear-ecaussinnes:
+	rm -rf result-ecaussinnes/ failures/ecaussinnes-*
+
 .PHONY: run-local-acropole
 run-local-acropole:
 	luigi --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --local-scheduler
