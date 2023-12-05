@@ -57,7 +57,7 @@ class StringToListTask(luigi.Task):
             raise KeyError("Missing key {0}".format(self.attribute_key))
         elif value is None and self.ignore_missing is True:
             return data
-        separators = [s for s in self.separators if s in value]
+        separators = [s for s in self.separators if re.match(s, value)]
         if len(separators) > 0:
             value = self._recursive_split(value, separators)
         else:
@@ -211,14 +211,17 @@ class ValueFixerTask(luigi.Task):
     def run(self):
         with self.input().open("r") as input_f:
             with self.output().open("w") as output_f:
-                data = json.load(input_f)
+                try:
+                    data = json.load(input_f)
+                except json.decoder.JSONDecodeError as err:
+                    __import__('pdb').set_trace()
+                    pass
                 json.dump(self.transform_data(data), output_f)
 
 
 class ValueFixerInMemoryTask(ValueFixerTask):
     def output(self):
         return MockTarget(mock_filename(self, "ValueFixer"), mirror_on_stderr=True)
-
 
 
 class ConvertDateTask(luigi.Task):
@@ -284,7 +287,7 @@ class ConvertDateTask(luigi.Task):
         for key in self.keys:
             if key not in data and self.ignore_missing is False:
                 raise KeyError(f"Missing key '{key}'")
-            if key in data:
+            if key in data and data[key]:
                 try:
                     date = datetime.strptime(data[key], self.date_format_input)
                     data[key] = date.strftime(self.date_format_output)
