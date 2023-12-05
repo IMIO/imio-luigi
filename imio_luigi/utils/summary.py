@@ -12,5 +12,16 @@ def get_all_keys(items):
     return key_list
 
 def get_all_unique_value(data, column):
-    return (item[column] for item in data if column in item)
-    
+    return set(item[column] for item in data if column in item)
+
+def get_all_unique_value_with_callback(data, callback):
+    return set(callback(item) for item in data)
+
+def get_all_unique_values_with_first_ref(data, column, ref):
+    output = {}
+    for item in data:
+        if item[column] in output:
+            continue
+        output[item[column]] = item[ref]
+        
+    return output
