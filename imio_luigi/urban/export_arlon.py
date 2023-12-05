@@ -63,7 +63,7 @@ class GetFromAccess(core.GetFromAccessJSONTask):
         iteration = 0
         
         for row in self.query(min_range=min_range, max_range=max_range):
-            if self._complete(row["clé"], row) is True:
+            if self._complete(row["clé"]) is True:
                 continue
             if len(row) <= 1:
                 continue
