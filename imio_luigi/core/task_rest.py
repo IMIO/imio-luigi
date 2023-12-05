@@ -48,7 +48,7 @@ class GetFromRESTServiceTask(luigi.Task):
         """Method that can be overrided if necessary to construct the request URL"""
         return self.url
 
-    def request(self, parameters=None):
+    def request(self, parameters=None, json_body={}):
         """Perform the REST request"""
         if parameters is None:
             parameters = self.parameters
@@ -60,6 +60,7 @@ class GetFromRESTServiceTask(luigi.Task):
             headers={"Accept": self.accept},
             auth=auth,
             params=parameters,
+            json=json_body
         )
 
     @_cache_request()
