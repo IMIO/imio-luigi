@@ -2,7 +2,9 @@
 
 from imio_luigi import core, utils
 from imio_luigi.urban.address import find_address_match
+from imio_luigi.core.utils import _cache
 from imio_luigi.urban import tools
+from datetime import datetime
 
 import json
 import logging
@@ -35,7 +37,10 @@ class GetFromAccess(core.GetFromAccessJSONTask):
         "section_cadastrale",
         "type_dossier",
         "n°",
-        "octroi"
+        "octroi",
+        "refus",
+        "début_travaux",
+        "irrecevabilité"
     ]
 
     def _complete(self, key):
@@ -56,7 +61,10 @@ class GetFromAccess(core.GetFromAccessJSONTask):
         if self.counter:
             counter = int(self.counter)
         iteration = 0
+        
         for row in self.query(min_range=min_range, max_range=max_range):
+            if len(row) <= 1:
+                continue
             try:
                 yield Transform(key=row["clé"], data=row)
             except Exception as e:
@@ -79,6 +87,17 @@ class Transform(luigi.Task):
     def output(self):
         return core.InMemoryTarget(f"Transform-{self.key}", mirror_on_stderr=True)
 
+    def make_title(self, data):
+        title = ""
+        ref = data.get("référence_communale", None)
+        if ref:
+            title = ref
+        object = data.get("objet", None)
+        if object:
+            title += " - " + object
+        data["title"] = title
+        return data
+
     def run(self):
         with self.output().open("w") as f:
             data = dict(self.data)
@@ -87,6 +106,7 @@ class Transform(luigi.Task):
                     "content-type": "text/html",
                     "data": "<p>{0}</p>\r\n".format(data["remarques"]),
                 }
+            data = self.make_title(data)
             f.write(json.dumps(data))
         yield WriteToJSON(key=self.key)
 
@@ -100,12 +120,13 @@ class ValueCleanup(core.ValueFixerInMemoryTask):
         return core.InMemoryTarget(f"Transform-{self.key}", mirror_on_stderr=True)
 
 
+
 class Mapping(core.MappingKeysInMemoryTask):
     task_namespace = "arlon"
     key = luigi.Parameter()
     mapping = {
         "référence_communale": "reference",
-        "objet": "title",
+        "objet": "licenceSubject",
         "type_dossier": "@type",
         "n°_cadastral": "cadastre",
     }
@@ -114,16 +135,24 @@ class Mapping(core.MappingKeysInMemoryTask):
         return ValueCleanup(key=self.key)
 
 
+class AddNISData(tools.AddNISData):
+    task_namespace = "arlon"
+    key = luigi.Parameter()
+
+    def requires(self):
+        return Mapping(key=self.key)
+
+
 class ConvertDates(core.ConvertDateInMemoryTask):
     task_namespace = "arlon"
     key = luigi.Parameter()
-    keys = ("entrée", "octroi")
+    keys = ("entrée", "octroi", "refus", "début_travaux", "irrecevabilité")
     date_format_input = "%m/%d/%y %H:%M:%S"
     date_format_output = "%Y-%m-%dT%H:%M:%S"
     log_failure = True
 
     def requires(self):
-        return Mapping(key=self.key)
+        return AddNISData(key=self.key)
 
 
 class AddExtraData(core.AddDataInMemoryTask):
@@ -138,21 +167,115 @@ class AddExtraData(core.AddDataInMemoryTask):
 class MappingType(core.MappingValueWithFileInMemoryTask):
     task_namespace = "arlon"
     key = luigi.Parameter()
+    log_failure = True
     mapping_filepath = "./config/arlon/mapping-type-arlon.json"
     mapping_key = "@type"
+    codt_trigger = [
+        "UrbanCertificateOne",
+        "UrbanCertificateTwo",
+        "Article127",
+        "BuildLicence",
+        "ParcelOutLicence",
+        "NotaryLetter",
+        "UniqueLicence",
+        "IntegratedLicence"
+    ]
+    codt_start_date = datetime(2017, 6, 1)
+    codt_start_year = 2017
+    
+    def on_failure(self, data, errors):
+        if "description" not in data:
+            data["description"] = {
+                "content-type": "text/html",
+                "data": "",
+            }
+        for error in errors:
+            data["description"]["data"] += f"<p>{error}</p>\r\n"
+        return data
+    
+    def log_failure_output(self):
+        fname = self.key.replace("/", "-")
+        fpath = (
+            f"./failures/{self.task_namespace}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
+    def _handle_exception(self, data, error, output_f):
+        """Method called when an exception occured"""
+        if not self.log_failure:
+            raise error
+        data = self.on_failure(data, [str(error)])
+        json.dump(data, output_f)
+        with self.log_failure_output().open("w") as f:
+            error = {
+                "error": str(error),
+                "data": data,
+            }
+            f.write(json.dumps(error))
+
+    def _certificate_one_two(self, data):
+        if self.mapping_key not in data or data[self.mapping_key] == "UrbanCertificate":
+            if "title" not in data:
+                return data
+            suffix = "One"
+            match = re.match(r"^CU([12])", data["title"])
+            if match and match.groups()[0] == '2':
+                suffix = "Two"
+            data[self.mapping_key] = f"{data[self.mapping_key]}{suffix}"
+        
+        return data
+        
+    def _cwatup_codt(self, data):
+        if data["@type"] not in self.codt_trigger:
+            return data
+        year = None
+        date = data.get("entrée", None)
+        if not date:
+            year = data.get("année", None)
+
+        if not date or year == self.codt_start_year:
+            raise KeyError("Manque une date pour déterminer si c'est un permis CODT")
+
+        date = datetime.fromisoformat(date)
+
+        if date > self.codt_start_date:
+            data["@type"] = f"CODT_{data['@type']}"
+            
+        if year and year > self.codt_start_year:
+            data["@type"] = f"CODT_{data['@type']}"
+            
+
+        return data
+    
+    def extract_type(self, data):
+        type = data.get("@type", None)
+        
+        if type:
+            return data
+        ref = data.get("reference")
+        
+        if not ref:
+            raise ValueError("Missing type and reference")
+
+        return data
+            
 
     def transform_data(self, data):
+        data = self.extract_type(data)
         data = super(MappingType, self).transform_data(data)
-        if self.mapping_key not in data or data[self.mapping_key] != "CODT_UrbanCertificate":
-            return data
-        if "title" not in data:
-            return data
-        suffix = "One"
-        match = re.match(r"^CU([12])", data["title"])
-        if match.groups()[0] == '2':
-            suffix = "Two"
-        data[self.mapping_key] = f"{data[self.mapping_key]}{suffix}"
+        data = self._certificate_one_two(data)
+        data = self._cwatup_codt(data)
         return data
+
+    def run(self):
+        with self.input().open("r") as input_f:
+            with self.output().open("w") as output_f:
+                data = json.load(input_f)
+                try :
+                    json.dump(self.transform_data(data), output_f)
+                except Exception as e:
+                    self._handle_exception(data, e, output_f)
 
     def requires(self):
         return AddExtraData(key=self.key)
@@ -186,13 +309,21 @@ class AddEvents(core.InMemoryTask):
         return data
 
     def _create_delivery(self, data):
-        if "octroi" not in data:
+        columns = ("octroi", "irrecevabilité", "refus")
+        matching_columns = [c for c in columns if c in data]
+        if not matching_columns:
             return data
         event_subtype, event_type = self._mapping_delivery_event(data["@type"])
+        if data.get("octroi"):
+            decision = "favorable"
+            date = data.get("octroi")
+        else:
+            decision = "defavorable"
+            date = data.get("irrecevabilité") or data.get("refus")
         event = {
             "@type": event_type,
-            "decision": "favorable",
-            "decisionDate": data["octroi"],
+            "decision": decision,
+            "decisionDate": date,
             "urbaneventtypes": event_subtype,
         }
         if "__children__" not in data:
@@ -221,9 +352,9 @@ class AddEvents(core.InMemoryTask):
             "ParcelOutLicence": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_ParcelOutLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
             "MiscDemand": ("depot-de-la-demande", "UrbanEvent"),
+            "PatrimonyCertificate": ("depot-de-la-demande-codt", "UrbanEvent"),
+            "Ticket": ("depot-de-la-demande-codt", "UrbanEvent"),
         }
-        if type not in data:
-            return ("depot-de-la-demande-codt", "UrbanEvent")
         return data[type]
 
     def _mapping_delivery_event(self, type):
@@ -254,23 +385,35 @@ class AddEvents(core.InMemoryTask):
             "EnvClassTwo": ("decision", "UrbanEvent"),
             "EnvClassThree": ("acceptation-de-la-demande", "UrbanEvent"),
             "PreliminaryNotice": ("passage-college", "UrbanEvent"),
+            "PatrimonyCertificate": ("decision", "UrbanEvent"),
+            "Ticket": ("decision", "UrbanEvent"),
         }
-        if type not in data:
-            return ("delivrance-du-permis-octroi-ou-refus-codt", "UrbanEvent")
         return data[type]
 
 
+class EventConfigUidResolver(tools.UrbanEventConfigUidResolver):
+    task_namespace = "arlon"
+    key = luigi.Parameter()
+    
+    def requires(self):
+        return AddEvents(key=self.key)
+    
+    
 class AddTransitions(core.InMemoryTask):
     task_namespace = "arlon"
     key = luigi.Parameter()
 
     def requires(self):
-        return AddEvents(key=self.key)
+        return EventConfigUidResolver(key=self.key)
 
     def transform_data(self, data):
-        state = None
+        state = "deposit"
         if data.get("octroi"):
             state = "accepted"
+        elif data.get("refus"):
+            state = "refused"
+        elif data.get("irrecevabilité"):
+            state = "inacceptable"
         if state is not None:
             data["wf_transitions"] = [state]
         return data
@@ -282,7 +425,7 @@ class WorkLocationStreetSplit(core.StringToListInMemoryTask):
     attribute_key = "rue-place"
     separators = [" - "]
 
-    def fix_item(self, item):
+    def _fix_item(self, item):
         return item.strip()
 
     def requires(self):
@@ -295,7 +438,7 @@ class WorkLocationNumberSplit(core.StringToListInMemoryTask):
     attribute_key = "n°"
     separators = ["-"]
 
-    def fix_item(self, item):
+    def _fix_item(self, item):
         return item.strip()
 
     def requires(self):
@@ -464,6 +607,7 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
             params["browse_old_parcels"] = True
             r = self.request(parameters=params)
             if r.status_code != 200:
+                __import__('pdb').set_trace()
                 errors.append(f"Response code is '{r.status_code}', expected 200")
                 continue
             result = r.json()
@@ -492,6 +636,195 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
         return data, errors
 
 
+class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
+    task_namespace = "arlon"
+    key = luigi.Parameter()
+    log_failure = True
+
+    def requires(self):
+        return TransformCadastre(key=self.key)
+
+    @property
+    def request_url(self):
+        return f"{self.url}/urban/architects/@search"
+
+    def on_failure(self, data, errors):
+        if "description" not in data:
+            data["description"] = {
+                "content-type": "text/html",
+                "data": "",
+            }
+        for error in errors:
+            data["description"]["data"] += f"<p>{error}</p>\r\n"
+        return data
+
+    def transform_data(self, data):
+        errors = []
+        value = data.get("auteur_de_projet", None)
+        if not value:
+            return data, errors
+        params = {"SearchableText": f"{value}", "metadata_fields": "UID"}
+        r = self.request(parameters=params)
+        if r.status_code != 200:
+            errors.append(f"Response code is '{r.status_code}', expected 200")
+            return data, errors
+        result = r.json()
+        if result["items_total"] == 0:
+            errors.append(f"Aucun résultat pour l'architecte: '{value}'")
+            return data, errors
+        elif result["items_total"] > 1:
+            errors.append(f"Plusieurs résultats pour l'architecte: '{value}'")
+            return data, errors
+        data["architects"] = [result["items"][0]["UID"]]
+        return data, errors
+
+
+class CreateApplicant(core.CreateSubElementInMemoryTask):
+    task_namespace = "arlon"
+    key = luigi.Parameter()
+    log_failure = True
+    subelement_container_key = "__children__"
+    mapping_keys = {}
+    subelement_base = {"@type": "Applicant"}      
+    demandeur_path = "./data/arlon/json/DEMANDEURS.json"
+    mapping = {
+        'localité': "city",
+        'n°': "number",
+        'nom': "name1",
+        'GSM': "gsm",
+        'code_postal': "zipcode",
+        'adresse': "street",
+        'fax': "fax",
+        'société': "society",
+        'téléphone': "phone",
+        'prénom': "name2",
+        'pays': "country",
+        'Email': "email",
+        "civilité": "personTitle",
+        "statut": "legalForm"
+    }
+    mapping_civilte = {
+        'M.': "mister",
+        'Mme': "madam",
+        'M. & Mme': "madam_and_mister",
+        'M. / Mme': "madam_and_mister",
+        'M. et Mlle': "mademoiselle-et-monsieur",
+        'Mlle': "miss"
+    }
+
+    def on_failure(self, data, errors):
+        if "description" not in data:
+            data["description"] = {
+                "content-type": "text/html",
+                "data": "",
+            }
+        for error in errors:
+            data["description"]["data"] += f"<p>{error}</p>\r\n"
+        return data
+    
+    def log_failure_output(self):
+        fname = self.key.replace("/", "-")
+        fpath = (
+            f"./failures/{self.task_namespace}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
+    def _handle_exception(self, data, error, output_f):
+        """Method called when an exception occured"""
+        if not self.log_failure:
+            raise error
+        data = self.on_failure(data, [str(error)])
+        json.dump(data, output_f)
+        with self.log_failure_output().open("w") as f:
+            error = {
+                "error": str(error),
+                "data": data,
+            }
+            f.write(json.dumps(error))
+
+    @property
+    @_cache(ignore_args=True)
+    def get_table(self):
+        file_content = open(self.demandeur_path, "r")
+        return [
+            json.loads(line)
+            for line in file_content.readlines()
+        ]
+
+    def mapping_demandeur_keys(self, obj):
+        new_obj = {}
+        for original, destination in self.mapping.items():
+            if original in obj:
+                new_obj[destination] = obj[original]
+            
+        if "personTitle" in new_obj:
+            title = self.mapping_civilte.get(new_obj["personTitle"], None)
+            if title:
+               new_obj["personTitle"] = title
+            else:
+                del new_obj["personTitle"]
+        return new_obj
+
+    def get_demandeur_data(self, demandeur):
+        result = [
+            item
+            for item in self.get_table
+            if item.get("demandeur", "") == demandeur
+        ]
+        if len(result) == 0:
+            result = [
+                item
+                for item in self.get_table
+                if re.match(demandeur, item.get("demandeur", ""))
+            ]
+
+        if len(result) == 1:
+            self.subelement_base = {
+                **self.subelement_base,
+                **self.mapping_demandeur_keys(result[0])
+            }
+        if len(result) > 1:
+            output = [f'"{res["demandeur"]}"' for res in result]
+            raise ValueError(f'Trop de demandeures correspondent : {",".join(output)} ')
+
+    def transform_data(self, data):
+        applicant = data.get("demandeur", None)
+        if not applicant or applicant == "?":
+            return data
+
+        self.subelement_base["name1"] = applicant
+        data['title'] += f" - {applicant}"
+
+        self.get_demandeur_data(applicant)
+        
+        if "legalForm" in self.subelement_base:
+            self.subelement_base["@type"] == "Corporation"
+        
+        if "country" in self.subelement_base:
+            maping_country = {"BELGIQUE": "belgium"}
+            self.subelement_base["country"] = maping_country[self.subelement_base["country"]]
+        
+        # Filter applicants without name
+        if "__children__" in data:
+            data["__children__"].append(self.subelement_base)
+        else:
+            data["__children__"] = [self.subelement_base]
+        return data
+
+    def run(self):
+        with self.input().open("r") as input_f:
+            with self.output().open("w") as output_f:
+                data = json.load(input_f)
+                try :
+                    json.dump(self.transform_data(data), output_f)
+                except Exception as e:
+                    self._handle_exception(data, e, output_f)
+
+    def requires(self):
+        return TransformArchitect(key=self.key)
+
+
 class DropColumns(core.DropColumnInMemoryTask):
     task_namespace = "arlon"
     key = luigi.Parameter()
@@ -512,11 +845,14 @@ class DropColumns(core.DropColumnInMemoryTask):
         "type_dossier",
         "n°",
         "cadastre",
-        "octroi"
+        "octroi",
+        "refus",
+        "début_travaux",
+        "irrecevabilité"
     ]
 
     def requires(self):
-        return TransformCadastre(key=self.key)
+        return CreateApplicant(key=self.key)
 
 
 class ValidateData(core.JSONSchemaValidationTask):
