@@ -25,6 +25,7 @@ class GetFiles(core.WalkFS):
             "BuildLicence": "buildlicences",
             "CODT_BuildLicence": "codt_buildlicences",
             "Article127": "article127s",
+            "CODT_Article127": "codt_article127s",
             "IntegratedLicence": "integratedlicences",
             "CODT_IntegratedLicence": "codt_integratedlicences",
             "UniqueLicence": "uniquelicences",
@@ -50,8 +51,12 @@ class GetFiles(core.WalkFS):
             "Notary": "notaries",
             "Parcelling": "parcellings",
             "Division": "divisions",
+            "ProjectMeeting": "projectmeeting",
+            "CommercialLicences": "commerciallicences",
+            "CODT_CommercialLicences": "codt_commerciallicences",
+            "ExplosivesPossessions": "explosivespossessions"
         }
-        folder = mapping[data["type"]]
+        folder = mapping[data["@type"]]
         return f"{self.url}/{folder}"
 
     def run(self):
@@ -82,9 +87,20 @@ class RESTPost(core.PostRESTTask):
     def run(self):
         result = self.output().request()
 
+    def _fix_character(self, term, character):
+        if character in term:
+            joiner = '"{}"'.format(character)
+            term = joiner.join(term.split(character))
+        return term
+
+    def _fix_key(self, key):
+        key = self._fix_character(key, "(")
+        key = self._fix_character(key, ")")
+        return key
+
     @property
     def test_parameters(self):
-        return {"portal_type": self.data["@type"], "getReference": self.key}
+        return {"portal_type": self.data["@type"], "getReference": self._fix_key(self.key)}
 
     def _add_attachments(self, data):
         if "__children__" not in data:
@@ -99,7 +115,9 @@ class RESTPost(core.PostRESTTask):
 
     @property
     def json_body(self):
-        return self._add_attachments(core.frozendict_to_dict(self.data))
+        json_body = self._add_attachments(core.frozendict_to_dict(self.data))
+        json_body["disable_check_ref_format"] = True
+        return json_body
 
     def complete(self):
         r = self.test_complete()
