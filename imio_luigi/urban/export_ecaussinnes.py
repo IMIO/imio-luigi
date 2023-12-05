@@ -14,53 +14,12 @@ import copy
 logger = logging.getLogger("luigi-interface")
 
 
-class Start(luigi.Task):
-    task_namespace = "ecaussinnes"
-    line_range = luigi.Parameter(default=None)
-    counter = luigi.Parameter(default=None)
-    folder = luigi.Parameter(default=None)
-    files = {
-        "liste804.utf8.xml": [{"type": "EnvClassThree"}],
-        "liste809.utf8.xml": [{"type": "NotaryLetter"}],
-        "liste811.utf8.xml": [
-            {"pattern": "PE", "type": "EnvClassTwo"},
-            {"pattern": "PU", "type": "UniqueLicence"},
-            {"pattern": "DE", "type": "EnvClassThree"},
-            {"pattern": "[Aa]rt65", "type": "EnvClassTwo"},
-            {"type": "EnvClassTwo"},
-        ],
-        "liste812.utf8.xml": [
-            {"pattern": "PE", "type": "EnvClassTwo"},
-            {"pattern": "PU", "type": "UniqueLicence"},
-            {"pattern": "DE", "type": "EnvClassThree"},
-            {"pattern": "[Aa]rt65", "type": "EnvClassTwo"},
-            {"type": "EnvClassTwo"},
-        ],
-        "liste813.utf8.xml": [
-            {"pattern": "PE", "type": "EnvClassTwo"},
-            {"pattern": "PU", "type": "UniqueLicence"},
-            {"pattern": "DE", "type": "EnvClassThree"},
-            {"pattern": "[Aa]rt65", "type": "EnvClassTwo"},
-            {"type": "EnvClassTwo"},
-        ],
-    }
-
-    def run(self):
-        for file in self.files:
-            yield GetFromXML(
-                filepath=os.path.join(self.folder, file),
-                type=self.files[file],
-                line_range=self.line_range,
-                counter=self.counter,
-            )
-
-
 class GetFromXML(core.GetFromListXMLFile):
     task_namespace = "ecaussinnes"
     filepath = luigi.Parameter()
     line_range = luigi.Parameter(default=None)
     counter = luigi.Parameter(default=None)
-    fail_on_error = False
+    fail_on_error = True
     files= [
         "liste804.utf8.xml",
         "liste809.utf8.xml",
@@ -72,21 +31,22 @@ class GetFromXML(core.GetFromListXMLFile):
         "liste804.utf8.xml": [{"type": "EnvClassThree"}],
         "liste809.utf8.xml": [{"type": "NotaryLetter"}],
         "liste811.utf8.xml": [
-            {"pattern": "PE", "type": "EnvClassTwo"},
-            {"pattern": "PU", "type": "UniqueLicence"},
-            {"pattern": "[Aa]rt65", "type": "EnvClassTwo"},
+            {"pattern": r"PE", "type": "EnvClassTwo"},
+            {"pattern": r"PU", "type": "UniqueLicence"},
+            {"pattern": r"[Aa]rt65", "type": "EnvClassTwo"},
             {"type": "EnvClassTwo"},
         ],
         "liste812.utf8.xml": [
-            {"pattern": "PE", "type": "EnvClassTwo"},
-            {"pattern": "PU", "type": "UniqueLicence"},
-            {"pattern": "[Aa]rt65", "type": "EnvClassTwo"},
+            {"pattern": r"PE", "type": "EnvClassTwo"},
+            {"pattern": r"PU", "type": "UniqueLicence"},
+            {"pattern": r"[Aa]rt65", "type": "EnvClassTwo"},
+            {"pattern": r"CL3", "type": "EnvClassThree"},
             {"type": "EnvClassTwo"},
         ],
         "liste813.utf8.xml": [
-            {"pattern": "PE", "type": "EnvClassTwo"},
-            {"pattern": "PU", "type": "UniqueLicence"},
-            {"pattern": "[Aa]rt65", "type": "EnvClassTwo"},
+            {"pattern": r"PE", "type": "EnvClassTwo"},
+            {"pattern": r"PU", "type": "UniqueLicence"},
+            {"pattern": r"[Aa]rt65", "type": "EnvClassTwo"},
             {"type": "EnvClassTwo"},
         ],
     }
@@ -99,11 +59,24 @@ class GetFromXML(core.GetFromListXMLFile):
     def apply_type(self, key, file):
         licence_type = self.parameter[file]
         for pattern in licence_type:
-            if "pattern" not in licence_type:
+            if "pattern" not in pattern:
                 return pattern["type"]
-            if re.match(pattern["pattern"], key):
+            if re.match(f'.*{pattern["pattern"]}.*', key):
                 return pattern["type"]
-        return pattern["type"]
+        return licence_type[-1]["type"]
+
+    def get_title(self, data):
+        max_width_text = 150
+        title_obj = data["wrkdossier_obj"]
+        if len(title_obj) > max_width_text:
+            title_obj = f"{title_obj[:max_width_text]} ..."
+        return f"{data['reference']} - {title_obj}"
+
+    def fix_ref(self, ref):
+        ref = ref.replace("(", "-")
+        ref = ref.replace(")","")
+        ref = ref.replace(" ", "_") 
+        return ref
 
     def transform_data(self, data, file):
         ref = data.get("RefCom", data.get("wrkdossier_num", None))
@@ -115,8 +88,8 @@ class GetFromXML(core.GetFromListXMLFile):
                 }
                 f.write(json.dumps(error))
             raise ValueError("Missing ref")
-        data["reference"] = ref
-        data["title"] = ref
+        data["reference"] = self.fix_ref(ref)
+        data["title"] = self.get_title(data)
         data["@type"] = self.apply_type(ref, file)
         return data
 
@@ -133,6 +106,7 @@ class GetFromXML(core.GetFromListXMLFile):
         if self.counter and self.counter != 'None':
             counter = int(self.counter)
         iteration = 0
+        res = utils.get_all_unique_value_with_callback(self.query(), fetch_num)
         for row in self.query(min_range=min_range, max_range=max_range):
             try:
                 yield Transform(key=row["reference"], data=row)
@@ -220,6 +194,13 @@ class ValueCleanup(core.ValueFixerInMemoryTask):
         return core.InMemoryTarget(f"Transform-{self.key}", mirror_on_stderr=True)
 
 
+class AddNISData(tools.AddNISData):
+    task_namespace = "ecaussinnes"
+    key = luigi.Parameter()
+
+    def requires(self):
+        return ValueCleanup(key=self.key)
+
 class Mapping(core.MappingKeysInMemoryTask):
     task_namespace = "ecaussinnes"
     key = luigi.Parameter()
@@ -228,7 +209,7 @@ class Mapping(core.MappingKeysInMemoryTask):
     }
 
     def requires(self):
-        return ValueCleanup(key=self.key)
+        return AddNISData(key=self.key)
 
 
 class ConvertDates(core.ConvertDateInMemoryTask):
@@ -260,7 +241,7 @@ class AddEvents(core.InMemoryTask):
         return AddExtraData(key=self.key)
 
     def transform_data(self, data):
-        # data = self._create_recepisse(data)
+        data = self._create_recepisse(data)
         data = self._create_delivery(data)
         return data
 
@@ -274,18 +255,28 @@ class AddEvents(core.InMemoryTask):
             "eventDate": data["DateInsert"],
             "urbaneventtypes": event_subtype,
         }
+        date = data.get("DateInsert", None)
+        if date or date :
+            event["decisionDate"] = date
         if "__children__" not in data:
             data["__children__"] = []
         data["__children__"].append(event)
         return data
 
     def _create_delivery(self, data):
-        columns = ("DateDeliv")
-        matching_columns = [c for c in columns if c in data]
-        if not matching_columns:
+        if "DateDeliv" not in data:
             return data
         event_subtype, event_type = self._mapping_delivery_event(data["@type"])
-        if data.get("etat") in ['Dossier recevable', 'Déc. recevable avec cond. compl.', 'Déc. recevable sans cond. compl.', 'Octroyé sur recours', 'Permis octroyé par le FT', 'Permis octroyé', 'Révision octroyée par le collège', 'Révision octroyée par le FT']:
+        if data.get("etat") in [
+            'Dossier recevable',
+            'Déc. recevable avec cond. compl.',
+            'Déc. recevable sans cond. compl.',
+            'Octroyé sur recours',
+            'Permis octroyé par le FT',
+            'Permis octroyé',
+            'Révision octroyée par le collège',
+            'Révision octroyée par le FT'
+        ]:
             decision = "favorable"
         elif data.get("etat") in ['Demande irrecevable', 'Dossier irrecevable','Permis refusé', 'Refusé sur recours', 'Révision refusée par le FT']:
             decision = "defavorable"
@@ -294,9 +285,11 @@ class AddEvents(core.InMemoryTask):
         event = {
             "@type": event_type,
             "decision": decision,
-            "decisionDate": data.get("DateDeliv", None),
             "urbaneventtypes": event_subtype,
         }
+        date = data.get("DateDeliv", None)
+        if date or date :
+            event["decisionDate"] = date
         if "__children__" not in data:
             data["__children__"] = []
         data["__children__"].append(event)
@@ -323,6 +316,7 @@ class AddEvents(core.InMemoryTask):
             "ParcelOutLicence": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_ParcelOutLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
             "MiscDemand": ("depot-de-la-demande", "UrbanEvent"),
+            "NotaryLetter": ("depot-de-la-demande", "urbanEvent"),
         }
         return data[type]
 
@@ -352,10 +346,19 @@ class AddEvents(core.InMemoryTask):
             "MiscDemand": ("deliberation-college", "UrbanEvent"),
             "EnvClassOne": ("decision", "UrbanEvent"),
             "EnvClassTwo": ("decision", "UrbanEvent"),
-            "EnvClassThree": ("acceptation-de-la-demande", "UrbanEvent"),
+            "EnvClassThree": ("passage-college", "UrbanEvent"),
             "PreliminaryNotice": ("passage-college", "UrbanEvent"),
+            "NotaryLetter": ("octroi-lettre-notaire", "UrbanEvent"),
         }
         return data[type]
+
+
+class EventConfigUidResolver(tools.UrbanEventConfigUidResolver):
+    task_namespace = "ecaussinnes"
+    key = luigi.Parameter()
+    
+    def requires(self):
+        return AddEvents(key=self.key)
 
 
 class AddTransitions(core.InMemoryTask):
@@ -383,7 +386,7 @@ class AddTransitions(core.InMemoryTask):
     }
 
     def requires(self):
-        return AddEvents(key=self.key)
+        return EventConfigUidResolver(key=self.key)
 
     def transform_data(self, data):
         state = self.mapping[data.get("etat")]
@@ -555,12 +558,14 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
 
     def _lieu_dit_cleanup(self, value):
         if value.startswith("lieu-dit"):
-            value.replace('"', '')
-
+            value = value.replace('"', '')
         return value
 
     def _prepare_term(self, worklocation):
-        return {"term": f"{self._lieu_dit_cleanup(worklocation['street'])} ({worklocation['locality']})"}
+        return {
+            "term": f"{self._lieu_dit_cleanup(worklocation['street'])} ({worklocation['locality']})",
+            "include_disable": "true"
+        }
 
     def transform_data(self, data):
         new_work_locations = []
@@ -644,14 +649,27 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
             data["description"]["data"] += f"<p>{error}</p>\r\n"
         return data
 
+    def get_bis(self, radical):
+        split_rad = radical.split("/")
+        bis = ""
+        if len(split_rad) > 1:
+            bis = split_rad[1]
+            radical = split_rad[0]
+        return radical, bis
+
     def transform_data(self, data):
+        if "cadastre" not in data or not data['cadastre']:
+            return data
         errors = []
         for cadastre in data["cadastre"]:
-            params = {}
-            cadastre_split = re.split("\s+",cadastre.strip())
-            part_order = ("division", "section", "radical", "exposant", "puissance" )
-            for count, part in enumerate(cadastre_split):
-                params[part_order[count]] = part
+            if cadastre == "Non cadastré":
+                continue
+            pattern = r"(?P<division>\d{1,4})\s*(?P<section>[a-zA-Z])\s*(?P<radical>\d{0,4})\/?(?P<bis>\d{0,2})\s*(?P<exposant>[a-zA-Z]?)\s*(?P<puissance>\d{0,2})"
+            cadastre_split = re.match(pattern,cadastre.strip())
+            if not cadastre_split:
+                errors.append(f"Impossible de reconnaitre la parcelle '{cadastre}'")
+                continue
+            params = cadastre_split.groupdict()
             params["division"] = self._mapping_division(params)
             params["browse_old_parcels"] = True
             r = self.request(parameters=params)
