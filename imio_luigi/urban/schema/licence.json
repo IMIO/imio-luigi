@@ -20,6 +20,7 @@
         "CODT_BuildLicence",
         "BuildLicence",
         "PreliminaryNotice",
+        "NotaryLetter",
         "CODT_NotaryLetter",
         "ParcelOutLicence",
         "CODT_ParcelOutLicence",
@@ -29,7 +30,8 @@
         "IntegratedLicence",
         "MiscDemand",
         "Declaration",
-        "PatrimonyCertificate"
+        "PatrimonyCertificate",
+        "Ticket"
       ]
     },
     "reference": {
@@ -60,7 +62,8 @@
       "type": "array",
       "minItems": 0,
       "items": {
-        "type": "string"
+        "type": "string",
+        "minLength": 1
       }
     },
     "workLocations": {
@@ -96,6 +99,14 @@
         "type": "string"
       }
     },
+    "usage": {
+      "type": "string",
+      "enum": [
+        "for_habitation",
+        "not_for_habitation",
+        "not_applicable"
+      ]
+    },
     "__children__": {
       "type": "array",
       "minItems": 0,
@@ -117,6 +128,43 @@
     "workLocations",
     "foldermanagers"
   ],
+  "dependencies": {
+    "@type": {
+      "oneOf": [
+        {
+          "properties": {
+            "@type": {
+              "enum": [
+                "UniqueLicence",
+                "CODT_UniqueLicence",
+                "CODT_IntegratedLicence",
+                "CODT_CommercialLicences",
+                "CODT_Article127",
+                "CODT_BuildLicence",
+                "RoadDecree",
+                "CODT_UrbanCertificateTwo",
+                "CODT_ParcelOutLicence",
+                "UrbanCertificateTwo",
+                "Article127",
+                "BuildLicence",
+                "IntegratedLicence",
+                "ParcelOutLicence"
+              ]
+            },
+            "usage": {
+              "type": "string",
+              "enum": [
+                "for_habitation",
+                "not_for_habitation",
+                "not_applicable"
+              ]
+            }
+          },
+          "required": ["usage"]
+        }
+      ]
+    }
+  },
   "definitions": {
     "urbanAttachment": {
       "type": "object",
@@ -227,7 +275,8 @@
             "recommande",
             "surplace",
             "par-courrier-recommande-avec-accuse-de-reception",
-            "depose-a-ladministration-communale-contre-recepisse"
+            "depose-a-ladministration-communale-contre-recepisse",
+            "decision"
           ]
         },
         "eventDate": {
@@ -248,7 +297,8 @@
       "additionalProperties": false,
       "required": [
         "@type",
-        "urbaneventtypes"
+        "urbaneventtypes",
+        "title"
       ]
     },
     "urbanApplicant": {
@@ -257,7 +307,8 @@
         "@type": {
           "type": "string",
           "enum": [
-            "Applicant"
+            "Applicant",
+            "Corporation"
           ]
         },
         "title": {
@@ -267,6 +318,9 @@
           "type": "string"
         },
         "name2": {
+          "type": "string"
+        },
+        "legalForm": {
           "type": "string"
         },
         "personTitle": {
