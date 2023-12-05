@@ -92,10 +92,20 @@ class Transform(luigi.Task):
         data["title"] = f"{data['référence']} - {data['objet']}"
         return data
 
+    def _reset_description(self, data):
+        if not "description" in data:
+            return data
+        data["description"] = {
+            "data": "",
+            "content-type": "text/html"
+        }
+        return data
+
     def run(self):
         with self.output().open("w") as f:
             data = core.frozendict_to_dict(self.data)
             data = self._generate_title(data)
+            data = self._reset_description(data)
             f.write(json.dumps(data))
         yield WriteToJSON(key=self.key)
 
@@ -105,14 +115,38 @@ class ValueCleanup(core.ValueFixerInMemoryTask):
     key = luigi.Parameter()
     rules_filepath = "./config/gracehollogne/fix-gracehollogne.json"
 
-    def transform_data(self, data):
-        data = super().transform_data(data)
-        data["wf_state"] = [data["wf_state"]]
-        return data
-
     def input(self):
         return core.InMemoryTarget(f"Transform-{self.key}", mirror_on_stderr=True)
 
+class AddTransitions(core.InMemoryTask):
+    task_namespace = "gracehollogne"
+    key = luigi.Parameter()
+    
+    @property
+    def db_data(self):
+        return get_db_data(self.key)
+    
+    def requires(self):
+        return ValueCleanup(key=self.key)
+
+    def transform_data(self, data):
+        refused = self.db_data.get("REFUS", None)
+        accepted = self.db_data.get("AUTORISATION", None)
+        if accepted:
+            data["wf_transitions"] = ["accepted"]
+        elif refused:
+            data["wf_transitions"] = ["refused"]
+        else:
+            data["wf_transitions"] = ["deposit"]
+        return data
+
+
+class AddNISData(tools.AddNISData):
+    task_namespace = "gracehollogne"
+    key = luigi.Parameter()
+
+    def requires(self):
+        return AddTransitions(key=self.key)
 
 class Mapping(core.MappingKeysInMemoryTask):
     task_namespace = "gracehollogne"
@@ -121,13 +155,12 @@ class Mapping(core.MappingKeysInMemoryTask):
         "référence": "reference",
         "objet": "licenceSubject",
         "n°_cadastral": "cadastre",
-        "wf_state": "wf_transitions",
         "référence DGATLP": "referenceDGATLP",
         "adresse des travaux": "workLocations"
     }
 
     def requires(self):
-        return ValueCleanup(key=self.key)
+        return AddNISData(key=self.key)
 
 
 class FixSubObjectKey(core.MappingKeysInMemoryTask):
@@ -292,7 +325,7 @@ class AddEvents(core.InMemoryTask):
         data = {
             "BuildLicence": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_BuildLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "CODT_Article127": ("depot-de-la-demande-codt", "UrbanEvent"),
+            "CODT_Article127": ("reception-demande-dgo4-codt", "UrbanEvent"),
             "Article127": ("depot-de-la-demande", "UrbanEvent"),
             "IntegratedLicence": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_IntegratedLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
@@ -310,6 +343,7 @@ class AddEvents(core.InMemoryTask):
             "ParcelOutLicence": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_ParcelOutLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
             "MiscDemand": ("depot-de-la-demande", "UrbanEvent"),
+            "NotaryLetter": ("depot-de-la-demande", "urbanEvent"),
         }
         return data[type]
 
@@ -321,7 +355,7 @@ class AddEvents(core.InMemoryTask):
                 "UrbanEvent",
             ),
             "CODT_Article127": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
+                "permis-decision-fd-codt",
                 "UrbanEvent",
             ),
             "CODT_UrbanCertificateOne": (
@@ -343,10 +377,19 @@ class AddEvents(core.InMemoryTask):
             "MiscDemand": ("deliberation-college", "UrbanEvent"),
             "EnvClassOne": ("decision", "UrbanEvent"),
             "EnvClassTwo": ("decision", "UrbanEvent"),
-            "EnvClassThree": ("acceptation-de-la-demande", "UrbanEvent"),
+            "EnvClassThree": ("passage-college", "UrbanEvent"),
             "PreliminaryNotice": ("passage-college", "UrbanEvent"),
+            "NotaryLetter": ("octroi-lettre-notaire", "UrbanEvent"),
         }
         return data[type]
+
+
+class EventConfigUidResolver(tools.UrbanEventConfigUidResolver):
+    task_namespace = "gracehollogne"
+    key = luigi.Parameter()
+    
+    def requires(self):
+        return AddEvents(key=self.key)
 
 
 class AddExtraData(core.AddDataInMemoryTask):
@@ -355,7 +398,7 @@ class AddExtraData(core.AddDataInMemoryTask):
     filepath = "./config/gracehollogne/add-data-gracehollogne.json"
 
     def requires(self):
-        return AddEvents(key=self.key)
+        return EventConfigUidResolver(key=self.key)
 
 
 class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
@@ -666,13 +709,13 @@ class DropColumns(core.DropColumnInMemoryTask):
         "Title",
         'Statistiques INS',
         'geometricians',
-        'licenceSubject',
         'notaries',
         'referenceDGATLP',
         'review_state',
         'rubrics',
         'type de procédure',
-        'wf_transition'
+        "wf_state",
+        "wf_transition"
     ]
 
     def requires(self):
