@@ -127,6 +127,8 @@ class MappingValueWithFileTask(luigi.Task):
     ignore_missing = True
     # Define if an error must be thrown if the mapping key is missing
     ignore_missing_mapping = True
+    # You can add a __default__ key with a value that will be use if any other key correspond
+    default_key = "__default__"
 
     @property
     @abc.abstractmethod
@@ -165,7 +167,12 @@ class MappingValueWithFileTask(luigi.Task):
         custom = self.custom_transform(data)
         if custom is not None:
             return custom
-        new_value = self.mapping.get(data[self.mapping_key], None)
+        old_value = data.get(self.mapping_key, None)
+        if not old_value:
+            old_value = self.default_key
+        new_value = self.mapping.get(old_value, None)
+        if new_value is None:
+            new_value = self.mapping.get(self.default_key , None)
         if new_value is None and self.ignore_missing_mapping is False:
             raise KeyError(f"Missing key {data[self.mapping_key]}")
         elif new_value is None and self.ignore_missing_mapping is True:
