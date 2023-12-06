@@ -146,7 +146,7 @@ class ConvertDates(core.ConvertDateInMemoryTask):
     log_failure = True
 
     def requires(self):
-        return AddNISData(key=self.key)
+        return Mapping(key=self.key)
 
 
 class AddExtraData(core.AddDataInMemoryTask):
