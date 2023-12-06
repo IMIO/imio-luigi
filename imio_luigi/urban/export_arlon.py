@@ -347,7 +347,7 @@ class AddEvents(core.InMemoryTask):
             "UrbanCertificateOne": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_UrbanCertificateOne": ("depot-de-la-demande-codt", "UrbanEvent"),
             "UrbanCertificateTwo": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_UrbanCertificateTwo": ("depot-de-la-demande", "UrbanEvent"),
+            "CODT_UrbanCertificateTwo": ("depot-demande", "UrbanEvent"),
             "PreliminaryNotice": ("depot-de-la-demande", "UrbanEvent"),
             "EnvClassOne": ("depot-de-la-demande", "UrbanEvent"),
             "EnvClassTwo": ("depot-de-la-demande", "UrbanEvent"),
