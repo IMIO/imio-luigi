@@ -100,7 +100,6 @@ class AddNISData(core.InMemoryTask):
 
     def transform_data(self, data):
         if self.type_key not in data:
-            __import__('pdb').set_trace()
             raise ValueError("Missing type")
         if data[self.type_key] in self.get_list:
             data[self.nis_data_key] = self.possible_value[self.get_value(data)]
