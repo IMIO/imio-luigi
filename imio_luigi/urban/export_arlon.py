@@ -65,7 +65,7 @@ class GetFromAccess(core.GetFromAccessJSONTask):
         for row in self.query(min_range=min_range, max_range=max_range):
             if self._complete(str(row["clé"])) is True:
                 continue
-            if len(row) <= 1:
+            if len(row) <= 2:
                 continue
             try:
                 yield Transform(key=row["clé"], data=row)
@@ -379,6 +379,8 @@ class AddEvents(core.InMemoryTask):
             "CODT_Article127": ("transmis-decision-fd-codt", "UrbanEvent"),
             "ParcelOutLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
             "CODT_ParcelOutLicence": ("delivrance-du-permis-octroi-ou-refus-codt", "UrbanEvent"),
+            "IntegratedLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
+            "CODT_IntegratedLicence": ("delivrance-du-permis-octroi-ou-refus-codt", "UrbanEvent"),
             "Declaration": ("deliberation-college", "UrbanEvent"),
             "UrbanCertificateOne": ("octroi-cu1", "UrbanEvent"),
             "UrbanCertificateTwo": ("octroi-cu2", "UrbanEvent"),
