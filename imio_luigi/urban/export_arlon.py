@@ -137,14 +137,6 @@ class Mapping(core.MappingKeysInMemoryTask):
         return ValueCleanup(key=self.key)
 
 
-class AddNISData(tools.AddNISData):
-    task_namespace = "arlon"
-    key = luigi.Parameter()
-
-    def requires(self):
-        return Mapping(key=self.key)
-
-
 class ConvertDates(core.ConvertDateInMemoryTask):
     task_namespace = "arlon"
     key = luigi.Parameter()
@@ -283,12 +275,20 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
         return AddExtraData(key=self.key)
 
 
-class AddEvents(core.InMemoryTask):
+class AddNISData(tools.AddNISData):
     task_namespace = "arlon"
     key = luigi.Parameter()
 
     def requires(self):
         return MappingType(key=self.key)
+
+
+class AddEvents(core.InMemoryTask):
+    task_namespace = "arlon"
+    key = luigi.Parameter()
+
+    def requires(self):
+        return AddNISData(key=self.key)
 
     def transform_data(self, data):
         data = self._create_recepisse(data)
