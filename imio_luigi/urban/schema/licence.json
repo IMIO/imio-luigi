@@ -128,42 +128,47 @@
     "workLocations",
     "foldermanagers"
   ],
-  "dependencies": {
-    "@type": {
-      "oneOf": [
-        {
-          "properties": {
-            "@type": {
-              "enum": [
-                "UniqueLicence",
-                "CODT_UniqueLicence",
-                "CODT_IntegratedLicence",
-                "CODT_CommercialLicences",
-                "CODT_Article127",
-                "CODT_BuildLicence",
-                "RoadDecree",
-                "CODT_UrbanCertificateTwo",
-                "CODT_ParcelOutLicence",
-                "UrbanCertificateTwo",
-                "Article127",
-                "BuildLicence",
-                "IntegratedLicence",
-                "ParcelOutLicence"
-              ]
-            },
-            "usage": {
-              "type": "string",
-              "enum": [
-                "for_habitation",
-                "not_for_habitation",
-                "not_applicable"
-              ]
-            }
-          },
-          "required": ["usage"]
-        }
-      ]
+  "if": {
+    "properties": {
+      "@type": {
+        "enum": [
+          "UniqueLicence",
+          "CODT_UniqueLicence",
+          "CODT_IntegratedLicence",
+          "CODT_CommercialLicences",
+          "CODT_Article127",
+          "CODT_BuildLicence",
+          "RoadDecree",
+          "CODT_UrbanCertificateTwo",
+          "CODT_ParcelOutLicence",
+          "UrbanCertificateTwo",
+          "Article127",
+          "BuildLicence",
+          "IntegratedLicence",
+          "ParcelOutLicence"
+        ]
+      }
     }
+  },
+  "then": {
+    "properties": {
+      "usage": {
+        "type": "string",
+        "enum": [
+          "for_habitation",
+          "not_for_habitation",
+          "not_applicable"
+        ]
+      }
+    },
+    "required": [
+      "@type",
+      "reference",
+      "title",
+      "workLocations",
+      "foldermanagers",
+      "usage"
+    ]
   },
   "definitions": {
     "urbanAttachment": {
