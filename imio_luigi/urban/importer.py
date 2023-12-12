@@ -159,6 +159,10 @@ class GetFiles(core.WalkFS):
         "ExplosivesPossessions": {
             "folder":"explosivespossessions",
             "config": DEFAULT_CONFIG
+        },
+        "PatrimonyCertificate": {
+            "folder": "patrimonycertificates",
+            "config": DEFAULT_CONFIG
         }
     }
     
