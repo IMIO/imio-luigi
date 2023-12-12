@@ -29,6 +29,10 @@ run-local-faimes:
 run-local-arlon:
 	LUIGI_CONFIG_PATH=$(CURDIR)/arlon.cfg luigi --module imio_luigi.urban.export_arlon arlon.GetFromAccess --filepath ./data/arlon/json/REGISTRES.json --local-scheduler
 
+.PHONY: import-arlon
+import-arlon:
+	LUIGI_CONFIG_PATH=./arlon.cfg luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-arlon --local-scheduler
+
 .PHONY: clear-arlon
 clear-arlon:
 	rm -rf result-arlon/ failures/arlon-*
@@ -47,6 +51,14 @@ run-local-mouscron:
 .PHONY: run-local-mouscron-architecte
 run-local-mouscron-architecte:
 	LUIGI_CONFIG_PATH=$(CURDIR)/mouscron.cfg luigi --module imio_luigi.urban.export_mouscron_architect mouscron-architect.GetFromCSV --filepath ./data/mouscron/c/c_organisme.csv --local-scheduler
+
+.PHONY: clear-mouscron-architecte
+clear-mouscron-architecte:
+	rm -rf result-mouscron-architect/ failures/mouscron-architect-*
+
+.PHONY: import-mouscron-architecte
+import-mouscron-architecte:
+	LUIGI_CONFIG_PATH=./mouscron.cfg luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-mouscron-architect --local-scheduler
 
 # Ecaussinnes
 .PHONY: run-local-ecaussinnes
