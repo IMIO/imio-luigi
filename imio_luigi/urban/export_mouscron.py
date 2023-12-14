@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from imio_luigi import core, utils
+from imio_luigi.urban import core as ucore
 from imio_luigi.urban.address import find_address_match
 from imio_luigi.urban import tools
 from datetime import datetime
@@ -237,7 +238,8 @@ class Mapping(core.MappingKeysInMemoryTask):
 
     def requires(self):
         return ValueCleanup(key=self.key)
-    
+
+
 class MakeTitle(core.InMemoryTask):
     task_namespace = "mouscron"
     key = luigi.Parameter()
@@ -327,7 +329,7 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
         if data["@type"] in self.codt_trigger and date > self.codt_start_date:
             data["@type"] = f"CODT_{data['@type']}"
 
-        if data["@type"] == "CODT_CommercialLicences" and date < self.codt_start_date:
+        if data["@type"] == "CODT_CommercialLicence" and date < self.codt_start_date:
             data["@type"] = "IntegratedLicence"
         
         return data
@@ -443,8 +445,8 @@ class AddEvents(core.InMemoryTask):
             "NotaryLetter": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_NotaryLetter": ("depot-de-la-demande-codt", "UrbanEvent"),
             "Division": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_CommercialLicences": ("depot-demande", "UrbanEvent"),
-            "ExplosivesPossessions": ("reception-de-la-demande", "UrbanEvent"),
+            "CODT_CommercialLicence": ("depot-demande", "UrbanEvent"),
+            "ExplosivesPossession": ("reception-de-la-demande", "UrbanEvent"),
             "NotaryLetter": ("depot-de-la-demande", "urbanEvent"),
         }
         if type not in data:
@@ -484,8 +486,8 @@ class AddEvents(core.InMemoryTask):
             "NotaryLetter": ("octroi-lettre-notaire", " UrbanEvent"),
             "CODT_NotaryLetter": ("notaryletter-codt", "UrbanEvent"),
             "Division": ("decision-octroi-refus", "UrbanEvent"),
-            "CODT_CommercialLicences": ("delivrance-du-permis-octroi-ou-refus-codt", " UrbanEvent"),
-            "ExplosivesPossessions" : {"decision", "UrbanEvent"}
+            "CODT_CommercialLicence": ("delivrance-du-permis-octroi-ou-refus-codt", " UrbanEvent"),
+            "ExplosivesPossession" : {"decision", "UrbanEvent"}
         }
         return data[type]
 
@@ -497,6 +499,13 @@ class EventConfigUidResolver(tools.UrbanEventConfigUidResolver):
     def requires(self):
         return AddEvents(key=self.key)
 
+
+class MappingStateToTransition(ucore.UrbanTransitionMapping):
+    task_namespace = "mouscron"
+    key = luigi.Parameter()
+    
+    def requires(self):
+        return EventConfigUidResolver(key=self.key)
 
 class CreateApplicant(core.CreateSubElementInMemoryTask):
     task_namespace = "mouscron"
@@ -581,7 +590,7 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
         return data
 
     def requires(self):
-        return EventConfigUidResolver(key=self.key)
+        return MappingStateToTransition(key=self.key)
 
 
 class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
