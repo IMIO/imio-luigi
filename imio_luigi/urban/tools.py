@@ -44,9 +44,8 @@ MAPPING_TYPE = {
     "Parcelling": "parcelling",
     "Division": "division",
     "ProjectMeeting": "projectmeeting",
-    "CommercialLicences": "commerciallicence",
-    "CODT_CommercialLicences": "codt_commerciallicence",
-    "ExplosivesPossessions": "explosivespossession",
+    "CODT_CommercialLicence": "codt_commerciallicence",
+    "ExplosivesPossession": "explosivespossession",
     "PatrimonyCertificate" : "patrimonycertificate"
 }
 
