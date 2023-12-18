@@ -33,7 +33,7 @@ def print_report(dirname):
 @cli.command()
 def list():
     """List tasks in error"""
-    for dirname in os.listdir("./failures"):
+    for dirname in sorted(os.listdir("./failures")):
         count = len(os.listdir(f"./failures/{dirname}"))
         click.echo(f"{dirname} ({count})")
 
