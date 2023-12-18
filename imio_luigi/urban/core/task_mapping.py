@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 from imio_luigi import core, utils
 from imio_luigi.urban import core as ucore
 

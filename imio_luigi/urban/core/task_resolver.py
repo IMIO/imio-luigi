@@ -2,6 +2,7 @@
 
 
 from imio_luigi import core, utils
+from imio_luigi.urban import core as ucore
 
 import json
 import logging
@@ -38,10 +39,11 @@ class UrbanEventConfigUidResolver(core.GetFromRESTServiceInMemoryTask):
         )
     
     def _transform_urban_event_type(self, data, licence_type):
+        mapping_type = ucore.config
         error = None
-        r = self.request(MAPPING_TYPE[licence_type], data["urbaneventtypes"])
+        r = self.request(mapping_type[licence_type]["config_folder"], data["urbaneventtypes"])
         if r.status_code != 200:
-            error = f"Cannot find {data['urbaneventtypes']} in {MAPPING_TYPE[licence_type]} config"
+            error = f"Cannot find {data['urbaneventtypes']} in {mapping_type[licence_type]['config_folder']} config"
             return data, error
         data["urbaneventtypes"] = r.json()["UID"]
         data['title'] = r.json()["title"]
