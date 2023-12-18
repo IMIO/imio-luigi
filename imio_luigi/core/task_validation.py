@@ -76,4 +76,4 @@ class JSONSchemaValidationTask(luigi.Task):
                     validate(data, self.json_schema)
                     json.dump(data, output_f)
                 except Exception as e:
-                    self._handle_exception(data, e, output_f)
+                    self._handle_exception(data, e.message, output_f)
