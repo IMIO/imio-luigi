@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from imio_luigi import core
+from imio_luigi.urban.core import config
+from timeit import default_timer as timer
 
 import base64
 import json
@@ -10,15 +12,6 @@ import luigi
 
 logger = logging.getLogger("luigi-interface")
 
-DEFAULT_CONFIG = {
-    "key":  "reference",
-    "search_on": "getReference"
-}
-
-CONTACT_CONFIG = {
-    "key":  "id",
-    "search_on": "id"
-}
 
 class GetFiles(core.WalkFS):
     task_namespace = "urban"
@@ -27,148 +20,10 @@ class GetFiles(core.WalkFS):
     url = luigi.Parameter()
     login = luigi.Parameter()
     password = luigi.Parameter()
-    mapping = {
-        "BuildLicence": {
-            "folder": "buildlicences",
-            "config": DEFAULT_CONFIG
-        },
-        "CODT_BuildLicence": {
-            "folder": "codt_buildlicences",
-            "config": DEFAULT_CONFIG
-        },
-        "Article127": {
-            "folder": "article127s",
-            "config": DEFAULT_CONFIG
-        },
-        "CODT_Article127": {
-            "folder": "codt_article127s",
-            "config": DEFAULT_CONFIG
-        },
-        "IntegratedLicence": {
-            "folder": "integratedlicences",
-            "config": DEFAULT_CONFIG
-        },
-        "CODT_IntegratedLicence": {
-            "folder": "codt_integratedlicences",
-            "config": DEFAULT_CONFIG
-        },
-        "UniqueLicence": {
-            "folder": "uniquelicences",
-            "config": DEFAULT_CONFIG
-        },
-        "CODT_UniqueLicence": {
-            "folder": "codt_uniquelicences",
-            "config": DEFAULT_CONFIG
-        },
-        "Declaration": {
-            "folder": "declarations",
-            "config": DEFAULT_CONFIG
-        },
-        "UrbanCertificateOne": {
-            "folder": "urbancertificateones",
-            "config": DEFAULT_CONFIG
-        },
-        "CODT_UrbanCertificateOne": {
-            "folder": "codt_urbancertificateones",
-            "config": DEFAULT_CONFIG
-        },
-        "UrbanCertificateTwo": {
-            "folder": "urbancertificatetwos",
-            "config": DEFAULT_CONFIG
-        },
-        "CODT_UrbanCertificateTwo": {
-            "folder": "codt_urbancertificatetwos",
-            "config": DEFAULT_CONFIG
-        },
-        "PreliminaryNotice": {
-            "folder": "preliminarynotices",
-            "config": DEFAULT_CONFIG
-        },
-        "EnvClassOne": {
-            "folder": "envclassones",
-            "config": DEFAULT_CONFIG
-        },
-        "EnvClassTwo": {
-            "folder": "envclasstwos",
-            "config": DEFAULT_CONFIG
-        },
-        "EnvClassThree": {
-            "folder": "envclassthrees",
-            "config": DEFAULT_CONFIG
-        },
-        "ParcelOutLicence": {
-            "folder": "parceloutlicences",
-            "config": DEFAULT_CONFIG
-        },
-        "CODT_ParcelOutLicence": {
-            "folder": "codt_parceloutlicences",
-            "config": DEFAULT_CONFIG
-        },
-        "MiscDemand": {
-            "folder": "miscdemands",
-            "config": DEFAULT_CONFIG
-        },
-        "NotaryLetter": {
-            "folder": "notaryletters",
-            "config": DEFAULT_CONFIG
-        },
-        "CODT_NotaryLetter": {
-            "folder": "codt_notaryletters",
-            "config": DEFAULT_CONFIG
-        },
-        "Inspection": {
-            "folder": "inspections",
-            "config": DEFAULT_CONFIG
-        },
-        "Ticket": {
-            "folder": "tickets",
-            "config": DEFAULT_CONFIG
-        },
-        "Architect": {
-            "folder": "architects",
-            "config": CONTACT_CONFIG
-        },
-        "Geometrician": {
-            "folder": "geometricians",
-            "config": CONTACT_CONFIG
-        },
-        "Notary": {
-            "folder": "notaries",
-            "config": CONTACT_CONFIG
-        },
-        "Parcelling": {
-            "folder": "parcellings",
-            "config": DEFAULT_CONFIG
-        },
-        "Division": {
-            "folder": "divisions",
-            "config": DEFAULT_CONFIG
-        },
-        "ProjectMeeting": {
-            "folder": "projectmeeting",
-            "config": DEFAULT_CONFIG
-        },
-        "CommercialLicences": {
-            "folder": "commerciallicences",
-            "config": DEFAULT_CONFIG
-        },
-        "CODT_CommercialLicences": {
-            "folder": "codt_commerciallicences",
-            "config": DEFAULT_CONFIG
-        },
-        "ExplosivesPossessions": {
-            "folder":"explosivespossessions",
-            "config": DEFAULT_CONFIG
-        },
-        "PatrimonyCertificate": {
-            "folder": "patrimonycertificates",
-            "config": DEFAULT_CONFIG
-        }
-    }
     
     def _get_url(self, data):
         """Construct POST url based on type"""
-        folder = self.mapping[data["@type"]]["folder"]
+        folder = config[data["@type"]]["folder"]
         return f"{self.url}/{folder}"
 
     def run(self):
@@ -176,12 +31,12 @@ class GetFiles(core.WalkFS):
             with open(fpath, "r") as f:
                 content = json.load(f)
                 yield RESTPost(
-                    key=content[self.mapping[content["@type"]]["config"]["key"]],
+                    key=content[config[content["@type"]]["config"]["key"]],
                     data=content,
                     url=self._get_url(content),
                     login=self.login,
                     password=self.password,
-                    search_on=self.mapping[content["@type"]]["config"]["search_on"]
+                    search_on=config[content["@type"]]["config"]["search_on"]
                 )
 
 
