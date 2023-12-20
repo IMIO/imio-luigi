@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from imio_luigi.core.utils import mock_filename
-from jsonschema import validate, ValidationError
+from jsonschema import validate, ValidationError, exceptions
 from luigi.mock import MockTarget
 
 import abc
@@ -75,5 +75,7 @@ class JSONSchemaValidationTask(luigi.Task):
                 try:
                     validate(data, self.json_schema)
                     json.dump(data, output_f)
-                except Exception as e:
+                except exceptions.ValidationError as e:
                     self._handle_exception(data, e.message, output_f)
+                except Exception as e:
+                    self._handle_exception(data, e, output_f)
