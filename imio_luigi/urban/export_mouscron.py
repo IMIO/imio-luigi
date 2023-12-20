@@ -43,8 +43,6 @@ class GetFromCSV(core.GetFromCSVFile):
         if self.counter:
             counter = int(self.counter)
         iteration = 0
-        # res = utils.get_all_unique_values_with_first_ref(self.query(), "statut", "numero_permis")
-        # __import__('pdb').set_trace()
         for row in self.query(min_range=min_range, max_range=max_range):
             try:
                 yield Transform(key=row["numero_permis"], data=row)
@@ -339,7 +337,7 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
         return AddExtraData(key=self.key)
 
 
-class AddNISData(tools.AddNISData):
+class AddNISData(ucore.AddNISData):
     task_namespace = "mouscron"
     key = luigi.Parameter()
 
@@ -368,131 +366,38 @@ class AddTransitions(core.MappingValueWithFileInMemoryTask):
         return data
 
 
-class AddEvents(core.InMemoryTask):
+class AddEvents(ucore.AddUrbanEvent):
     task_namespace = "mouscron"
     key = luigi.Parameter()
 
     def requires(self):
         return AddTransitions(key=self.key)
 
-    def transform_data(self, data):
-        data = self._create_recepisse(data)
-        data = self._create_delivery(data)
-        return data
+    def get_recepisse_date(self, data):
+        return data["date_recepisse"]
 
-    def _create_recepisse(self, data):
-        """Create recepisse event"""
-        if "date_recepisse" not in data or not data["date_recepisse"]:
-            return data
-        event_subtype, event_type = self._mapping_recepisse_event(data["@type"])
-        event = {
-            "@type": event_type,
-            "eventDate": data["date_recepisse"],
-            "urbaneventtypes": event_subtype,
-        }
-        if "__children__" not in data:
-            data["__children__"] = []
-        data["__children__"].append(event)
-        return data
+    def get_delivery_date(self, data):
+        return data.get("date_cloture", None)
 
-    def _create_delivery(self, data):
-        columns = ("date_cloture", "wf_transitions")
-        matching_columns = [c for c in columns if c in data]
-        if not matching_columns:
-            return data
-        event_subtype, event_type = self._mapping_delivery_event(data["@type"])
+    def get_delivery_decision(self, data):
         if data.get("wf_transitions")[0] in ['accepted']:
             decision = "favorable"
         elif data.get("wf_transitions")[0] in ['refused', 'inacceptable']:
             decision = "defavorable"
         else: 
-            return data
-        event = {
-            "@type": event_type,
-            "decision": decision,
-            "urbaneventtypes": event_subtype,
-        }
-        date = data.get("date_cloture", None)
-        if date:
-            event["eventDate"] = date
-
-        if "__children__" not in data:
-            data["__children__"] = []
-        data["__children__"].append(event)
-        return data
-
-    def _mapping_recepisse_event(self, type):
-        data = {
-            "BuildLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_BuildLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "Article127": ("depot-de-la-demande", "UrbanEvent"),
-            "IntegratedLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_IntegratedLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "UniqueLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_UniqueLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "Declaration": ("depot-de-la-demande", "UrbanEvent"),
-            "UrbanCertificateOne": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_UrbanCertificateOne": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "UrbanCertificateTwo": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_UrbanCertificateTwo": ("depot-demande", "UrbanEvent"),
-            "PreliminaryNotice": ("depot-de-la-demande", "UrbanEvent"),
-            "EnvClassOne": ("depot-de-la-demande", "UrbanEvent"),
-            "EnvClassTwo": ("depot-de-la-demande", "UrbanEvent"),
-            "EnvClassThree": ("depot-de-la-demande", "UrbanEvent"),
-            "ParcelOutLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_ParcelOutLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "MiscDemand": ("depot-de-la-demande", "UrbanEvent"),
-            "NotaryLetter": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_NotaryLetter": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "Division": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_CommercialLicence": ("depot-demande", "UrbanEvent"),
-            "ExplosivesPossession": ("reception-de-la-demande", "UrbanEvent"),
-            "NotaryLetter": ("depot-de-la-demande", "urbanEvent"),
-        }
-        if type not in data:
-            return ("depot-de-la-demande", "UrbanEvent")
-        return data[type]
+            return None
+        return decision
     
-    def _mapping_delivery_event(self, type):
-        data = {
-            "BuildLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_BuildLicence": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
-                "UrbanEvent",
-            ),
-            "CODT_UrbanCertificateOne": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
-                "UrbanEvent",
-            ),
-            "CODT_UrbanCertificateTwo": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
-                "UrbanEvent",
-            ),
-            "Article127": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "IntegratedLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_IntegratedLicence": ("delivrance-du-permis-octroi-ou-refus-codt", "UrbanEvent"),
-            "ParcelOutLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_ParcelOutLicence": ("delivrance-du-permis-octroi-ou-refus-codt", "UrbanEvent"),
-            "Declaration": ("deliberation-college", "UrbanEvent"),
-            "UrbanCertificateOne": ("octroi-cu1", "UrbanEvent"),
-            "UrbanCertificateTwo": ("octroi-cu2", "UrbanEvent"),
-            "UniqueLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_UniqueLicence": ("delivrance-permis", "UrbanEvent"),
-            "MiscDemand": ("deliberation-college", "UrbanEvent"),
-            "EnvClassOne": ("decision", "UrbanEvent"),
-            "EnvClassTwo": ("decision", "UrbanEvent"),
-            "EnvClassThree": ("passage-college", "UrbanEvent"),
-            "PreliminaryNotice": ("passage-college", "UrbanEvent"),
-            "NotaryLetter": ("octroi-lettre-notaire", " UrbanEvent"),
-            "CODT_NotaryLetter": ("notaryletter-codt", "UrbanEvent"),
-            "Division": ("decision-octroi-refus", "UrbanEvent"),
-            "CODT_CommercialLicence": ("delivrance-du-permis-octroi-ou-refus-codt", " UrbanEvent"),
-            "ExplosivesPossession" : {"decision", "UrbanEvent"}
-        }
-        return data[type]
+    def get_recepisse_check(self, data):
+        return "date_recepisse" not in data or not data["date_recepisse"]
+
+    def get_delivery_check(self, data):
+        columns = ("date_cloture", "wf_transitions")
+        matching_columns = [c for c in columns if c in data]
+        return not matching_columns
 
 
-class EventConfigUidResolver(tools.UrbanEventConfigUidResolver):
+class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
     task_namespace = "mouscron"
     key = luigi.Parameter()
     
