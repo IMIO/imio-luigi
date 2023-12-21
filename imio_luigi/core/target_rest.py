@@ -3,6 +3,7 @@
 import abc
 import luigi
 import requests
+import time
 
 
 class RESTTarget(luigi.Target):
@@ -15,11 +16,22 @@ class RESTTarget(luigi.Target):
         "PUT": requests.put,
     }
 
-    def __init__(self, url, accept="application/json", login=None, password=None):
+    def __init__(
+        self,
+        url,
+        accept="application/json",
+        login=None,
+        password=None,
+        retry=5,
+        wait_between_retry=120,
+    ):
         self.url = url
         self.accept = accept
         self.login = login
         self.password = password
+        self.retry = retry
+        self.wait_between_retry = wait_between_retry
+        self.current_retry = 0
 
     @property
     @abc.abstractmethod
@@ -56,6 +68,13 @@ class RESTTarget(luigi.Target):
         result = me(self.url, **self.request_kwargs)
         if not hasattr(result, "status_code"):
             raise RuntimeError("Request result has no status code")
+        if result.status_code not in self.expected_codes and self.retry > 0:
+            while self.current_retry < self.retry:
+                self.current_retry += 1
+                time.sleep(self.wait_between_retry)
+                result = me(self.url, **self.request_kwargs)
+                if result.status_code in self.expected_codes:
+                    break
         if result.status_code not in self.expected_codes:
             message = (
                 "Wrong request returned status_code {0}, expected codes are: {1}, "
