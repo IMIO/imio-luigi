@@ -8,9 +8,12 @@ import base64
 import json
 import logging
 import luigi
+import requests
 
 
 logger = logging.getLogger("luigi-interface")
+
+COMPLETE_REFERENCES = []
 
 
 class GetFiles(core.WalkFS):
@@ -26,7 +29,24 @@ class GetFiles(core.WalkFS):
         folder = config[data["@type"]]["folder"]
         return f"{self.url}/{folder}"
 
+    def _get_actual_references(self):
+        global COMPLETE_REFERENCES
+        result = requests.get(
+            f"{self.url}/@@search"
+            auth=(self.login, self.password),
+            params={
+                "object_provides": "Products.urban.interfaces.IBaseAllBuildLicence",
+                "b_size": 29999,
+                "metadata_fields": "getReference",
+            },
+            headers={"Accept": "application/json"},
+        )
+        if result.status_code == 200:
+            for l in result["items"]:
+                COMPLETE_REFERENCES.append(l["getReference"])
+
     def run(self):
+        self._get_actual_references()
         for fpath in self.filepaths:
             with open(fpath, "r") as f:
                 content = json.load(f)
@@ -89,6 +109,11 @@ class RESTPost(core.PostRESTTask):
         return json_body
 
     def complete(self):
+        global COMPLETE_REFERENCES
+        if self.data["reference"] in COMPLETE_REFERENCES:
+            return True
         r = self.test_complete()
         result = r.json()["items_total"] >= 1
+        if result is True:
+            COMPLETE_REFERENCES.append(self.data["reference"])
         return result
