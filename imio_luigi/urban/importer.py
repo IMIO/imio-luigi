@@ -23,7 +23,8 @@ class GetFiles(core.WalkFS):
     url = luigi.Parameter()
     login = luigi.Parameter()
     password = luigi.Parameter()
-    
+    task_complete = False
+
     def _get_url(self, data):
         """Construct POST url based on type"""
         folder = config[data["@type"]]["folder"]
@@ -31,8 +32,9 @@ class GetFiles(core.WalkFS):
 
     def _get_actual_references(self):
         global COMPLETE_REFERENCES
+
         result = requests.get(
-            f"{self.url}/@@search"
+            f"{self.url}/@search",
             auth=(self.login, self.password),
             params={
                 "object_provides": "Products.urban.interfaces.IBaseAllBuildLicence",
@@ -42,14 +44,18 @@ class GetFiles(core.WalkFS):
             headers={"Accept": "application/json"},
         )
         if result.status_code == 200:
-            for l in result["items"]:
+            for l in result.json()["items"]:
                 COMPLETE_REFERENCES.append(l["getReference"])
 
-    def run(self):
+    def requires(self):
+        global COMPLETE_REFERENCES
+
         self._get_actual_references()
         for fpath in self.filepaths:
             with open(fpath, "r") as f:
                 content = json.load(f)
+                if content["reference"] in COMPLETE_REFERENCES:
+                    continue
                 yield RESTPost(
                     key=content[config[content["@type"]]["config"]["key"]],
                     data=content,
@@ -58,6 +64,12 @@ class GetFiles(core.WalkFS):
                     password=self.password,
                     search_on=config[content["@type"]]["config"]["search_on"]
                 )
+
+    def run(self):
+        self.task_complete = True
+
+    def complete(self):
+        return self.task_complete
 
 
 class RESTPost(core.PostRESTTask):
@@ -68,13 +80,15 @@ class RESTPost(core.PostRESTTask):
     login = luigi.Parameter()
     password = luigi.Parameter()
     search_on = luigi.Parameter()
+    has_run = False
 
     @property
     def test_url(self):
         return f"{self.url}/@search"
 
     def run(self):
-        result = self.output().request()
+        self.output().request()
+        self.has_run = True
 
     def _fix_character(self, term, character):
         if character in term:
@@ -110,6 +124,8 @@ class RESTPost(core.PostRESTTask):
 
     def complete(self):
         global COMPLETE_REFERENCES
+        if self.has_run is False:
+            return False
         if self.data["reference"] in COMPLETE_REFERENCES:
             return True
         r = self.test_complete()
