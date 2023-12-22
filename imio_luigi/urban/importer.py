@@ -45,7 +45,7 @@ class GetFiles(core.WalkFS):
         )
         if result.status_code == 200:
             for l in result.json()["items"]:
-                COMPLETE_REFERENCES.append(l["getReference"])
+                COMPLETE_REFERENCES.append(l["getReference"].upper())
 
     def requires(self):
         global COMPLETE_REFERENCES
@@ -54,7 +54,7 @@ class GetFiles(core.WalkFS):
         for fpath in self.filepaths:
             with open(fpath, "r") as f:
                 content = json.load(f)
-                if content["reference"] in COMPLETE_REFERENCES:
+                if content["reference"].upper() in COMPLETE_REFERENCES:
                     continue
                 yield RESTPost(
                     key=content[config[content["@type"]]["config"]["key"]],
@@ -126,10 +126,10 @@ class RESTPost(core.PostRESTTask):
         global COMPLETE_REFERENCES
         if self.has_run is False:
             return False
-        if self.data["reference"] in COMPLETE_REFERENCES:
+        if self.data["reference"].upper() in COMPLETE_REFERENCES:
             return True
         r = self.test_complete()
         result = r.json()["items_total"] >= 1
         if result is True:
-            COMPLETE_REFERENCES.append(self.data["reference"])
+            COMPLETE_REFERENCES.append(self.data["reference"].upper())
         return result
