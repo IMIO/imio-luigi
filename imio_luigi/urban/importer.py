@@ -37,8 +37,8 @@ class GetFiles(core.WalkFS):
             f"{self.url}/@search",
             auth=(self.login, self.password),
             params={
-                "object_provides": "Products.urban.interfaces.IBaseAllBuildLicence",
-                "b_size": 29999,
+                "object_provides": "Products.urban.interfaces.IUrbanBase",
+                "b_size": 99999,
                 "metadata_fields": "getReference",
             },
             headers={"Accept": "application/json"},
