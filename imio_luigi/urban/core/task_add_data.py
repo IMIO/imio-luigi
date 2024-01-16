@@ -110,6 +110,7 @@ class AddUrbanEvent(core.InMemoryTask):
         date = self.get_delivery_date(data)
         if date:
             event["decisionDate"] = date
+            event["eventDate"] = date
 
         if "__children__" not in data:
             data["__children__"] = []
