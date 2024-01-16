@@ -34,6 +34,9 @@ run-local-arlon:
 import-arlon:
 	LUIGI_CONFIG_PATH=./arlon.cfg $(LUIGI_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-arlon --local-scheduler
 
+.PHONY: change_workflow_arlon
+change_workflow_arlon:
+	LUIGI_CONFIG_PATH=./arlon.cfg $(LUIGI_PATH)luigi --module imio_luigi.urban.change_workflow_json_arlon arlon.GetJSONFile --path ./result-arlon-preprocess --local-scheduler
 
 # Berloz
 .PHONY: run-local-berloz
