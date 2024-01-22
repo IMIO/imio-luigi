@@ -45,7 +45,7 @@ class GetFiles(core.WalkFS):
         )
         if result.status_code == 200:
             for l in result.json()["items"]:
-                COMPLETE_REFERENCES.append(l["getReference"].upper())
+                COMPLETE_REFERENCES.append(l["getReference"].upper().strip())
 
     def requires(self):
         global COMPLETE_REFERENCES
@@ -119,6 +119,7 @@ class RESTPost(core.PostRESTTask):
     @property
     def json_body(self):
         json_body = self._add_attachments(core.frozendict_to_dict(self.data))
+        json_body["reference"] = json_body["reference"].upper().strip()
         json_body["disable_check_ref_format"] = True
         return json_body
 
@@ -126,10 +127,10 @@ class RESTPost(core.PostRESTTask):
         global COMPLETE_REFERENCES
         if self.has_run is False:
             return False
-        if self.data["reference"].upper() in COMPLETE_REFERENCES:
+        if self.data["reference"].upper().strip() in COMPLETE_REFERENCES:
             return True
         r = self.test_complete()
         result = r.json()["items_total"] >= 1
         if result is True:
-            COMPLETE_REFERENCES.append(self.data["reference"].upper())
+            COMPLETE_REFERENCES.append(self.data["reference"].upper().strip())
         return result
