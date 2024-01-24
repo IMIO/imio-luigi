@@ -143,7 +143,7 @@ class AddUrbanEvent(core.InMemoryTask):
             "Division": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_CommercialLicence": ("depot-demande", "UrbanEvent"),
             "ExplosivesPossession": ("reception-de-la-demande", "UrbanEvent"),
-            "NotaryLetter": ("depot-de-la-demande", "urbanEvent"),
+            "Ticket": ("depot-de-la-demande-codt", "UrbanEvent"),
         }
         return data[type]
     
@@ -181,6 +181,7 @@ class AddUrbanEvent(core.InMemoryTask):
             "CODT_NotaryLetter": ("notaryletter-codt", "UrbanEvent"),
             "Division": ("decision-octroi-refus", "UrbanEvent"),
             "CODT_CommercialLicence": ("delivrance-du-permis-octroi-ou-refus-codt", " UrbanEvent"),
-            "ExplosivesPossession" : {"decision", "UrbanEvent"}
+            "ExplosivesPossession": {"decision", "UrbanEvent"},
+            "Ticket": ("decision", "UrbanEvent"),
         }
         return data[type]
