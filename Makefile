@@ -87,6 +87,11 @@ import-gracehollogne:
 run-local-bastogne:
 	LUIGI_CONFIG_PATH=$(CURDIR)/bastogne.cfg $(LUIGI_PATH)luigi --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --dbname=urb82003ac --local-scheduler
 
+# OLLN
+.PHONY: run-local-olln
+run-local-olln:
+	LUIGI_CONFIG_PATH=./olln.cfg $(LUIGI_PATH)luigi --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --dbname=urb25121ac --local-scheduler
+
 # Acropole
 .PHONY: run-local-acropole
 run-local-acropole:
