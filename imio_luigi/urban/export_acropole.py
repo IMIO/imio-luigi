@@ -3,22 +3,24 @@
 from imio_luigi import core, utils
 from imio_luigi.urban.address import find_address_match
 from imio_luigi.urban import tools
+from imio_luigi.urban import core as ucore
 
 import json
 import logging
 import luigi
-
+import re
 
 logger = logging.getLogger("luigi-interface")
 
 
 class GetFromMySQL(core.GetFromMySQLTask):
+    line_range = luigi.Parameter(default=None)
+    counter = luigi.Parameter(default=None)
     task_namespace = "acropole"
     login = "root"
     password = "password"
     host = "localhost"
     port = 3306
-    dbname = "urb82003ac"
     tablename = "DOSSIER_VIEW"
     columns = (
         "WRKDOSSIER_ID",
@@ -36,7 +38,18 @@ class GetFromMySQL(core.GetFromMySQLTask):
     )
 
     def run(self):
-        for row in self.query():
+        limit = None
+        offset = None
+        if self.counter:
+            limit = int(self.counter)
+            offset = None
+        if self.line_range:
+            if not re.match(r"\d{1,}-\d{1,}", self.line_range):
+                raise ValueError("Wrong Line Range")
+            line_range = self.line_range.split("-")
+            limit = int(line_range[0])
+            offset = int(line_range[1])-int(line_range[0])
+        for row in self.query(limit=limit, offset=offset):
             data = {k: getattr(row, k) for k in row._fields}
             for column in (
                 "DOSSIER_DATEDEPART",
@@ -62,20 +75,34 @@ class Transform(luigi.Task):
         yield WriteToJSON(key=self.key)
 
 
+class AddExtraData(core.AddDataInMemoryTask):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+    filepath = luigi.OptionalParameter(default=None)
+
+    def transform_data(self, data):
+        if not self.filepath:
+            return data
+        return super().transform_data(data)
+
+    def input(self):
+        return core.InMemoryTarget(f"Transform-{self.key}", mirror_on_stderr=True)
+
+
 class JoinAddresses(core.JoinFromMySQLInMemoryTask):
     task_namespace = "acropole"
     login = "root"
     password = "password"
     host = "localhost"
     port = 3306
-    dbname = "urb82003ac"
+    dbname = luigi.Parameter()
     tablename = "ADRESSES_VIEW"
     columns = ["*"]
     destination = "addresses"
     key = luigi.Parameter()
 
-    def input(self):
-        return core.InMemoryTarget(f"Transform-{self.key}", mirror_on_stderr=True)
+    def requires(self):
+        return AddExtraData(key=self.key)
 
     def sql_condition(self):
         with self.input().open("r") as f:
@@ -89,7 +116,7 @@ class JoinApplicants(core.JoinFromMySQLInMemoryTask):
     password = "password"
     host = "localhost"
     port = 3306
-    dbname = "urb82003ac"
+    dbname = luigi.Parameter()
     tablename = "DEMANDEURS_VIEW"
     columns = ["*"]
     destination = "applicants"
@@ -109,23 +136,101 @@ class Mapping(core.MappingKeysInMemoryTask):
     key = luigi.Parameter()
     mapping = {
         "DOSSIER_NUMERO": "reference",
-        "DETAILS": "title",
-        "TDOSSIER_OBJETFR": "@type",
+        "DETAILS": "licenceSubject",
+        "DOSSIER_TDOSSIERID": "@type",
         "CONCAT_PARCELS": "cadastre",
+        "DOSSIER_OCTROI": "wf_transitions"
     }
 
     def requires(self):
         return JoinApplicants(key=self.key)
 
 
-class MappingType(core.MappingValueWithFileInMemoryTask):
+class MappingType(ucore.UrbanTypeMapping):
     task_namespace = "acropole"
     key = luigi.Parameter()
-    mapping_filepath = "./mapping-type.json"
+    mapping_filepath = "./config/acropole/mapping-type-acropole.json"
     mapping_key = "@type"
 
     def requires(self):
         return Mapping(key=self.key)
+
+
+class AddNISData(ucore.AddNISData):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+
+    def requires(self):
+        return MappingType(key=self.key)
+
+
+class AddTransitions(core.MappingValueWithFileInMemoryTask):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+    mapping_filepath = "./config/acropole/mapping-transition-acrople.json"
+    mapping_key = "wf_transitions"
+
+    @property
+    @core.utils._cache(ignore_args=True)
+    def mapping(self):
+        mapping = json.load(open(self.mapping_filepath, "r"))
+        return {l["key"]: l["value"] for l in mapping["keys"]}
+
+    def requires(self):
+        return AddNISData(key=self.key)
+
+    def transform_data(self, data):
+        data = super().transform_data(data)
+        if self.mapping_key in data:
+            data[self.mapping_key] = [data[self.mapping_key]]
+        return data
+
+
+class AddEvents(ucore.AddUrbanEvent):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+
+    def requires(self):
+        return AddTransitions(key=self.key)
+
+    def get_recepisse_check(self, data):
+        return "DOSSIER_DATEDEPOT" in data or data["DOSSIER_DATEDEPOT"]
+
+    def get_recepisse_date(self, data):
+        return data.get("DOSSIER_DATEDEPOT", None)
+
+    def get_delivery_check(self, data):
+        return "DOSSIER_DATEDELIV" in data or data["DOSSIER_DATEDELIV"]
+
+    def get_delivery_date(self, data):
+        return data.get("DOSSIER_DATEDELIV", None)
+
+    def get_delivery_decision(self, data):
+        if "wf_transitions" not in data:
+            return None
+        if data.get("wf_transitions")[0] in ['accepted']:
+            decision = "favorable"
+        elif data.get("wf_transitions")[0] in ['refused', 'inacceptable']:
+            decision = "defavorable"
+        else:
+            return None
+        return decision
+
+
+class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+
+    def requires(self):
+        return AddEvents(key=self.key)
+
+
+class MappingStateToTransition(ucore.UrbanTransitionMapping):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+
+    def requires(self):
+        return EventConfigUidResolver(key=self.key)
 
 
 class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
@@ -134,8 +239,8 @@ class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
     subelements_source_key = "applicants"
     subelements_destination_key = "__children__"
     mapping_keys = {
-        "PRENOM": "name1",
-        "NOM": "name2",
+        "NOM": "name1",
+        "PRENOM": "name2",
         "LOCALITE": "city",
         "ZIP": "zipcode",
         "ADRESSE": "street",
@@ -144,11 +249,34 @@ class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
     }
     subelement_base = {
         "@type": "Applicant",
-        "country": "BE",
+        "country": "belgium",
     }
 
     def requires(self):
-        return MappingType(key=self.key)
+        return MappingStateToTransition(key=self.key)
+
+
+class AddTitle(core.InMemoryTask):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+
+    def transform_data(self, data):
+        ref = data["reference"]
+        data["title"] = f"{ref}"
+        subject = data.get("licenceSubject", None)
+        if subject:
+            data["title"] += f" - {subject}"
+        if "__children__" not in data:
+            return data
+        applicants = ""
+        for child in data["__children__"]:
+            if child["@type"] == "Applicant":
+                applicants += f" - {child['name1']}"
+        data["title"] += applicants
+        return data
+
+    def requires(self):
+        return CreateApplicant(key=self.key)
 
 
 class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
@@ -157,7 +285,7 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
     subelements_source_key = "addresses"
     subelements_destination_key = "workLocations"
     mapping_keys = {
-        "ADDRESSE": "street",
+        "ADRESSE": "street",
         "NUM": "number",
         "ZIP": "zip",
         "LOCALITE": "localite",
@@ -165,139 +293,75 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
     subelement_base = {}
 
     def requires(self):
-        return CreateApplicant(key=self.key)
+        return AddTitle(key=self.key)
 
 
-class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
+class TransformWorkLocation(ucore.TransformWorkLocation):
     task_namespace = "acropole"
     key = luigi.Parameter()
     log_failure = True
 
+    def _generate_term(self, worklocation, data):
+        street = worklocation.get("street", None)
+        if not street:
+            __import__('pdb').set_trace()
+            return None, "Pas de nom de rue présent"
+        param_values = [
+            str(v)
+            for k, v in worklocation.items()
+            if v and k in ("street", "locality", "zip")
+        ]
+        return " ".join(param_values), None
+
     def requires(self):
         return CreateWorkLocation(key=self.key)
-
-    @property
-    def request_url(self):
-        return f"{self.url}/@address"
-
-    def on_failure(self, data, errors):
-        if "description" not in data:
-            data["description"] = {
-                "content-type": "text/html",
-                "data": "",
-            }
-        for error in errors:
-            data["description"]["data"] += f"<p>{error}</p>\r\n"
-        return data
-
-    def transform_data(self, data):
-        new_work_locations = []
-        errors = []
-        for worklocation in data["workLocations"]:
-            param_values = [
-                str(v)
-                for k, v in worklocation.items()
-                if v and k in ("street", "locality", "zip")
-            ]
-            params = {"term": " ".join(param_values)}
-            r = self.request(parameters=params)
-            if r.status_code != 200:
-                errors.append(f"Response code is '{r.status_code}', expected 200")
-                continue
-            result = r.json()
-            if result["items_total"] == 0:
-                errors.append(f"Aucun résultat pour l'adresse: '{params['term']}'")
-                continue
-            elif result["items_total"] > 1:
-                match = find_address_match(result["items"], worklocation["street"])
-                if not match:
-                    errors.append(
-                        f"Plusieurs résultats pour l'adresse: '{params['term']}'"
-                    )
-                    continue
-            else:
-                match = result["items"][0]
-            new_work_locations.append(
-                {
-                    "street": match["uid"],
-                    "number": worklocation.get("number", ""),
-                }
-            )
-        data["workLocations"] = new_work_locations
-        return data, errors
 
 
 class CadastreSplit(core.StringToListInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
     attribute_key = "cadastre"
-    separators = [",", " ET ", "et"]
+    separators = [",", " ET ", "et", "|"]
+
+    def _recursive_split(self, value, separators):
+        regexp = f"[{''.join(separators)}]"
+        return [v for v in re.split(regexp, value) if v and v not in separators]
 
     def requires(self):
         return TransformWorkLocation(key=self.key)
 
 
-class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
+class TransformCadastre(ucore.TransformCadastre):
     task_namespace = "acropole"
     key = luigi.Parameter()
     log_failure = True
+    division_mapping_path = luigi.Parameter()
+
+    @property
+    def mapping_division_dict(self):
+        mapping = json.load(open(self.division_mapping_path, "r"))
+        return {l["key"]: l["value"] for l in mapping["keys"]}
+
+    def _mapping_division(self, data):
+        if 'division' not in data or data['division'] not in self.mapping_division_dict:
+            return "99999"
+        return self.mapping_division_dict[data['division']]
 
     def requires(self):
         return CadastreSplit(key=self.key)
 
-    @property
-    def request_url(self):
-        return f"{self.url}/@parcel"
-
-    def on_failure(self, data, errors):
-        if "description" not in data:
-            data["description"] = {
-                "content-type": "text/html",
-                "data": "",
-            }
-        for error in errors:
-            # cleanup
-            error = error.replace(", 'browse_old_parcels': True", "")
-            error = error.replace("'", "")
-            data["description"]["data"] += f"<p>{error}</p>\r\n"
-        return data
-
-    def transform_data(self, data):
-        errors = []
-        for cadastre in data["cadastre"]:
-            try:
-                params = tools.extract_cadastre(cadastre)
-            except ValueError:
-                errors.append(f"Valeur incorrecte pour la parcelle: {cadastre}")
-                continue
-            if "Section" in data:
-                params["section"] = data["Section"]
-            params["browse_old_parcels"] = True
-            r = self.request(parameters=params)
-            if r.status_code != 200:
-                errors.append(f"Response code is '{r.status_code}', expected 200")
-                continue
-            result = r.json()
-            if result["items_total"] == 0:
-                errors.append(f"Aucun résultat pour la parcelle '{params}'")
-                continue
-            elif result["items_total"] > 1:
-                errors.append(f"Plusieurs résultats pour la parcelle '{params}'")
-                continue
-            if not "__children__" in data:
-                data["__children__"] = []
-            new_cadastre = result["items"][0]
-            new_cadastre["@type"] = "Parcel"
-            new_cadastre["id"] = new_cadastre["capakey"].replace("/", "_")
-            if "old" in new_cadastre:
-                new_cadastre["outdated"] = new_cadastre["old"]
-            else:
-                new_cadastre["outdated"] = False
-            for key in ("divname", "natures", "locations", "owners", "capakey", "old"):
-                if key in new_cadastre:
-                    del new_cadastre[key]
-            data["__children__"].append(new_cadastre)
-        return data, errors
+    def _generate_cadastre_dict(self, cadastre):
+        if cadastre == "Non cadastré":
+            return None, ""
+        pattern = r"(?P<division>\d{1,4})\s*(?P<section>[a-zA-Z])\s*(?P<radical>\d{0,4})\/?(?P<bis>\d{0,2})\s*(?P<exposant>[a-zA-Z]?)\s*(?P<puissance>\d{0,2})"
+        cadastre_split = re.match(pattern, cadastre.strip())
+        if not cadastre_split:
+            msg = f"Impossible de reconnaitre la parcelle '{cadastre}'"
+            return None, msg
+        params = cadastre_split.groupdict()
+        params["division"] = self._mapping_division(params)
+        params["browse_old_parcels"] = True
+        return params, None
 
 
 class DropColumns(core.DropColumnInMemoryTask):
@@ -307,6 +371,13 @@ class DropColumns(core.DropColumnInMemoryTask):
         "addresses",
         "applicants",
         "WRKDOSSIER_ID",
+        'DOSSIER_DATEDELIV',
+        'DOSSIER_DATEDEPART',
+        'DOSSIER_DATEDEPOT',
+        'DOSSIER_REFCOM',
+        'DOSSIER_TYPEIDENT',
+        'TDOSSIER_OBJETFR',
+        'cadastre'
     ]
 
     def requires(self):
@@ -325,7 +396,7 @@ class ValidateData(core.JSONSchemaValidationTask):
 
 class WriteToJSON(core.WriteToJSONTask):
     task_namespace = "acropole"
-    export_filepath = "./result"
+    export_filepath = luigi.Parameter()
     key = luigi.Parameter()
 
     def requires(self):
