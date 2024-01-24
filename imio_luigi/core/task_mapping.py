@@ -38,7 +38,8 @@ class MappingKeysTask(luigi.Task):
         for original, destination in self.mapping.items():
             if self.ignore_missing is True:
                 if original in data:
-                    data[destination] = data[original]
+                    if data[original]:
+                        data[destination] = data[original]
                     del data[original]
             else:
                 data[destination] = data[original]

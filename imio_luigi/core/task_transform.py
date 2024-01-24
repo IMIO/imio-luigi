@@ -198,7 +198,8 @@ class CreateSubElementsFromSubElementsTask(luigi.Task):
             if key not in base and self.ignore_missing is False:
                 raise KeyError(f"Missing key {key}")
             if key in base:
-                new_element[destination] = base[key]
+                if base[key]:
+                    new_element[destination] = base[key]
                 del base[key]
         return new_element
 
