@@ -39,7 +39,7 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         new_work_locations = []
         errors = []
         for worklocation in data["workLocations"]:
-            term, error = self._generate_term(worklocation)
+            term, error = self._generate_term(worklocation, data)
             if error:
                 errors.append(error)
                 continue
@@ -73,8 +73,8 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
             )
         data["workLocations"] = new_work_locations
         return data, errors
-    
-    
+
+
 class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
     browse_old_parcels = True
 
@@ -102,6 +102,8 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
 
     def transform_data(self, data):
         errors = []
+        if 'cadastre' not in data:
+            return data, errors
         for cadastre in data["cadastre"]:
             params, error = self._generate_cadastre_dict(cadastre)
             if error:
