@@ -57,7 +57,7 @@ class StringToListTask(luigi.Task):
             raise KeyError("Missing key {0}".format(self.attribute_key))
         elif value is None and self.ignore_missing is True:
             return data
-        separators = [s for s in self.separators if re.match(s, value)]
+        separators = [s for s in self.separators if re.search(s, value)]
         if len(separators) > 0:
             value = self._recursive_split(value, separators)
         else:
