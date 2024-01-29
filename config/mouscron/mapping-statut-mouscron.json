@@ -1,0 +1,24 @@
+{
+  "keys": [
+    {"key": "0", "value": "deposit"},
+    {"key": "1", "value": "accepted"},
+    {"key": "2", "value": "refused"},
+    {"key": "3", "value": "refused"},
+    {"key": "4", "value": "accepted"},
+    {"key": "5", "value": "retired"},
+    {"key": "6", "value": "deposit"},
+    {"key": "8", "value": "inacceptable"},
+    {"key": "9", "value": "refused"},
+    {"key": "10", "value": "retired"},
+    {"key": "14", "value": "accepted"},
+    {"key": "17", "value": "accepted"},
+    {"key": "18", "value": "refused"},
+    {"key": "20", "value": "accepted"},
+    {"key": "24", "value": "accepted"},
+    {"key": "29", "value": "refused"},
+    {"key": "30", "value": "complete"},
+    {"key": "34", "value": "complete"},
+    {"key": "36", "value": "inacceptable"}
+  ]
+}
+

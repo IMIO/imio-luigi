@@ -1,0 +1,18 @@
+{
+  "changes" : [
+    {
+      "condition" : {
+        "key": "@type",
+        "type" : "==",
+        "value": "EnvClassThree" 
+      },
+      "actions" : [
+        {  
+          "type": "set",
+          "key": "wf_transitions",
+          "value": ["accepted"]
+        }
+      ]
+    }
+  ]
+}

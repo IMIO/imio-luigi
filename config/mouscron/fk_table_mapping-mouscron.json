@@ -1,0 +1,1022 @@
+{
+    "proc_def_id_": {
+        "table": "act_re_procdef",
+        "key": "id_"
+    },
+    "batch_job_def_id_": {
+        "table": "act_ru_jobdef",
+        "key": "id_"
+    },
+    "monitor_job_def_id_": {
+        "table": "act_ru_jobdef",
+        "key": "id_"
+    },
+    "seed_job_def_id_": {
+        "table": "act_ru_jobdef",
+        "key": "id_"
+    },
+    "deployment_id_": {
+        "table": "act_re_deployment",
+        "key": "id_"
+    },
+    "case_def_id_": {
+        "table": "act_re_case_def",
+        "key": "id_"
+    },
+    "case_inst_id_": {
+        "table": "act_ru_case_execution",
+        "key": "id_"
+    },
+    "parent_id_": {
+        "table": "act_ru_case_execution",
+        "key": "id_"
+    },
+    "case_exec_id_": {
+        "table": "act_ru_case_execution",
+        "key": "id_"
+    },
+    "dec_req_id_": {
+        "table": "act_re_decision_req_def",
+        "key": "id_"
+    },
+    "execution_id_": {
+        "table": "act_ru_execution",
+        "key": "id_"
+    },
+    "proc_inst_id_": {
+        "table": "act_ru_execution",
+        "key": "id_"
+    },
+    "super_exec_": {
+        "table": "act_ru_execution",
+        "key": "id_"
+    },
+    "error_details_id_": {
+        "table": "act_ge_bytearray",
+        "key": "id_"
+    },
+    "cause_incident_id_": {
+        "table": "act_ru_incident",
+        "key": "id_"
+    },
+    "job_def_id_": {
+        "table": "act_ru_jobdef",
+        "key": "id_"
+    },
+    "root_cause_incident_id_": {
+        "table": "act_ru_incident",
+        "key": "id_"
+    },
+    "exception_stack_id_": {
+        "table": "act_ge_bytearray",
+        "key": "id_"
+    },
+    "group_id_": {
+        "table": "act_id_group",
+        "key": "id_"
+    },
+    "user_id_": {
+        "table": "act_id_user",
+        "key": "id_"
+    },
+    "case_execution_id_": {
+        "table": "act_ru_case_execution",
+        "key": "id_"
+    },
+    "tenant_id_": {
+        "table": "act_id_tenant",
+        "key": "id_"
+    },
+    "task_id_": {
+        "table": "act_ru_task",
+        "key": "id_"
+    },
+    "bytearray_id_": {
+        "table": "act_ge_bytearray",
+        "key": "id_"
+    },
+    "environnement_effet_recour_fk": {
+        "table": "c_environnement_effet_recour",
+        "key": "id"
+    },
+    "type_permis_id": {
+        "table": "c_type_permis",
+        "key": "id"
+    },
+    "enquete_publique_auteur_demande_id": {
+        "table": "c_enquete_publique_auteur_demande",
+        "key": "id"
+    },
+    "permis_fk": {
+        "table": "p_permis",
+        "key": "id"
+    },
+    "autorisation_type_permis_id": {
+        "table": "c_autorisation_type_permis",
+        "key": "id"
+    },
+    "services_a_consulter_id": {
+        "table": "p_services_a_consulter",
+        "key": "id"
+    },
+    "service_consulte_id": {
+        "table": "p_service_consulte",
+        "key": "id"
+    },
+    "utilisateur_id": {
+        "table": "c_utilisateur",
+        "key": "id"
+    },
+    "utilisateur_champ_perso_id": {
+        "table": "c_utilisateur_champ_perso",
+        "key": "id"
+    },
+    "type_permis_fk": {
+        "table": "c_type_permis",
+        "key": "id"
+    },
+    "cwatup_fk": {
+        "table": "c_cwatup",
+        "key": "id"
+    },
+    "localite_fk": {
+        "table": "c_localite",
+        "key": "id"
+    },
+    "environnement_classe_id": {
+        "table": "c_environnement_classe",
+        "key": "id"
+    },
+    "avis_fk": {
+        "table": "c_avis_college",
+        "key": "id"
+    },
+    "motif_avis_service_fk": {
+        "table": "c_motif_avis_service",
+        "key": "id"
+    },
+    "organisme_consulte_fk": {
+        "table": "c_organisme_consulte",
+        "key": "id"
+    },
+    "motif_demande_service_fk": {
+        "table": "c_motif_demande_service",
+        "key": "id"
+    },
+    "enquete_publique_id": {
+        "table": "p_enquete_publique",
+        "key": "id"
+    },
+    "reclamant_id": {
+        "table": "p_reclamant",
+        "key": "id"
+    },
+    "nature_id": {
+        "table": "c_nature",
+        "key": "id"
+    },
+    "utilisateur_type_permis_autorisation_id": {
+        "table": "c_utilisateur_type_permis_autorisation",
+        "key": "id"
+    },
+    "avis_college_fk": {
+        "table": "c_avis_college",
+        "key": "id"
+    },
+    "etude_incidence_id": {
+        "table": "p_etude_incidence",
+        "key": "id"
+    },
+    "rue_fk": {
+        "table": "c_rue",
+        "key": "id"
+    },
+    "modele_procedure_fk": {
+        "table": "c_modele_procedure",
+        "key": "id"
+    },
+    "code_urbain_fk": {
+        "table": "c_code_urbain",
+        "key": "id"
+    },
+    "type_nature_fk": {
+        "table": "c_type_nature",
+        "key": "id"
+    },
+    "organisme_consulte_id": {
+        "table": "c_organisme_consulte",
+        "key": "id"
+    },
+    "environnement_localisation_fk": {
+        "table": "c_environnement_localisation",
+        "key": "id"
+    },
+    "enquete_publique_unique_id": {
+        "table": "p_enquete_publique_eu",
+        "key": "id"
+    },
+    "raison_demande_fk": {
+        "table": "c_enquete_publique_raison_demande",
+        "key": "id"
+    },
+    "auteur_demande_fk": {
+        "table": "c_enquete_publique_auteur_demande",
+        "key": "id"
+    },
+    "piece_manquante_fk": {
+        "table": "c_piecemanquante",
+        "key": "id"
+    },
+    "parcelle_donnee_proprietaire_id": {
+        "table": "c_parcelle_donnee_proprietaire",
+        "key": "id"
+    },
+    "parcelle_donnee_id": {
+        "table": "c_parcelle_donnee",
+        "key": "id"
+    },
+    "courrier_fk": {
+        "table": "p_courrier",
+        "key": "id"
+    },
+    "document_info_permis_fk": {
+        "table": "p_document_info_permis",
+        "key": "id"
+    },
+    "avis_enqueteur_fk": {
+        "table": "c_avis_enqueteur",
+        "key": "id"
+    },
+    "modele_id": {
+        "table": "c_modele",
+        "key": "id"
+    },
+    "commune_contact_id": {
+        "table": "p_commune_contact",
+        "key": "id"
+    },
+    "pays_fk": {
+        "table": "c_pays",
+        "key": "id"
+    },
+    "civilite_fk": {
+        "table": "c_civilite",
+        "key": "id"
+    },
+    "civilite2_fk": {
+        "table": "c_civilite",
+        "key": "id"
+    },
+    "bureau_etude_fk": {
+        "table": "c_organisme",
+        "key": "id"
+    },
+    "permis_dyn_meta_fk": {
+        "table": "c_permis_dyn_meta",
+        "key": "id"
+    },
+    "commune_champ_perso_id": {
+        "table": "c_commune_champ_perso",
+        "key": "id"
+    },
+    "commune_id": {
+        "table": "c_commune",
+        "key": "id"
+    },
+    "securite_groupe_fk": {
+        "table": "s_securite_groupe",
+        "key": "id"
+    },
+    "rapport_technique_mode_implantation_fk": {
+        "table": "c_rapport_technique_mode_implantation",
+        "key": "id"
+    },
+    "piece_manquante_id": {
+        "table": "c_piecemanquante",
+        "key": "id"
+    },
+    "piece_manquante_type_permis_autorisation_id": {
+        "table": "c_piece_manquante_type_permis_autorisation",
+        "key": "id"
+    },
+    "service_consulte_fk": {
+        "table": "p_service_consulte",
+        "key": "id"
+    },
+    "directive_fk": {
+        "table": "p_directive",
+        "key": "id"
+    },
+    "echeance_debut_reclamations_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_notification_pv_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_courrier_bourgmestre_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "signature_fk": {
+        "table": "p_signature",
+        "key": "id"
+    },
+    "ech_reception_avis_fd_vaut_decision_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_envoi_nouvelle_decision_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "type_paiement_fk": {
+        "table": "c_type_paiement",
+        "key": "id"
+    },
+    "ech_decision_saisine_fd_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "demandeur_fk": {
+        "table": "p_demandeur",
+        "key": "id"
+    },
+    "utilisateur_fk": {
+        "table": "c_utilisateur",
+        "key": "id"
+    },
+    "echeance_envoi_conditions_complementaires_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "voirie_decision_recours_fk": {
+        "table": "c_voirie_decision_recours",
+        "key": "id"
+    },
+    "echeance_envoi_irrecevable_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "echeance_reclamations_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "autorisationcodt_fk": {
+        "table": "p_autorisation_codt",
+        "key": "id"
+    },
+    "ech_envoi_decision_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "audit_log_fk": {
+        "table": "c_audit_log",
+        "key": "id"
+    },
+    "ech_invitation_reunion_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_envoi_mise_en_demeure_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_avis_college_pv_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "type_outil_amenagement_fk": {
+        "table": "c_type_outil_amenagement",
+        "key": "id"
+    },
+    "parcelle_info_fk": {
+        "table": "c_parcelle_info",
+        "key": "id"
+    },
+    "outil_amenagement_affectation_fk": {
+        "table": "c_outil_amenagement_affectation",
+        "key": "id"
+    },
+    "outil_amenagement_liste_fk": {
+        "table": "c_outil_amenagement_liste",
+        "key": "id"
+    },
+    "parcelle_info_outil_amenagement_fk": {
+        "table": "c_parcelle_info_outil_amenagement",
+        "key": "id"
+    },
+    "type_outil_amenagement_attribut_fk": {
+        "table": "c_type_outil_amenagement_attribut",
+        "key": "id"
+    },
+    "particularite_liste_fk": {
+        "table": "c_particularite_liste",
+        "key": "id"
+    },
+    "type_particularite_fk": {
+        "table": "c_type_particularite",
+        "key": "id"
+    },
+    "parcelle_info_particularite_fk": {
+        "table": "c_parcelle_info_particularite",
+        "key": "id"
+    },
+    "type_particularite_attribut_fk": {
+        "table": "c_type_particularite_attribut",
+        "key": "id"
+    },
+    "deliberation_fk": {
+        "table": "p_deliberation",
+        "key": "id"
+    },
+    "deliberation_doc_type_fk": {
+        "table": "p_deliberation_document_type",
+        "key": "id"
+    },
+    "cedant_cession_fk": {
+        "table": "p_cession",
+        "key": "id"
+    },
+    "cession_fk": {
+        "table": "p_cession",
+        "key": "id"
+    },
+    "cessionnaire_fk": {
+        "table": "p_cessionnaire",
+        "key": "id"
+    },
+    "ech_affichage_decisions_recours": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_reunion_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "instruction_insalubrite_logement_fk": {
+        "table": "p_instruction_insalubrite_logement",
+        "key": "id"
+    },
+    "objet_demande_id": {
+        "table": "c_objet_demande",
+        "key": "id"
+    },
+    "type_notice_bo_fk": {
+        "table": "c_type_notice_bo",
+        "key": "id"
+    },
+    "type_paiement_equipement_fk": {
+        "table": "c_type_paiement",
+        "key": "id"
+    },
+    "echeance_fin_affichage_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_paiement_redevance_equipement_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "constatant_fk": {
+        "table": "c_constatant",
+        "key": "id"
+    },
+    "type_rappel_id": {
+        "table": "c_type_rappel",
+        "key": "id"
+    },
+    "ech_mise_en_oeuvre_tribunal_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_retrait_college_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "annonce_projet_id": {
+        "table": "p_annonce_projet",
+        "key": "id"
+    },
+    "permis_id": {
+        "table": "p_permis",
+        "key": "id"
+    },
+    "cession_id": {
+        "table": "p_cession",
+        "key": "id"
+    },
+    "enquete_publique_eu_id": {
+        "table": "p_enquete_publique_eu",
+        "key": "id"
+    },
+    "environnement_arrete_rubrique_id": {
+        "table": "c_environnement_arrete_rubrique",
+        "key": "id"
+    },
+    "infraction_id": {
+        "table": "p_infraction",
+        "key": "id"
+    },
+    "notaire_liste_permis_id": {
+        "table": "p_notaire_liste_permis",
+        "key": "id"
+    },
+    "recours_eu_id": {
+        "table": "p_recour_eu",
+        "key": "id"
+    },
+    "recours_id": {
+        "table": "p_recour",
+        "key": "id"
+    },
+    "registre_modification_id": {
+        "table": "p_registre_modification",
+        "key": "id"
+    },
+    "suspension_id": {
+        "table": "p_suspension",
+        "key": "id"
+    },
+    "ech_suspension_fd_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_peremption_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_mise_en_conformite_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_paiement_redevance_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "entete_fk": {
+        "table": "c_modele",
+        "key": "id"
+    },
+    "pied_page_fk": {
+        "table": "c_modele",
+        "key": "id"
+    },
+    "echeance_introduction_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "ech_retour_parquet_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "permis_target_fk": {
+        "table": "p_permis",
+        "key": "id"
+    },
+    "cadastre_construction_indication_fk": {
+        "table": "c_cadastre_construction_indication",
+        "key": "id"
+    },
+    "cadastre_construction_quality_fk": {
+        "table": "c_cadastre_construction_quality",
+        "key": "id"
+    },
+    "cadastre_construction_type_fk": {
+        "table": "c_cadastre_construction_type",
+        "key": "id"
+    },
+    "cadastre_construction_year_fk": {
+        "table": "c_cadastre_construction_year",
+        "key": "id"
+    },
+    "cadastre_nature_fk": {
+        "table": "c_cadastre_nature",
+        "key": "id"
+    },
+    "environnement_classe_fk": {
+        "table": "c_environnement_classe",
+        "key": "id"
+    },
+    "environnement_type_etablissement_fk": {
+        "table": "c_environnement_type_etablissement",
+        "key": "id"
+    },
+    "notaire_type_acte_fk": {
+        "table": "c_notaire_type_acte",
+        "key": "id"
+    },
+    "notaire_type_dossier_fk": {
+        "table": "c_notaire_type_dossier",
+        "key": "id"
+    },
+    "notaire_type_payement_fk": {
+        "table": "c_notaire_type_paiement",
+        "key": "id"
+    },
+    "organisme_fk": {
+        "table": "c_organisme",
+        "key": "id"
+    },
+    "surface_fk": {
+        "table": "c_pic_surface",
+        "key": "id"
+    },
+    "type_constat_fk": {
+        "table": "c_type_constat",
+        "key": "id"
+    },
+    "annonce_projet_fk": {
+        "table": "p_annonce_projet",
+        "key": "id"
+    },
+    "assainissement_fk": {
+        "table": "p_assainissement",
+        "key": "id"
+    },
+    "audition_souhaitee_fk": {
+        "table": "p_audition_souhaitee",
+        "key": "id"
+    },
+    "autorisation_fk": {
+        "table": "p_autorisation",
+        "key": "id"
+    },
+    "autorisation_codt_fk": {
+        "table": "p_autorisation_codt",
+        "key": "id"
+    },
+    "autorisation_cu_fk": {
+        "table": "p_autorisation_cu",
+        "key": "id"
+    },
+    "autorisation_notaire_fk": {
+        "table": "p_autorisation_notaire",
+        "key": "id"
+    },
+    "cessation_fk": {
+        "table": "p_cessation",
+        "key": "id"
+    },
+    "commission_consultative_fk": {
+        "table": "p_commission_consultative",
+        "key": "id"
+    },
+    "completude_fk": {
+        "table": "p_completude",
+        "key": "id"
+    },
+    "decision_environnement_fk": {
+        "table": "p_decision_environnement",
+        "key": "id"
+    },
+    "decision_environnement_classe3_fk": {
+        "table": "p_decision_environnement_classe3",
+        "key": "id"
+    },
+    "decision_fk": {
+        "table": "p_decision_implantation_commerciale",
+        "key": "id"
+    },
+    "decision_unique_fk": {
+        "table": "p_decision_unique",
+        "key": "id"
+    },
+    "ech_observation_exploitant_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "enquete_publique_fk": {
+        "table": "p_enquete_publique",
+        "key": "id"
+    },
+    "enquete_publique_eu_fk": {
+        "table": "p_enquete_publique_eu",
+        "key": "id"
+    },
+    "etude_incidence_fk": {
+        "table": "p_etude_incidence",
+        "key": "id"
+    },
+    "fonctionnaire_delegue_fk": {
+        "table": "p_fonctionnaire_delegue",
+        "key": "id"
+    },
+    "fonctionnaire_technique_fk": {
+        "table": "p_fonctionnaire_technique",
+        "key": "id"
+    },
+    "infraction_fk": {
+        "table": "p_infraction",
+        "key": "id"
+    },
+    "instruction_infraction_urbanistique_fk": {
+        "table": "p_instruction_infraction_urbanistique",
+        "key": "id"
+    },
+    "instruction_codt_fk": {
+        "table": "p_instruction_infraction_urbanistique_codt",
+        "key": "id"
+    },
+    "instruction_permis_location_fk": {
+        "table": "p_instruction_permis_location",
+        "key": "id"
+    },
+    "instruction_reclamation_plainte_fk": {
+        "table": "p_instruction_reclamation_plainte",
+        "key": "id"
+    },
+    "instruction_reunion_fk": {
+        "table": "p_instruction_reunion",
+        "key": "id"
+    },
+    "performance_energetique_batiment_fk": {
+        "table": "p_performance_energetique_batiment",
+        "key": "id"
+    },
+    "recevabilite_fk": {
+        "table": "p_recevabilite",
+        "key": "id"
+    },
+    "recour_fk": {
+        "table": "p_recour",
+        "key": "id"
+    },
+    "recour_eu_fk": {
+        "table": "p_recour_eu",
+        "key": "id"
+    },
+    "resume_eu_fk": {
+        "table": "p_resume_eu",
+        "key": "id"
+    },
+    "travaux_fk": {
+        "table": "p_travaux",
+        "key": "id"
+    },
+    "urbanisme_fk": {
+        "table": "p_urbanisme",
+        "key": "id"
+    },
+    "voirie_fk": {
+        "table": "p_voirie",
+        "key": "id"
+    },
+    "voirie_rt_fk": {
+        "table": "p_voirie_rt",
+        "key": "id"
+    },
+    "type_permis_reunion_fk": {
+        "table": "c_type_permis",
+        "key": "id"
+    },
+    "type_rappel_fk": {
+        "table": "c_type_rappel",
+        "key": "id"
+    },
+    "parcelle_fk": {
+        "table": "p_parcelle",
+        "key": "id"
+    },
+    "parcelle_outil_amenagement_fk": {
+        "table": "p_parcelle_outil_amenagement",
+        "key": "id"
+    },
+    "parcelle_particularite_fk": {
+        "table": "p_parcelle_particularite",
+        "key": "id"
+    },
+    "echeance_reception_renseignements_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "voirie_auteur_recours_fk": {
+        "table": "c_voirie_auteur_recours",
+        "key": "id"
+    },
+    "ech_reparation_regularisation_fk": {
+        "table": "p_echeance",
+        "key": "id"
+    },
+    "reclamant_fk": {
+        "table": "p_reclamant",
+        "key": "id"
+    },
+    "rapport_technique_fk": {
+        "table": "p_rapport_technique",
+        "key": "id"
+    },
+    "charge_imposee_fk": {
+        "table": "p_charge_imposee",
+        "key": "id"
+    },
+    "agent_technique_fk": {
+        "table": "c_agent_technique",
+        "key": "id"
+    },
+    "nature_fk": {
+        "table": "c_nature",
+        "key": "id"
+    },
+    "type_dossier_fk": {
+        "table": "c_type_dossier",
+        "key": "id"
+    },
+    "voirie_regime_assainissement_fk": {
+        "table": "c_voirie_regime_assainissement",
+        "key": "id"
+    },
+    "voirie_nature_travaux_fk": {
+        "table": "c_voirie_nature_travaux",
+        "key": "id"
+    },
+    "voirie_prescription_fk": {
+        "table": "c_voirie_prescription",
+        "key": "id"
+    },
+    "voirie_equipement_eau_electricite_fk": {
+        "table": "c_voirie_equipement_eau_electricite",
+        "key": "id"
+    },
+    "voirie_type_reseau_fk": {
+        "table": "c_voirie_type_reseau",
+        "key": "id"
+    },
+    "voirie_decision_plan_fk": {
+        "table": "c_voirie_decision_plan",
+        "key": "id"
+    },
+    "voirie_extrait_pcge_fk": {
+        "table": "c_voirie_extrait_pcge",
+        "key": "id"
+    },
+    "voirie_trottoir_fk": {
+        "table": "c_voirie_trottoir",
+        "key": "id"
+    },
+    "voirie_decision_rappel_plan_fk": {
+        "table": "c_voirie_decision_rappel_plan",
+        "key": "id"
+    },
+    "voirie_situation_avale_fk": {
+        "table": "c_voirie_situation_avale",
+        "key": "id"
+    },
+    "voirie_amenagement_sens_cwatupe_fk": {
+        "table": "c_voirie_amenagement_sens_cwatupe",
+        "key": "id"
+    },
+    "voirie_systeme_evacuation_eaux_pluviales_fk": {
+        "table": "c_voirie_systeme_evacuation_eaux_pluviales",
+        "key": "id"
+    },
+    "voirie_dispositif_evacuation_eaux_fk": {
+        "table": "c_voirie_dispositif_evacuation_eaux",
+        "key": "id"
+    },
+    "voirie_systeme_evacuation_eaux_usees_fk": {
+        "table": "c_voirie_systeme_evacuation_eaux_usees",
+        "key": "id"
+    },
+    "voirie_type_action_fk": {
+        "table": "c_voirie_type_action",
+        "key": "id"
+    },
+    "voirie_statut_voirie_fk": {
+        "table": "c_voirie_statut_voirie",
+        "key": "id"
+    },
+    "voirie_decision_rappel_voirie_fk": {
+        "table": "c_voirie_decision_rappel_voirie",
+        "key": "id"
+    },
+    "voirie_revetement_prescrit_fk": {
+        "table": "c_voirie_revetement_prescrit",
+        "key": "id"
+    },
+    "voirie_nature_revetement_fk": {
+        "table": "c_voirie_nature_revetement",
+        "key": "id"
+    },
+    "document_permis_fk": {
+        "table": "p_document_permis",
+        "key": "id"
+    },
+    "fk_champ_fusion": {
+        "table": "c_champ_fusion",
+        "key": "id"
+    },
+    "permis_dyn_meta_id": {
+        "table": "c_permis_dyn_meta",
+        "key": "id"
+    },
+    "enquete_publique_raison_demande_id": {
+        "table": "c_enquete_publique_raison_demande",
+        "key": "id"
+    },
+    "avis_phase_3_fk": {
+        "table": "c_avis_college",
+        "key": "id"
+    },
+    "auteur_etude_fk": {
+        "table": "c_organisme",
+        "key": "id"
+    },
+    "performance_energetique_batiment_procedure_fk": {
+        "table": "c_performance_energetique_batiment_procedure",
+        "key": "id"
+    },
+    "performance_energetique_batiment_avis_fk": {
+        "table": "c_performance_energetique_batiment_avis",
+        "key": "id"
+    },
+    "agent_traitant_fk": {
+        "table": "c_agent_technique",
+        "key": "id"
+    },
+    "responsable_fk": {
+        "table": "c_organisme",
+        "key": "id"
+    },
+    "organisme_cloturant_fk": {
+        "table": "c_organisme_cloturant",
+        "key": "id"
+    },
+    "cessionnaire_id": {
+        "table": "p_cessionnaire",
+        "key": "id"
+    },
+    "securite_groupe_id": {
+        "table": "s_securite_groupe",
+        "key": "id"
+    },
+    "organisme_controleur_fk": {
+        "table": "c_organisme",
+        "key": "id"
+    },
+    "type_redevance2_fk": {
+        "table": "c_type_redevance",
+        "key": "id"
+    },
+    "avis_voirie_fk": {
+        "table": "c_avis_voirie",
+        "key": "id"
+    },
+    "type_paiement_redevance2_fk": {
+        "table": "c_type_paiement",
+        "key": "id"
+    },
+    "controleur_fk": {
+        "table": "c_controleur",
+        "key": "id"
+    },
+    "resultat_controleur_fk": {
+        "table": "c_resultat_controleur",
+        "key": "id"
+    },
+    "division_fk": {
+        "table": "c_division",
+        "key": "id"
+    },
+    "onglet_personnalise_ressource_fk": {
+        "table": "c_onglet_personnalise_ressource",
+        "key": "id"
+    },
+    "fk_type_permis": {
+        "table": "c_type_permis",
+        "key": "id"
+    },
+    "categorie_demandeur_fk": {
+        "table": "c_categorie_demandeur",
+        "key": "id"
+    },
+    "decision_college_id": {
+        "table": "c_decision_college",
+        "key": "id"
+    },
+    "assainissement_pcge_fk": {
+        "table": "c_assainissement_pcge",
+        "key": "id"
+    },
+    "assainissement_rejet_eaux_fk": {
+        "table": "c_assainissement_rejet_eaux",
+        "key": "id"
+    },
+    "assainissement_rga_fk": {
+        "table": "c_assainissement_rga",
+        "key": "id"
+    },
+    "resume_id": {
+        "table": "p_completude",
+        "key": "id"
+    },
+    "piece_manquante_completude_id": {
+        "table": "p_piece_manquante_completude",
+        "key": "id"
+    },
+    "permis_workflow_log_fk": {
+        "table": "p_permis_workflow_log",
+        "key": "id"
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "keys": [
+    {"key": "VVI", "value": "8fb77bc9f8e24882ac16de724acd7085"}, 
+    {"key": "DL", "value": "33fa81fb09654eebb68e1cc0fe5ec549"}, 
+    {"key": "MM", "value": "63a821b0c332433188f9b017cf2a4cf5"}, 
+    {"key": "MIS", "value": "0557105cd1d242818d714fa54c3a1a59"}, 
+    {"key": "DD", "value": "f9b270640c634ddf9bc6077c99cf8b8e"}, 
+    {"key": "LBR", "value": "82c3f6e757a1443da40d962ad40f0eda"}, 
+    {"key": "BONELO", "value": "bb55a8d94852464787f3c7c563bbdfab"}, 
+    {"key": "CJE", "value": "e246afc182c642a69244e72ff61ff099"}, 
+    {"key": "DJF", "value": "8b12654b64954c3190500054f88aaa71"},
+    {"key": "__default__", "value": "0463808da10d4ba19cff5a920a40033c"}
+  ]
+}

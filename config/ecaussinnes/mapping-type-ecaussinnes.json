@@ -1,0 +1,11 @@
+{
+  "keys": [
+    {"key": "DD/DP", "value": "BuildLicence"},
+    {"key": "DU", "value": "Declaration"},
+    {"key": "PL", "value": "CODT_ParcelOutLicence"},
+    {"key": "PUrb", "value": "CODT_BuildLicence"},
+    {"key": "HIST-PU", "value": "BuildLicence"},
+    {"key": "PU", "value": "UniqueLicence"},
+    {"key": "RA", "value": "BuildLicence"}
+  ]
+}

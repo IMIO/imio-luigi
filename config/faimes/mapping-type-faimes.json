@@ -1,0 +1,17 @@
+{
+  "keys": [
+    {"key": "1", "value": "CODT_UrbanCertificateOne"},
+    {"key": "2", "value": "CODT_UrbanCertificateTwo"},
+    {"key": "B", "value": "CODT_BuildLicence"},
+    {"key": "A", "value": "PreliminaryNotice"},
+    {"key": "E", "value": "EnvClass"},
+    {"key": "I", "value": "Déclaration Impétrants ??"},
+    {"key": "L", "value": "ParcelOutLicence"},
+    {"key": "N", "value": "CODT_NotaryLetter"},
+    {"key": "R", "value": "Declaration"},
+    {"key": "S", "value": "ParcelOutLicence"},
+    {"key": "U", "value": "CODT_UniqueLicence"},
+    {"key": "Z", "value": "MiscDemand"},
+    {"key": "z", "value": "MiscDemand"}
+  ]
+}

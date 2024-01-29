@@ -1,0 +1,41 @@
+{
+  "keys": [
+    {"key": "B", "value": "BuildLicence"}, 
+    {"key": "L", "value": "BuildLicence"}, 
+    {"key": "1", "value": "UrbanCertificateOne"},
+    {"key": "2", "value": "UrbanCertificateTwo"}, 
+    {"key": "A", "value": "PreliminaryNotice"},
+    {"key": "E", "value": "EnvClassTwo"},
+    {"key": "I", "value": "MiscDemand"},
+    {"key": "N", "value": "NotaryLetter"},
+    {"key": "R", "value": "EnvClassThree"},
+    {"key": "U", "value": "UniqueLicence"},
+    {"key": "Z", "value": "MiscDemand"},
+    {"key": "S", "value": "ParcelOutLicence"},
+    {"key": "E3", "value": "EnvClassThree"},
+    {"key": "IU", "value": "Inspection"},
+    {"key": "PL", "value": "MiscDemand"},
+    {"key": "IL", "value": "Inspection"},
+    {"key": "V", "value": "BuildLicence"},
+    {"key": "BC", "value": "CODT_BuildLicence"},
+    {"key": "2C", "value": "CODT_UrbanCertificateTwo"},
+    {"key": "SC", "value": "CODT_ParcelOutLicence"},
+    {"key": "3C", "value": "Inspection"},
+    {"key": "RP", "value": "ProjectMeeting"},
+    {"key": "PIC", "value": "CODT_CommercialLicence"},
+    {"key": "NIC", "value": "CODT_CommercialLicence"},
+    {"key": "DIC", "value": "CODT_CommercialLicence"},
+    {"key": "PIUR", "value": "IntegratedLicence"},
+    {"key": "PIUN", "value": "IntegratedLicence"},
+    {"key": "PIEN", "value": "IntegratedLicence"},
+    {"key": "ART65", "value": "EnvClassTwo"},
+    {"key": "AUTENV", "value": "EnvClassThree"},
+    {"key": "AUTEXP", "value": "ExplosivesPossession"},
+    {"key": "PRJASS", "value": "PreliminaryNotice"},
+    {"key": "RAIO", "value": "MiscDemand"},
+    {"key": "RECPLA", "value": "Inspection"},
+    {"key": "RPAT", "value": "ProjectMeeting"}
+  ]
+}
+
+

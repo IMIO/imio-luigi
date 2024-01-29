@@ -1,0 +1,23 @@
+{
+  "keys": [
+    {"key": "PB", "value": "BuildLicence"},
+    {"key": "pb", "value": "BuildLicence"},
+    {"key": "PUN", "value": "UniqueLicence"},
+    {"key": "CU", "value": "UrbanCertificate"},
+    {"key": "CP", "value": "PatrimonyCertificate"},
+    {"key": "AVP", "value": "MiscDemand"},
+    {"key": "Avp", "value": "MiscDemand"},
+    {"key": "avp", "value": "MiscDemand"},
+    {"key": "BCX", "value": "Ticket"},
+    {"key": "CFD", "value": "UrbanCertificateTwo"},
+    {"key": "FEC", "value": "MiscDemand"},
+    {"key": "FEW", "value": "MiscDemand"},
+    {"key": "FE", "value": "MiscDemand"},
+    {"key": "DOS", "value": "MiscDemand"},
+    {"key": "DAU", "value": "Declaration"},
+    {"key": "INF", "value": "Ticket"},
+    {"key": "PFD", "value": "Article127"},
+    {"key": "PL", "value": "ParcelOutLicence"},
+    {"key": "PIN", "value": "IntegratedLicence"}
+  ]
+}
