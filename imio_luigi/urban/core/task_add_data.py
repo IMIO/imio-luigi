@@ -93,6 +93,9 @@ class AddUrbanEvent(core.InMemoryTask):
         return data
 
     def _create_delivery(self, data):
+        if data["@type"] in self._no_delivery_event:
+            return data
+        
         if not self.get_delivery_check(data):
             return data
 
@@ -178,10 +181,15 @@ class AddUrbanEvent(core.InMemoryTask):
             "EnvClassThree": ("passage-college", "UrbanEvent"),
             "PreliminaryNotice": ("passage-college", "UrbanEvent"),
             "NotaryLetter": ("octroi-lettre-notaire", " UrbanEvent"),
-            "CODT_NotaryLetter": ("notaryletter-codt", "UrbanEvent"),
             "Division": ("decision-octroi-refus", "UrbanEvent"),
             "CODT_CommercialLicence": ("delivrance-du-permis-octroi-ou-refus-codt", " UrbanEvent"),
             "ExplosivesPossession": {"decision", "UrbanEvent"},
             "Ticket": ("decision", "UrbanEvent"),
         }
         return data[type]
+
+    @property
+    def _no_delivery_event(self):
+        return [
+            "CODT_NotaryLetter"
+        ]
