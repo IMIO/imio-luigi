@@ -30,6 +30,21 @@ def print_report(dirname):
         click.echo(f"{nbr}: {msg}")
 
 
+def print_list_files(dirnames, pretty, path):
+    output = []
+    for dirname in dirnames:
+        file_list = os.listdir(dirname)
+        if path or len(dirnames) > 1:
+            file_list = [os.path.join(dirname, filename) for filename in file_list]
+        output += file_list
+
+    join_string = " "
+    if pretty:
+        join_string = "\n"
+
+    click.echo(join_string.join(output))
+
+
 @cli.command()
 def list():
     """List tasks in error"""
@@ -48,7 +63,18 @@ def report(task_name):
         dirnames = [f"./failures/{task_name}"]
     for dirname in dirnames:
         print_report(dirname)
-
+      
+@cli.command()
+@click.argument("task-name")  
+@click.option("--pretty", default=False, is_flag=True, help="Pretty output")
+@click.option("--path", default=False, is_flag=True, help="Include path in print if only one dirname, if task-name set to 'all' path will be include")
+def list_files(task_name, pretty, path):
+    """List file in a specific task failure folder"""
+    if task_name == "all":
+        dirnames = [f"./failures/{f}" for f in os.listdir("./failures")]
+    else:
+        dirnames = [f"./failures/{task_name}"]
+    print_list_files(dirnames, pretty, path)
 
 def main():
     cli()
