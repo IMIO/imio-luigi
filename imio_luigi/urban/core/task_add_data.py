@@ -139,7 +139,7 @@ class AddUrbanEvent(core.InMemoryTask):
             "CODT_ParcelOutLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
             "MiscDemand": ("depot-de-la-demande", "UrbanEvent"),
             "NotaryLetter": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_NotaryLetter": ("depot-de-la-demande-codt", "UrbanEvent"),
+            "CODT_NotaryLetter": ("notaryletter-codt", "UrbanEvent"),
             "Division": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_CommercialLicence": ("depot-demande", "UrbanEvent"),
             "ExplosivesPossession": ("reception-de-la-demande", "UrbanEvent"),
