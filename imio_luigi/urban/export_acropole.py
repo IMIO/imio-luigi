@@ -16,6 +16,7 @@ logger = logging.getLogger("luigi-interface")
 class GetFromMySQL(core.GetFromMySQLTask):
     line_range = luigi.Parameter(default=None)
     counter = luigi.Parameter(default=None)
+    orga = luigi.Parameter()
     task_namespace = "acropole"
     login = "root"
     password = "password"
@@ -36,6 +37,14 @@ class GetFromMySQL(core.GetFromMySQLTask):
         "DETAILS",
         "CONCAT_PARCELS",
     )
+    
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def run(self):
         limit = None
@@ -58,13 +67,22 @@ class GetFromMySQL(core.GetFromMySQLTask):
             ):
                 if data[column]:
                     data[column] = data[column].strftime("%Y-%m-%dT%H:%M")
-            yield Transform(key=row.WRKDOSSIER_ID, data=data)
+            yield Transform(key=row.WRKDOSSIER_ID, data=data, orga=self.orga)
 
 
 class Transform(luigi.Task):
     task_namespace = "acropole"
     key = luigi.Parameter()
     data = luigi.DictParameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def output(self):
         return core.InMemoryTarget(f"Transform-{self.key}", mirror_on_stderr=True)
@@ -72,13 +90,22 @@ class Transform(luigi.Task):
     def run(self):
         with self.output().open("w") as f:
             f.write(json.dumps(dict(self.data)))
-        yield WriteToJSON(key=self.key)
+        yield WriteToJSON(key=self.key, orga=self.orga)
 
 
 class AddExtraData(core.AddDataInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     filepath = luigi.OptionalParameter(default=None)
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def transform_data(self, data):
         if not self.filepath:
@@ -100,9 +127,18 @@ class JoinAddresses(core.JoinFromMySQLInMemoryTask):
     columns = ["*"]
     destination = "addresses"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return AddExtraData(key=self.key)
+        return AddExtraData(key=self.key, orga=self.orga)
 
     def sql_condition(self):
         with self.input().open("r") as f:
@@ -121,9 +157,18 @@ class JoinApplicants(core.JoinFromMySQLInMemoryTask):
     columns = ["*"]
     destination = "applicants"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return JoinAddresses(key=self.key)
+        return JoinAddresses(key=self.key, orga=self.orga)
 
     def sql_condition(self):
         with self.input().open("r") as f:
@@ -134,6 +179,7 @@ class JoinApplicants(core.JoinFromMySQLInMemoryTask):
 class Mapping(core.MappingKeysInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     mapping = {
         "DOSSIER_NUMERO": "reference",
         "DETAILS": "licenceSubject",
@@ -142,33 +188,68 @@ class Mapping(core.MappingKeysInMemoryTask):
         "DOSSIER_OCTROI": "wf_transitions"
     }
 
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
     def requires(self):
-        return JoinApplicants(key=self.key)
+        return JoinApplicants(key=self.key, orga=self.orga)
 
 
 class MappingType(ucore.UrbanTypeMapping):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     mapping_filepath = "./config/acropole/mapping-type-acropole.json"
     mapping_key = "@type"
 
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
     def requires(self):
-        return Mapping(key=self.key)
+        return Mapping(key=self.key, orga=self.orga)
 
 
 class AddNISData(ucore.AddNISData):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return MappingType(key=self.key)
+        return MappingType(key=self.key, orga=self.orga)
 
 
 class AddTransitions(core.MappingValueWithFileInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     mapping_filepath = "./config/acropole/mapping-transition-acrople.json"
     mapping_key = "wf_transitions"
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     @property
     @core.utils._cache(ignore_args=True)
@@ -177,7 +258,7 @@ class AddTransitions(core.MappingValueWithFileInMemoryTask):
         return {l["key"]: l["value"] for l in mapping["keys"]}
 
     def requires(self):
-        return AddNISData(key=self.key)
+        return AddNISData(key=self.key, orga=self.orga)
 
     def transform_data(self, data):
         data = super().transform_data(data)
@@ -189,9 +270,18 @@ class AddTransitions(core.MappingValueWithFileInMemoryTask):
 class AddEvents(ucore.AddUrbanEvent):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return AddTransitions(key=self.key)
+        return AddTransitions(key=self.key, orga=self.orga)
 
     def get_recepisse_check(self, data):
         return "DOSSIER_DATEDEPOT" in data or data["DOSSIER_DATEDEPOT"]
@@ -220,22 +310,41 @@ class AddEvents(ucore.AddUrbanEvent):
 class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return AddEvents(key=self.key)
+        return AddEvents(key=self.key, orga=self.orga)
 
 
 class MappingStateToTransition(ucore.UrbanTransitionMapping):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return EventConfigUidResolver(key=self.key)
+        return EventConfigUidResolver(key=self.key, orga=self.orga)
 
 
 class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     subelements_source_key = "applicants"
     subelements_destination_key = "__children__"
     mapping_keys = {
@@ -252,13 +361,30 @@ class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
         "country": "belgium",
     }
 
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
     def requires(self):
-        return MappingStateToTransition(key=self.key)
+        return MappingStateToTransition(key=self.key, orga=self.orga)
 
 
 class AddTitle(core.InMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def transform_data(self, data):
         ref = data["reference"]
@@ -276,12 +402,13 @@ class AddTitle(core.InMemoryTask):
         return data
 
     def requires(self):
-        return CreateApplicant(key=self.key)
+        return CreateApplicant(key=self.key, orga=self.orga)
 
 
 class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     subelements_source_key = "addresses"
     subelements_destination_key = "workLocations"
     mapping_keys = {
@@ -292,50 +419,91 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
     }
     subelement_base = {}
 
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
     def requires(self):
-        return AddTitle(key=self.key)
+        return AddTitle(key=self.key, orga=self.orga)
 
 
 class TransformWorkLocation(ucore.TransformWorkLocation):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     log_failure = True
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
+    def _fix_street(self, street):
+        """Fix street with locality in parentheses"""
+        street = street.replace("(", " ")
+        street = street.replace(")", " ")
+        return street.strip()
 
     def _generate_term(self, worklocation, data):
         street = worklocation.get("street", None)
         if not street:
-            __import__('pdb').set_trace()
             return None, "Pas de nom de rue présent"
+        worklocation["street"] = self._fix_street(street)
         param_values = [
             str(v)
             for k, v in worklocation.items()
-            if v and k in ("street", "locality", "zip")
+            if v and k in ("street", "localite", "zip")
         ]
         return " ".join(param_values), None
 
     def requires(self):
-        return CreateWorkLocation(key=self.key)
+        return CreateWorkLocation(key=self.key, orga=self.orga)
 
 
 class CadastreSplit(core.StringToListInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     attribute_key = "cadastre"
     separators = [",", " ET ", "et", "|"]
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def _recursive_split(self, value, separators):
         regexp = f"[{''.join(separators)}]"
         return [v for v in re.split(regexp, value) if v and v not in separators]
 
     def requires(self):
-        return TransformWorkLocation(key=self.key)
+        return TransformWorkLocation(key=self.key, orga=self.orga)
 
 
 class TransformCadastre(ucore.TransformCadastre):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     log_failure = True
     division_mapping_path = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     @property
     def mapping_division_dict(self):
@@ -348,9 +516,9 @@ class TransformCadastre(ucore.TransformCadastre):
         return self.mapping_division_dict[data['division']]
 
     def requires(self):
-        return CadastreSplit(key=self.key)
+        return CadastreSplit(key=self.key, orga=self.orga)
 
-    def _generate_cadastre_dict(self, cadastre):
+    def _generate_cadastre_dict(self, cadastre, data):
         if cadastre == "Non cadastré":
             return None, ""
         pattern = r"(?P<division>\d{1,4})\s*(?P<section>[a-zA-Z])\s*(?P<radical>\d{0,4})\/?(?P<bis>\d{0,2})\s*(?P<exposant>[a-zA-Z]?)\s*(?P<puissance>\d{0,2})"
@@ -367,6 +535,7 @@ class TransformCadastre(ucore.TransformCadastre):
 class DropColumns(core.DropColumnInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     drop_keys = [
         "addresses",
         "applicants",
@@ -380,24 +549,50 @@ class DropColumns(core.DropColumnInMemoryTask):
         'cadastre'
     ]
 
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
     def requires(self):
-        return TransformCadastre(key=self.key)
+        return TransformCadastre(key=self.key, orga=self.orga)
 
 
 class ValidateData(core.JSONSchemaValidationTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
+    orga = luigi.Parameter()
     schema_path = "./imio_luigi/urban/schema/licence.json"
     log_failure = True
 
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
     def requires(self):
-        return DropColumns(key=self.key)
+        return DropColumns(key=self.key, orga=self.orga)
 
 
 class WriteToJSON(core.WriteToJSONTask):
     task_namespace = "acropole"
     export_filepath = luigi.Parameter()
     key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = (
+            f"./failures/{self.orga}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return ValidateData(key=self.key)
+        return ValidateData(key=self.key, orga=self.orga)
