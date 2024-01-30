@@ -450,12 +450,21 @@ class TransformWorkLocation(ucore.TransformWorkLocation):
         street = street.replace("(", " ")
         street = street.replace(")", " ")
         return street.strip()
+    
+    def _fix_localite(self, localite):
+        pattern = r".*\s+\((?P<localite>.*)\)"
+        match = re.match(pattern, localite)
+        if not match:
+            return localite
+        return match.groupdict()["localite"]
+        
 
     def _generate_term(self, worklocation, data):
         street = worklocation.get("street", None)
         if not street:
             return None, "Pas de nom de rue présent"
         worklocation["street"] = self._fix_street(street)
+        worklocation["localite"] = self._fix_localite(worklocation["localite"])
         param_values = [
             str(v)
             for k, v in worklocation.items()
