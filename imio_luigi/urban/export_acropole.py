@@ -284,13 +284,13 @@ class AddEvents(ucore.AddUrbanEvent):
         return AddTransitions(key=self.key, orga=self.orga)
 
     def get_recepisse_check(self, data):
-        return "DOSSIER_DATEDEPOT" in data or data["DOSSIER_DATEDEPOT"]
+        return "DOSSIER_DATEDEPOT" in data and bool(data.get("DOSSIER_DATEDEPOT",False))
 
     def get_recepisse_date(self, data):
         return data.get("DOSSIER_DATEDEPOT", None)
 
     def get_delivery_check(self, data):
-        return "DOSSIER_DATEDELIV" in data or data["DOSSIER_DATEDELIV"]
+        return "DOSSIER_DATEDELIV" in data and bool(data.get("DOSSIER_DATEDELIV",False))
 
     def get_delivery_date(self, data):
         return data.get("DOSSIER_DATEDELIV", None)
