@@ -51,7 +51,7 @@ run-local-berloz:
 # Mouscron
 .PHONY: run-local-mouscron
 run-local-mouscron:
-	LUIGI_CONFIG_PATH=$(CURDIR)/mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_mouscron mouscron.GetFromCSV --filepath ./data/mouscron/p/p_permis.csv --local-scheduler
+	LUIGI_CONFIG_PATH=$(CURDIR)/mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_mouscron mouscron.GetFromCSV --filepath ./data/mouscron/p/p_permis_rename.csv --local-scheduler
 
 .PHONY: run-local-mouscron-architecte
 run-local-mouscron-architecte:
