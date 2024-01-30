@@ -89,7 +89,12 @@ run-local-bastogne:
 # OLLN
 .PHONY: run-local-olln
 run-local-olln:
-	LUIGI_CONFIG_PATH=./olln.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --dbname=urb25121ac --local-scheduler
+	LUIGI_CONFIG_PATH=./olln.cfg $(BIN_PATH)luigi --orga=olln --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --dbname=urb25121ac --local-scheduler
+
+.PHONY: import-olln
+import-olln:
+	LUIGI_CONFIG_PATH=./olln.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-olln --local-scheduler
+
 
 # Acropole
 .PHONY: run-local-acropole
