@@ -940,7 +940,8 @@ class DropColumns(core.DropColumnInMemoryTask):
         'valeur_rue',
         'voirie_fk',
         'voirie_rt_fk',
-        "p_permis_avis_fonctionnaire"
+        "p_permis_avis_fonctionnaire",
+        "Unnamed: 0"
     ]
 
     def requires(self):

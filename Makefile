@@ -51,7 +51,7 @@ run-local-berloz:
 # Mouscron
 .PHONY: run-local-mouscron
 run-local-mouscron:
-	LUIGI_CONFIG_PATH=$(CURDIR)/mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_mouscron mouscron.GetFromCSV --filepath ./data/mouscron/p/p_permis_rename.csv --local-scheduler
+	LUIGI_CONFIG_PATH=$(CURDIR)/mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_mouscron mouscron.GetFromCSV --filepath ./data/mouscron/p/p_permis_rename_only.csv --local-scheduler
 
 .PHONY: run-local-mouscron-architecte
 run-local-mouscron-architecte:
@@ -60,6 +60,10 @@ run-local-mouscron-architecte:
 .PHONY: import-mouscron-architecte
 import-mouscron-architecte:
 	LUIGI_CONFIG_PATH=./mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-mouscron-architect --local-scheduler
+
+.PHONY: import-mouscron
+import-mouscron:
+	LUIGI_CONFIG_PATH=./mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-mouscron --local-scheduler
 
 # Ecaussinnes
 .PHONY: run-local-ecaussinnes
