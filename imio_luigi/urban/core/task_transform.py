@@ -30,24 +30,41 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
             data["description"]["data"] += f"<p>{error}</p>\r\n"
         return data
 
-    @abc.abstractmethod
     def _generate_term(self, worklocation, data):
         """Generate term for street to be search, return tuple of term and error"""
+        return None, None
+
+    def _generate_street_code(self, worklocation, data):
+        """Generate street code for street to be search, return tuple of street code and error"""
         return None, None
 
     def transform_data(self, data):
         new_work_locations = []
         errors = []
         for worklocation in data["workLocations"]:
+            params = {
+                "match": self.search_match,
+                "include_disable": self.seach_disable
+            }
+
             term, error = self._generate_term(worklocation, data)
             if error:
                 errors.append(error)
                 continue
-            params = {
-                "term": term,
-                "match": self.search_match,
-                "include_disable": self.seach_disable
-            }
+            if term:
+                params["term"] = term
+
+            street_code, error = self._generate_street_code(worklocation, data)
+
+            if error:
+                errors.append(error)
+                continue
+            if street_code:
+                params["street_code"] = street_code
+
+            if term is None and street_code is None:
+                raise NotImplementedError("At least one of '_generate_term' or '_generate_street_code' must be impleted")
+
             r = self.request(parameters=params)
             if r.status_code != 200:
                 errors.append(f"Response code is '{r.status_code}', expected 200")
