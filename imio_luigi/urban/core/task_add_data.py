@@ -48,29 +48,34 @@ class AddUrbanEvent(core.InMemoryTask):
             data = self._create_delivery(data)
         return data
 
-    @abc.abstractmethod
     def get_recepisse_check(self, data):
         """Return boolean check for recepisse"""
+        if self.create_recepisse:
+            raise NotImplementedError
         return None
-    
-    @abc.abstractmethod
+
     def get_recepisse_date(self, data):
         """Return date for recepisse"""
+        if self.create_recepisse:
+            raise NotImplementedError
         return None
-    
-    @abc.abstractmethod
+
     def get_delivery_check(self, data):
         """Return boolean check for delivery"""
+        if self.create_delivery:
+            raise NotImplementedError
         return None
 
-    @abc.abstractmethod
     def get_delivery_date(self, data):
         """Return date for delivery"""
+        if self.create_delivery:
+            raise NotImplementedError
         return None
 
-    @abc.abstractmethod
     def get_delivery_decision(self, data):
         """Return decision for delivery"""
+        if self.create_delivery:
+            raise NotImplementedError
         return None
     
     def _create_recepisse(self, data):
