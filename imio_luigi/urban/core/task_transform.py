@@ -117,6 +117,10 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
         """Generate cadastre dict, return tuple of cadastre and error"""
         return None, None
 
+    def _check_for_duplicate_cadastre(self, cadastre, children):
+        child_cadastre = [child["id"] for child in children if child.get("@type", None) == "Parcel"]
+        return cadastre["id"] not in child_cadastre
+
     def transform_data(self, data):
         errors = []
         if 'cadastre' not in data:
@@ -153,7 +157,8 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
             for key in ("divname", "natures", "locations", "owners", "capakey", "old"):
                 if key in new_cadastre:
                     del new_cadastre[key]
-            data["__children__"].append(new_cadastre)
+            if self._check_for_duplicate_cadastre(new_cadastre, data["__children__"]):
+                data["__children__"].append(new_cadastre)                
         return data, errors
 
 
