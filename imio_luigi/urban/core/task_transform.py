@@ -162,10 +162,13 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
         return data, errors
 
 
-class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
+class TransformContact(core.GetFromRESTServiceInMemoryTask):
+    contact_type = ""
+    data_key = ""
+    
     @property
     def request_url(self):
-        return f"{self.url}/urban/architects/@search"
+        return f"{self.url}/urban/{self.contact_type}/@search"
 
     def on_failure(self, data, errors):
         if "description" not in data:
@@ -178,13 +181,13 @@ class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
         return data
 
     @abc.abstractmethod
-    def _generate_architect_name(self, data):
-        """Generate architect name, return tuple of architect name and error"""
+    def _generate_contact_name(self, data):
+        """Generate contact name, return tuple of contact name and error"""
         return None, None
 
     def transform_data(self, data):
         errors = []
-        search, error = self._generate_architect_name(data)
+        search, error = self._generate_contact_name(data)
         if error:
             errors.append(error)
             return data, errors
@@ -195,10 +198,10 @@ class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
             return data, errors
         result = r.json()
         if result["items_total"] == 0:
-            errors.append(f"Aucun résultat pour l'architecte: '{search}'")
+            errors.append(f"Aucun résultat pour: '{search}'")
             return data, errors
         elif result["items_total"] > 1:
-            errors.append(f"Plusieurs résultats pour l'architecte: '{search}'")
+            errors.append(f"Plusieurs résultats pour: '{search}'")
             return data, errors
-        data["architects"] = [result["items"][0]["UID"]]
+        data[self.data_key] = [result["items"][0]["UID"]]
         return data, errors
