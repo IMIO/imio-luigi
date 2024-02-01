@@ -126,7 +126,7 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
         if 'cadastre' not in data:
             return data, errors
         for cadastre in data["cadastre"]:
-            params, error = self._generate_cadastre_dict(cadastre)
+            params, error = self._generate_cadastre_dict(cadastre, data)
             if error:
                 errors.append(error)
                 continue
