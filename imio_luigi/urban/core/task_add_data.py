@@ -15,11 +15,7 @@ class AddNISData(core.InMemoryTask):
     nis_list_licence_path = "./config/global/list_ins_licence.json"
     nis_data_key = "usage"
     type_key = "@type"
-    possible_value = [
-        "for_habitation",
-        "not_for_habitation",
-        "not_applicable"
-    ]
+    possible_value = ["for_habitation", "not_for_habitation", "not_applicable"]
 
     @property
     def get_list(self):
@@ -33,18 +29,17 @@ class AddNISData(core.InMemoryTask):
             raise ValueError("Missing type")
         if data[self.type_key] in self.get_list:
             data[self.nis_data_key] = self.possible_value[self.get_value(data)]
-
         return data
 
 
 class AddUrbanEvent(core.InMemoryTask):
     create_recepisse = True
     create_delivery = True
-    
+
     def transform_data(self, data):
-        if self.create_recepisse: 
+        if self.create_recepisse:
             data = self._create_recepisse(data)
-        if self.create_delivery: 
+        if self.create_delivery:
             data = self._create_delivery(data)
         return data
 
@@ -77,13 +72,13 @@ class AddUrbanEvent(core.InMemoryTask):
         if self.create_delivery:
             raise NotImplementedError
         return None
-    
+
     def _create_recepisse(self, data):
         """Create recepisse event"""
         if not self.get_recepisse_check(data):
             return data
+
         event_subtype, event_type = self._mapping_recepisse_event(data["@type"])
-        
         event = {
             "@type": event_type,
             "urbaneventtypes": event_subtype,
@@ -100,7 +95,7 @@ class AddUrbanEvent(core.InMemoryTask):
     def _create_delivery(self, data):
         if data["@type"] in self._no_delivery_event:
             return data
-        
+
         if not self.get_delivery_check(data):
             return data
 
@@ -123,8 +118,8 @@ class AddUrbanEvent(core.InMemoryTask):
         if "__children__" not in data:
             data["__children__"] = []
         data["__children__"].append(event)
-        return data    
-    
+        return data
+
     def _mapping_recepisse_event(self, type):
         data = {
             "BuildLicence": ("depot-de-la-demande", "UrbanEvent"),
@@ -154,7 +149,7 @@ class AddUrbanEvent(core.InMemoryTask):
             "Ticket": ("depot-de-la-demande-codt", "UrbanEvent"),
         }
         return data[type]
-    
+
     def _mapping_delivery_event(self, type):
         data = {
             "BuildLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
@@ -172,9 +167,15 @@ class AddUrbanEvent(core.InMemoryTask):
             ),
             "Article127": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
             "IntegratedLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_IntegratedLicence": ("delivrance-du-permis-octroi-ou-refus-codt", "UrbanEvent"),
+            "CODT_IntegratedLicence": (
+                "delivrance-du-permis-octroi-ou-refus-codt",
+                "UrbanEvent",
+            ),
             "ParcelOutLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_ParcelOutLicence": ("delivrance-du-permis-octroi-ou-refus-codt", "UrbanEvent"),
+            "CODT_ParcelOutLicence": (
+                "delivrance-du-permis-octroi-ou-refus-codt",
+                "UrbanEvent",
+            ),
             "Declaration": ("deliberation-college", "UrbanEvent"),
             "UrbanCertificateOne": ("octroi-cu1", "UrbanEvent"),
             "UrbanCertificateTwo": ("octroi-cu2", "UrbanEvent"),
@@ -187,7 +188,10 @@ class AddUrbanEvent(core.InMemoryTask):
             "PreliminaryNotice": ("passage-college", "UrbanEvent"),
             "NotaryLetter": ("octroi-lettre-notaire", " UrbanEvent"),
             "Division": ("decision-octroi-refus", "UrbanEvent"),
-            "CODT_CommercialLicence": ("delivrance-du-permis-octroi-ou-refus-codt", " UrbanEvent"),
+            "CODT_CommercialLicence": (
+                "delivrance-du-permis-octroi-ou-refus-codt",
+                " UrbanEvent",
+            ),
             "ExplosivesPossession": {"decision", "UrbanEvent"},
             "Ticket": ("decision", "UrbanEvent"),
         }
@@ -195,6 +199,4 @@ class AddUrbanEvent(core.InMemoryTask):
 
     @property
     def _no_delivery_event(self):
-        return [
-            "CODT_NotaryLetter"
-        ]
+        return ["CODT_NotaryLetter"]

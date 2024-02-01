@@ -10,6 +10,7 @@ import luigi
 import os
 import re
 
+
 class UrbanEventConfigUidResolver(core.GetFromRESTServiceInMemoryTask):
     type_list = ["UrbanEvent"]
     log_failure = True
@@ -37,22 +38,24 @@ class UrbanEventConfigUidResolver(core.GetFromRESTServiceInMemoryTask):
             auth=auth,
             params=parameters,
         )
-    
+
     def _transform_urban_event_type(self, data, licence_type):
         mapping_type = ucore.config
         error = None
-        r = self.request(mapping_type[licence_type]["config_folder"], data["urbaneventtypes"])
+        r = self.request(
+            mapping_type[licence_type]["config_folder"], data["urbaneventtypes"]
+        )
         if r.status_code != 200:
             error = f"Cannot find {data['urbaneventtypes']} in {mapping_type[licence_type]['config_folder']} config"
             return data, error
         data["urbaneventtypes"] = r.json()["UID"]
-        data['title'] = r.json()["title"]
+        data["title"] = r.json()["title"]
         return data, error
-    
+
     def transform_data(self, data):
         children = data.get("__children__", None)
         errors = []
-        
+
         if not children:
             return data, errors
 
@@ -63,7 +66,7 @@ class UrbanEventConfigUidResolver(core.GetFromRESTServiceInMemoryTask):
                 if error:
                     errors.append(error)
             new_children.append(child)
-            
+
         data["__children__"] = new_children
-        
+
         return data, errors

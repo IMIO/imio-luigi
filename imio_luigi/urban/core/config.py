@@ -1,86 +1,82 @@
 # -*- coding: utf-8 -*-
 
 DEFAULT_CONFIG = {
-    "key":  "reference",
+    "key": "reference",
     "search_on": "getReference",
-    "change_workflow": True
+    "change_workflow": True,
 }
 
-CONTACT_CONFIG = {
-    "key":  "id",
-    "search_on": "id",
-    "change_workflow": False
-}
+CONTACT_CONFIG = {"key": "id", "search_on": "id", "change_workflow": False}
 
 workflows = {
-    "codt_buildlicence_workflow" : {
+    "codt_buildlicence_workflow": {
         "default_transition": "deposit",
-        "transition" : {
+        "transition": {
             "deposit": [],
-            "accepted" : ["iscomplete", "accept"],
+            "accepted": ["iscomplete", "accept"],
             "inacceptable": ["isinacceptable"],
-            "incomplete" : ["isincomplete"],
+            "incomplete": ["isincomplete"],
             "complete": ["iscomplete"],
             "refused": ["iscomplete", "refuse"],
-            "retired": ["iscomplete", "retire"]
+            "retired": ["iscomplete", "retire"],
         },
-        "mapping" : {}
+        "mapping": {},
     },
-    "env_licence_workflow" : {
+    "env_licence_workflow": {
         "default_transition": "deposit",
-        "transition" : {
+        "transition": {
             "deposit": [],
-            "accepted" : [
+            "accepted": [
                 "iscomplete",
-                'prepare_college_opinion',
+                "prepare_college_opinion",
                 "wait_FT_opinion",
                 "prepare_final_decision",
-                "accept"
+                "accept",
             ],
             "inacceptable": ["isinacceptable"],
-            "incomplete" : ["isincomplete"],
+            "incomplete": ["isincomplete"],
             "complete": ["iscomplete"],
             "refused": [
                 "iscomplete",
-                'prepare_college_opinion',
+                "prepare_college_opinion",
                 "wait_FT_opinion",
                 "prepare_final_decision",
-                "refuse"
+                "refuse",
             ],
             "retired": [
                 "iscomplete",
-                'prepare_college_opinion',
+                "prepare_college_opinion",
                 "wait_FT_opinion",
                 "prepare_final_decision",
-                "retire"
+                "retire",
             ],
             "college_opinion": [
                 "iscomplete",
-                'prepare_college_opinion',
+                "prepare_college_opinion",
             ],
             "FT_opinion": [
                 "iscomplete",
-                'prepare_college_opinion',
+                "prepare_college_opinion",
                 "wait_FT_opinion",
             ],
             "final_decision_in_progress": [
                 "iscomplete",
-                'prepare_college_opinion',
+                "prepare_college_opinion",
                 "wait_FT_opinion",
                 "prepare_final_decision",
-            ]
+            ],
         },
-        "mapping" : {}
+        "mapping": {},
     },
-    "inspection_workflow" : {
+    "inspection_workflow": {
         "default_transition": "creation",
-        "transition" : {
+        "transition": {
             "creation": [],
             "analysis": ["analyse"],
-            "administrative_answer": ["analyse","give_answer"],
-            "ended": ["analyse","give_answer","close"],
+            "administrative_answer": ["analyse", "give_answer"],
+            "ended": ["analyse", "give_answer", "close"],
         },
-        "mapping" : {
+        "mapping": {
             "deposit": "creation",
             "accepted": "creation",
             "inacceptable": "creation",
@@ -88,19 +84,24 @@ workflows = {
             "complete": "creation",
             "refused": "creation",
             "retired": "creation",
-        }
-       
+        },
     },
-    "ticket_workflow" : {
+    "ticket_workflow": {
         "default_transition": "creation",
-        "transition" : {
+        "transition": {
             "creation": [],
             "prosecution_analysis": ["send_to_prosecutor"],
-            "in_progress_with_prosecutor": ["send_to_prosecutor","follow_with_prosecutor"],
-            "in_progress_without_prosecutor": ["send_to_prosecutor", "follow_without_prosecutor"],
-            "ended": ["send_to_prosecutor","follow_with_prosecutor","close"],
+            "in_progress_with_prosecutor": [
+                "send_to_prosecutor",
+                "follow_with_prosecutor",
+            ],
+            "in_progress_without_prosecutor": [
+                "send_to_prosecutor",
+                "follow_without_prosecutor",
+            ],
+            "ended": ["send_to_prosecutor", "follow_with_prosecutor", "close"],
         },
-        "mapping" : {
+        "mapping": {
             "deposit": "creation",
             "accepted": "creation",
             "inacceptable": "creation",
@@ -108,39 +109,39 @@ workflows = {
             "complete": "creation",
             "refused": "creation",
             "retired": "creation",
-        }
+        },
     },
-    "urbandivision_workflow" : {
+    "urbandivision_workflow": {
         "default_transition": "in_progress",
-        "transition" : {
+        "transition": {
             "in_progress": [],
             "accepted": ["accept"],
             "need_parceloutlicence": ["nonapplicable"],
         },
-        "mapping" : {
-            "deposit" : "in_progress",
+        "mapping": {
+            "deposit": "in_progress",
             "inacceptable": "need_parceloutlicence",
             "incomplete": "in_progress",
             "complete": "in_progress",
             "refused": "need_parceloutlicence",
             "retired": "need_parceloutlicence",
-        }
+        },
     },
-    "urban_licence_workflow" : {
+    "urban_licence_workflow": {
         "default_transition": "in_progress",
-        "transition" : {
+        "transition": {
             "in_progress": [],
             "accepted": ["accept"],
             "incomplete": ["isincomplete"],
             "refused": ["refuse"],
             "retired": ["retire"],
         },
-        "mapping" : {
-            "deposit" : "in_progress",
+        "mapping": {
+            "deposit": "in_progress",
             "inacceptable": "refused",
-            "complete": "in_progress"
-        }
-    }
+            "complete": "in_progress",
+        },
+    },
 }
 
 config = {
@@ -327,7 +328,7 @@ config = {
         "workflow": "codt_buildlicence_workflow",
     },
     "ExplosivesPossession": {
-        "folder":"ExplosivesPossession",
+        "folder": "ExplosivesPossession",
         "config_folder": "explosivespossession",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
@@ -337,5 +338,5 @@ config = {
         "config_folder": "patrimonycertificate",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
-    }
+    },
 }

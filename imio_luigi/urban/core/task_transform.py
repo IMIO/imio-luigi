@@ -42,10 +42,7 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         new_work_locations = []
         errors = []
         for worklocation in data["workLocations"]:
-            params = {
-                "match": self.search_match,
-                "include_disable": self.seach_disable
-            }
+            params = {"match": self.search_match, "include_disable": self.seach_disable}
 
             term, error = self._generate_term(worklocation, data)
             if error:
@@ -63,7 +60,9 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
                 params["street_code"] = street_code
 
             if term is None and street_code is None:
-                raise NotImplementedError("At least one of '_generate_term' or '_generate_street_code' must be impleted")
+                raise NotImplementedError(
+                    "At least one of '_generate_term' or '_generate_street_code' must be impleted"
+                )
 
             r = self.request(parameters=params)
             if r.status_code != 200:
@@ -118,12 +117,14 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
         return None, None
 
     def _check_for_duplicate_cadastre(self, cadastre, children):
-        child_cadastre = [child["id"] for child in children if child.get("@type", None) == "Parcel"]
+        child_cadastre = [
+            child["id"] for child in children if child.get("@type", None) == "Parcel"
+        ]
         return cadastre["id"] not in child_cadastre
 
     def transform_data(self, data):
         errors = []
-        if 'cadastre' not in data:
+        if "cadastre" not in data:
             return data, errors
         for cadastre in data["cadastre"]:
             params, error = self._generate_cadastre_dict(cadastre, data)
@@ -158,14 +159,14 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
                 if key in new_cadastre:
                     del new_cadastre[key]
             if self._check_for_duplicate_cadastre(new_cadastre, data["__children__"]):
-                data["__children__"].append(new_cadastre)                
+                data["__children__"].append(new_cadastre)
         return data, errors
 
 
 class TransformContact(core.GetFromRESTServiceInMemoryTask):
     contact_type = ""
     data_key = ""
-    
+
     @property
     def request_url(self):
         return f"{self.url}/urban/{self.contact_type}/@search"

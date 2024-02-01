@@ -11,9 +11,10 @@ import luigi
 import os
 import re
 
+
 class UrbanTransitionMapping(core.InMemoryTask):
     log_failure = False
-    
+
     def log_failure_output(self):
         fname = self.key.replace("/", "-")
         fpath = (
@@ -21,7 +22,7 @@ class UrbanTransitionMapping(core.InMemoryTask):
             f"{self.__class__.__name__}/{fname}.json"
         )
         return luigi.LocalTarget(fpath)
-    
+
     def on_failure(self, data, errors):
         if "description" not in data:
             data["description"] = {
@@ -49,7 +50,7 @@ class UrbanTransitionMapping(core.InMemoryTask):
         config = ucore.config
         workflows = ucore.workflows
 
-        lic_type = data.get('@type', None)
+        lic_type = data.get("@type", None)
         if lic_type is None:
             raise RuntimeError("Missing type")
         if lic_type not in config:
@@ -68,18 +69,19 @@ class UrbanTransitionMapping(core.InMemoryTask):
             else:
                 data["wf_transitions"] = []
                 return data
-        
+
         data["wf_transitions"] = workflows[workflow]["transition"][target_state]
         return data
-    
+
     def run(self):
         with self.input().open("r") as input_f:
             with self.output().open("w") as output_f:
                 data = json.load(input_f)
-                try :
+                try:
                     json.dump(self.transform_data(data), output_f)
                 except Exception as e:
                     self._handle_exception(data, e, output_f)
+
 
 class UrbanTypeMapping(core.MappingValueWithFileInMemoryTask):
     log_failure = True
@@ -91,7 +93,7 @@ class UrbanTypeMapping(core.MappingValueWithFileInMemoryTask):
         "ParcelOutLicence",
         "NotaryLetter",
         "UniqueLicence",
-        "IntegratedLicence"
+        "IntegratedLicence",
     ]
     codt_start_date = datetime(2017, 6, 1)
     codt_start_year = 2017
@@ -143,7 +145,9 @@ class UrbanTypeMapping(core.MappingValueWithFileInMemoryTask):
         if self.mapping_key not in data:
             raise (f"Manque la clé {self.mapping_key}")
         if data[self.mapping_key] not in ucore.config:
-            raise (f"le type : {data[self.mapping_key]} n'est pas un type présent dans Urban")
+            raise (
+                f"le type : {data[self.mapping_key]} n'est pas un type présent dans Urban"
+            )
         if data[self.mapping_key] not in self.codt_trigger:
             return data
 
@@ -176,7 +180,7 @@ class UrbanTypeMapping(core.MappingValueWithFileInMemoryTask):
         with self.input().open("r") as input_f:
             with self.output().open("w") as output_f:
                 data = json.load(input_f)
-                try :
+                try:
                     json.dump(self.transform_data(data), output_f)
                 except Exception as e:
                     self._handle_exception(data, e, output_f)
