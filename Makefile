@@ -65,6 +65,10 @@ import-mouscron-architecte:
 import-mouscron:
 	LUIGI_CONFIG_PATH=./mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-mouscron --local-scheduler
 
+.PHONY: run-local-fix-ref-mouscron
+run-local-fix-ref-mouscron:
+	LUIGI_CONFIG_PATH=$(CURDIR)/mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.fix_ref_mouscron mouscron.GetJSONFile --path ./result-mouscron-preprocess --local-scheduler
+
 # Ecaussinnes
 .PHONY: run-local-ecaussinnes
 run-local-ecaussinnes:
