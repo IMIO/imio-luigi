@@ -96,6 +96,13 @@
         "type": "string"
       }
     },
+    "notaryContact": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "string"
+      }
+    },
     "foldermanagers": {
       "type": "array",
       "minItems": 1,
