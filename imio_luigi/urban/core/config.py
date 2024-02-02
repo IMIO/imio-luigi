@@ -150,144 +150,168 @@ config = {
         "config_folder": "buildlicence",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "CODT_BuildLicence": {
         "folder": "codt_buildlicences",
         "config_folder": "codt_buildlicence",
         "config": DEFAULT_CONFIG,
         "workflow": "codt_buildlicence_workflow",
+        'contact_type': 'Applicant'
     },
     "Article127": {
         "folder": "article127s",
         "config_folder": "article127",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "CODT_Article127": {
         "folder": "codt_article127s",
         "config_folder": "codt_article127",
         "config": DEFAULT_CONFIG,
         "workflow": "codt_buildlicence_workflow",
+        'contact_type': 'Applicant'
     },
     "IntegratedLicence": {
         "folder": "integratedlicences",
         "config_folder": "integratedlicence",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "CODT_IntegratedLicence": {
         "folder": "codt_integratedlicences",
         "config_folder": "codt_integratedlicence",
         "config": DEFAULT_CONFIG,
         "workflow": "codt_buildlicence_workflow",
+        'contact_type': 'Applicant'
     },
     "UniqueLicence": {
         "folder": "uniquelicences",
         "config_folder": "uniquelicence",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "CODT_UniqueLicence": {
         "folder": "codt_uniquelicences",
         "config_folder": "codt_uniquelicence",
         "config": DEFAULT_CONFIG,
         "workflow": "codt_buildlicence_workflow",
+        'contact_type': 'Applicant'
     },
     "Declaration": {
         "folder": "declarations",
         "config_folder": "declaration",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "UrbanCertificateOne": {
         "folder": "urbancertificateones",
         "config_folder": "urbancertificateone",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Proprietary'
     },
     "CODT_UrbanCertificateOne": {
         "folder": "codt_urbancertificateones",
         "config_folder": "codt_urbancertificateone",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "UrbanCertificateTwo": {
         "folder": "urbancertificatetwos",
         "config_folder": "urbancertificatetwo",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Proprietary'
     },
     "CODT_UrbanCertificateTwo": {
         "folder": "codt_urbancertificatetwos",
         "config_folder": "codt_urbancertificatetwo",
         "config": DEFAULT_CONFIG,
         "workflow": "codt_buildlicence_workflow",
+        'contact_type': 'Applicant'
     },
     "PreliminaryNotice": {
         "folder": "preliminarynotices",
         "config_folder": "preliminarynotice",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "EnvClassOne": {
         "folder": "envclassones",
         "config_folder": "envclassone",
         "config": DEFAULT_CONFIG,
         "workflow": "env_licence_workflow",
+        'contact_type': 'Corporation'
     },
     "EnvClassTwo": {
         "folder": "envclasstwos",
         "config_folder": "envclasstwo",
         "config": DEFAULT_CONFIG,
         "workflow": "env_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "EnvClassThree": {
         "folder": "envclassthrees",
         "config_folder": "envclassthree",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "ParcelOutLicence": {
         "folder": "parceloutlicences",
         "config_folder": "parceloutlicence",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "CODT_ParcelOutLicence": {
         "folder": "codt_parceloutlicences",
         "config_folder": "codt_parceloutlicence",
         "config": DEFAULT_CONFIG,
         "workflow": "codt_buildlicence_workflow",
+        'contact_type': 'Applicant'
     },
     "MiscDemand": {
         "folder": "miscdemands",
         "config_folder": "miscdemand",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "NotaryLetter": {
         "folder": "notaryletters",
         "config_folder": "notaryletter",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Proprietary'
     },
     "CODT_NotaryLetter": {
         "folder": "codt_notaryletters",
         "config_folder": "codt_notaryletter",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "Inspection": {
         "folder": "inspections",
         "config_folder": "inspection",
         "config": DEFAULT_CONFIG,
         "workflow": "inspection_workflow",
+        'contact_type': 'Proprietary'
     },
     "Ticket": {
         "folder": "tickets",
         "config_folder": "ticket",
         "config": DEFAULT_CONFIG,
         "workflow": "ticket_workflow",
+        'contact_type': 'Applicant'
     },
     "Architect": {
         "folder": "architects",
@@ -314,29 +338,34 @@ config = {
         "config_folder": "division",
         "config": DEFAULT_CONFIG,
         "workflow": "urbandivision_workflow",
+        'contact_type': 'Proprietary'
     },
     "ProjectMeeting": {
         "folder": "projectmeeting",
         "config_folder": "projectmeeting",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "CODT_CommercialLicence": {
         "folder": "codt_commerciallicences",
         "config_folder": "codt_commerciallicence",
         "config": DEFAULT_CONFIG,
         "workflow": "codt_buildlicence_workflow",
+        'contact_type': 'Applicant'
     },
     "ExplosivesPossession": {
         "folder": "ExplosivesPossession",
         "config_folder": "explosivespossession",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
     "PatrimonyCertificate": {
         "folder": "patrimonycertificates",
         "config_folder": "patrimonycertificate",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
+        'contact_type': 'Applicant'
     },
 }
