@@ -2,6 +2,7 @@
 
 
 from imio_luigi import core, utils
+from imio_luigi.urban import core as ucore
 
 import abc
 import json
@@ -200,3 +201,26 @@ class AddUrbanEvent(core.InMemoryTask):
     @property
     def _no_delivery_event(self):
         return ["CODT_NotaryLetter"]
+
+
+class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
+    subelements_source_key = "applicants"
+    subelements_destination_key = "__children__"
+
+    @property
+    @abc.abstractmethod
+    def mapping_keys(self):
+        return None
+
+    @property
+    @abc.abstractmethod
+    def subelement_base(self):
+        return None
+
+    def apply_subelement_base_type(self, data):
+        self.subelement_base["@type"] = ucore.config[data["@type"]]["contact_type"]
+
+    def transform_data(self, data):
+        self.apply_subelement_base_type(data)
+        data = super().transform_data(data)
+        return data
