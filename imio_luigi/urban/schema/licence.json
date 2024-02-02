@@ -317,7 +317,8 @@
           "type": "string",
           "enum": [
             "Applicant",
-            "Corporation"
+            "Corporation",
+            "Proprietary"
           ]
         },
         "title": {
