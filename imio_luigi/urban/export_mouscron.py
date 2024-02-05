@@ -412,7 +412,7 @@ class MappingStateToTransition(ucore.UrbanTransitionMapping):
     def requires(self):
         return EventConfigUidResolver(key=self.key)
 
-class CreateApplicant(core.CreateSubElementInMemoryTask):
+class CreateApplicant(ucore.CreateApplicant):
     task_namespace = "mouscron"
     key = luigi.Parameter()
     subelement_container_key = "__children__"
@@ -431,7 +431,7 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
         "telephone": "phone",
         "mail": "email"
     }
-    subelement_base = {"@type": "Applicant"}
+    subelement_base = {}
 
     def _get_values(self, data):
         output = {}
@@ -476,6 +476,7 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
         return data
     
     def transform_data(self, data):
+        self.apply_subelement_base_type(data)
         applicants = data.get("p_demandeur", None)
         if not applicants:
             return data
