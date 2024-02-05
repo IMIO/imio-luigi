@@ -11,7 +11,8 @@ from imio_luigi.urban.core.task_transform import (
 
 __all__ = (
     "config",
-    "workflows" "AddNISData",
+    "workflows",
+    "AddNISData",
     "AddUrbanEvent",
     "UrbanEventConfigUidResolver",
     "UrbanTransitionMapping",
