@@ -555,7 +555,8 @@ class DropColumns(core.DropColumnInMemoryTask):
         'DOSSIER_REFCOM',
         'DOSSIER_TYPEIDENT',
         'TDOSSIER_OBJETFR',
-        'cadastre'
+        'cadastre',
+        "zip"
     ]
 
     def log_failure_output(self):
