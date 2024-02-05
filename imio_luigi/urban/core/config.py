@@ -213,7 +213,7 @@ config = {
         "config_folder": "urbancertificateone",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
-        'contact_type': 'Proprietary'
+        'contact_type': 'Applicant'
     },
     "CODT_UrbanCertificateOne": {
         "folder": "codt_urbancertificateones",
@@ -227,7 +227,7 @@ config = {
         "config_folder": "urbancertificatetwo",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
-        'contact_type': 'Proprietary'
+        'contact_type': 'Applicant'
     },
     "CODT_UrbanCertificateTwo": {
         "folder": "codt_urbancertificatetwos",
@@ -248,7 +248,7 @@ config = {
         "config_folder": "envclassone",
         "config": DEFAULT_CONFIG,
         "workflow": "env_licence_workflow",
-        'contact_type': 'Corporation'
+        'contact_type': 'Applicant'
     },
     "EnvClassTwo": {
         "folder": "envclasstwos",
@@ -290,7 +290,7 @@ config = {
         "config_folder": "notaryletter",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
-        'contact_type': 'Proprietary'
+        'contact_type': 'Applicant'
     },
     "CODT_NotaryLetter": {
         "folder": "codt_notaryletters",
@@ -304,7 +304,7 @@ config = {
         "config_folder": "inspection",
         "config": DEFAULT_CONFIG,
         "workflow": "inspection_workflow",
-        'contact_type': 'Proprietary'
+        'contact_type': 'Applicant'
     },
     "Ticket": {
         "folder": "tickets",
