@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from imio_luigi import core, utils
-from imio_luigi.urban.address import find_address_match
-from imio_luigi.urban import tools
 from imio_luigi.urban import core as ucore
+from imio_luigi.urban import tools
+from imio_luigi.urban.address import find_address_match
 
 import json
 import logging
 import luigi
 import re
+
 
 logger = logging.getLogger("luigi-interface")
 
@@ -37,13 +38,10 @@ class GetFromMySQL(core.GetFromMySQLTask):
         "DETAILS",
         "CONCAT_PARCELS",
     )
-    
+
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def run(self):
@@ -57,7 +55,7 @@ class GetFromMySQL(core.GetFromMySQLTask):
                 raise ValueError("Wrong Line Range")
             line_range = self.line_range.split("-")
             limit = int(line_range[0])
-            offset = int(line_range[1])-int(line_range[0])
+            offset = int(line_range[1]) - int(line_range[0])
         for row in self.query(limit=limit, offset=offset):
             data = {k: getattr(row, k) for k in row._fields}
             for column in (
@@ -78,10 +76,7 @@ class Transform(luigi.Task):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def output(self):
@@ -101,10 +96,7 @@ class AddExtraData(core.AddDataInMemoryTask):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def transform_data(self, data):
@@ -131,10 +123,7 @@ class JoinAddresses(core.JoinFromMySQLInMemoryTask):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -161,10 +150,7 @@ class JoinApplicants(core.JoinFromMySQLInMemoryTask):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -185,15 +171,12 @@ class Mapping(core.MappingKeysInMemoryTask):
         "DETAILS": "licenceSubject",
         "DOSSIER_TDOSSIERID": "@type",
         "CONCAT_PARCELS": "cadastre",
-        "DOSSIER_OCTROI": "wf_transitions"
+        "DOSSIER_OCTROI": "wf_transitions",
     }
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -209,10 +192,7 @@ class MappingType(ucore.UrbanTypeMapping):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -226,10 +206,7 @@ class AddNISData(ucore.AddNISData):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -245,10 +222,7 @@ class AddTransitions(core.MappingValueWithFileInMemoryTask):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     @property
@@ -274,23 +248,24 @@ class AddEvents(ucore.AddUrbanEvent):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
         return AddTransitions(key=self.key, orga=self.orga)
 
     def get_recepisse_check(self, data):
-        return "DOSSIER_DATEDEPOT" in data and bool(data.get("DOSSIER_DATEDEPOT",False))
+        return "DOSSIER_DATEDEPOT" in data and bool(
+            data.get("DOSSIER_DATEDEPOT", False)
+        )
 
     def get_recepisse_date(self, data):
         return data.get("DOSSIER_DATEDEPOT", None)
 
     def get_delivery_check(self, data):
-        return "DOSSIER_DATEDELIV" in data and bool(data.get("DOSSIER_DATEDELIV",False))
+        return "DOSSIER_DATEDELIV" in data and bool(
+            data.get("DOSSIER_DATEDELIV", False)
+        )
 
     def get_delivery_date(self, data):
         return data.get("DOSSIER_DATEDELIV", None)
@@ -298,9 +273,9 @@ class AddEvents(ucore.AddUrbanEvent):
     def get_delivery_decision(self, data):
         if "wf_transitions" not in data:
             return None
-        if data.get("wf_transitions")[0] in ['accepted']:
+        if data.get("wf_transitions")[0] in ["accepted"]:
             decision = "favorable"
-        elif data.get("wf_transitions")[0] in ['refused', 'inacceptable']:
+        elif data.get("wf_transitions")[0] in ["refused", "inacceptable"]:
             decision = "defavorable"
         else:
             return None
@@ -314,10 +289,7 @@ class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -331,10 +303,7 @@ class MappingStateToTransition(ucore.UrbanTransitionMapping):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -360,10 +329,7 @@ class CreateApplicant(ucore.CreateApplicant):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -377,10 +343,7 @@ class AddTitle(core.InMemoryTask):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def transform_data(self, data):
@@ -418,10 +381,7 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -436,10 +396,7 @@ class TransformWorkLocation(ucore.TransformWorkLocation):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def _fix_street(self, street):
@@ -447,14 +404,13 @@ class TransformWorkLocation(ucore.TransformWorkLocation):
         street = street.replace("(", " ")
         street = street.replace(")", " ")
         return street.strip()
-    
+
     def _fix_localite(self, localite):
         pattern = r".*\s+\((?P<localite>.*)\)"
         match = re.match(pattern, localite)
         if not match:
             return localite
         return match.groupdict()["localite"]
-        
 
     def _generate_term(self, worklocation, data):
         street = worklocation.get("street", None)
@@ -482,10 +438,7 @@ class CadastreSplit(core.StringToListInMemoryTask):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def _recursive_split(self, value, separators):
@@ -505,10 +458,7 @@ class TransformCadastre(ucore.TransformCadastre):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     @property
@@ -517,9 +467,9 @@ class TransformCadastre(ucore.TransformCadastre):
         return {l["key"]: l["value"] for l in mapping["keys"]}
 
     def _mapping_division(self, data):
-        if 'division' not in data or data['division'] not in self.mapping_division_dict:
+        if "division" not in data or data["division"] not in self.mapping_division_dict:
             return "99999"
-        return self.mapping_division_dict[data['division']]
+        return self.mapping_division_dict[data["division"]]
 
     def requires(self):
         return CadastreSplit(key=self.key, orga=self.orga)
@@ -546,22 +496,19 @@ class DropColumns(core.DropColumnInMemoryTask):
         "addresses",
         "applicants",
         "WRKDOSSIER_ID",
-        'DOSSIER_DATEDELIV',
-        'DOSSIER_DATEDEPART',
-        'DOSSIER_DATEDEPOT',
-        'DOSSIER_REFCOM',
-        'DOSSIER_TYPEIDENT',
-        'TDOSSIER_OBJETFR',
-        'cadastre',
-        "zip"
+        "DOSSIER_DATEDELIV",
+        "DOSSIER_DATEDEPART",
+        "DOSSIER_DATEDEPOT",
+        "DOSSIER_REFCOM",
+        "DOSSIER_TYPEIDENT",
+        "TDOSSIER_OBJETFR",
+        "cadastre",
+        "zip",
     ]
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -577,10 +524,7 @@ class ValidateData(core.JSONSchemaValidationTask):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
@@ -595,10 +539,7 @@ class WriteToJSON(core.WriteToJSONTask):
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
-        fpath = (
-            f"./failures/{self.orga}-"
-            f"{self.__class__.__name__}/{fname}.json"
-        )
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
         return luigi.LocalTarget(fpath)
 
     def requires(self):
