@@ -341,12 +341,10 @@ class MappingStateToTransition(ucore.UrbanTransitionMapping):
         return EventConfigUidResolver(key=self.key, orga=self.orga)
 
 
-class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
+class CreateApplicant(ucore.CreateApplicant):
     task_namespace = "acropole"
     key = luigi.Parameter()
     orga = luigi.Parameter()
-    subelements_source_key = "applicants"
-    subelements_destination_key = "__children__"
     mapping_keys = {
         "NOM": "name1",
         "PRENOM": "name2",
@@ -357,7 +355,6 @@ class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
         "GSM": "gsm",
     }
     subelement_base = {
-        "@type": "Applicant",
         "country": "belgium",
     }
 
