@@ -1,0 +1,6 @@
+{
+  "default_prefix": "result",
+  "special_mapping": {
+    "flemalle": "result-flemalle-notaries"
+  }
+}

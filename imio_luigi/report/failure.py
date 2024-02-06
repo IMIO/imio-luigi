@@ -45,12 +45,44 @@ def print_list_files(dirnames, pretty, path):
     click.echo(join_string.join(output))
 
 
+def get_report_config():
+    with open("./report.json", "r") as f:
+        config = json.load(f)
+    return config
+
+
+def get_result_count(failure_direname):
+    namespace = failure_direname.split("-")[0]
+    default_prefix = get_report_config()["default_prefix"]
+    special_mapping = get_report_config()["special_mapping"]
+    if namespace in special_mapping:
+        dir_path = f"./{special_mapping[namespace]}"
+    else:
+        dir_path = f"./{default_prefix}-{namespace}"
+
+    if not os.path.isdir(dir_path):
+        return None
+
+    count = len(os.listdir(dir_path))
+
+    return count
+
+
 @cli.command()
-def list():
+@click.option("--percent", default=False, is_flag=True, help="Add percentage of failure against the result")
+def list(percent):
     """List tasks in error"""
     for dirname in sorted(os.listdir("./failures")):
         count = len(os.listdir(f"./failures/{dirname}"))
-        click.echo(f"{dirname} ({count})")
+        output = f"{dirname} ({count})"
+        if percent:
+            result_count = get_result_count(dirname)
+            if result_count:
+                percentage = (count / result_count) * 100
+                output += f" {round(percentage, 2)}%)"
+            else:
+                output += f" (N/A)"
+        click.echo(output)
 
 
 @cli.command()
