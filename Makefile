@@ -24,6 +24,9 @@ run-local-dison:
 run-local-faimes:
 	LUIGI_CONFIG_PATH=$(CURDIR)/faimes.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_faimes faimes.GetFromAccess --filepath ./data/faimes/AgoraWin/json/URBA.json --local-scheduler
 
+.PHONY: import-faimes
+import-faimes:
+	LUIGI_CONFIG_PATH=./faimes.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-faimes --local-scheduler
 
 # Arlon
 .PHONY: run-local-arlon
