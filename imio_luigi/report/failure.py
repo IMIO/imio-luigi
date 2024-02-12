@@ -68,6 +68,22 @@ def get_result_count(failure_direname):
     return count
 
 
+def add_color(output, percentage):
+    color_mapping = {
+        25: "green",
+        50: "yellow",
+        75: "red",
+    }
+    color_style = "bright_green"
+    for percent, color in color_mapping.items():
+        if percentage < percent:
+            break
+        if percentage >= percent:
+            color_style = color
+
+    return click.style(output, fg=color_style)
+
+
 @cli.command()
 @click.option("--percent", default=False, is_flag=True, help="Add percentage of failure against the result")
 def list(percent):
@@ -80,6 +96,7 @@ def list(percent):
             if result_count:
                 percentage = (count / result_count) * 100
                 output += f" {round(percentage, 2)}%)"
+                output = add_color(output, percentage)
             else:
                 output += f" (N/A)"
         click.echo(output)
