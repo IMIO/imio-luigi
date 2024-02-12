@@ -2,7 +2,7 @@
 
 from imio_luigi import core, utils
 from imio_luigi.urban import core as ucore
-from imio_luigi.urban.address import find_address_match
+from imio_luigi.urban.address import find_address_similarity
 
 import abc
 import json
@@ -73,12 +73,17 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
                 errors.append(f"Aucun résultat pour l'adresse: '{params['term']}'")
                 continue
             elif result["items_total"] > 1:
-                match = find_address_match(result["items"], worklocation["street"])
+                match, similarity_error = find_address_similarity(result["items"], term)
                 if not match:
-                    errors.append(
-                        f"Plusieurs résultats pour l'adresse: '{params['term']}'"
-                    )
+                    error = "Plusieurs résultats"
+                    if street_code:
+                        error += f" pour le code de rue: '{street_code}'"
+                    elif term:
+                        error += f" pour l'adresse: '{term}'"
+                    errors.append(error)
                     continue
+                if similarity_error:
+                    errors.append(similarity_error)
             else:
                 match = result["items"][0]
             new_work_locations.append(
