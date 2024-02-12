@@ -103,6 +103,7 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
 
 class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
     browse_old_parcels = True
+    mapping_division_dict = {}
 
     @property
     def request_url(self):
@@ -132,6 +133,10 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
         ]
         return cadastre["id"] not in child_cadastre
 
+    def _mapping_division(self, divison):
+        if divison not in self.mapping_division_dict:
+            return "99999"
+        return self.mapping_division_dict[divison]
     def transform_data(self, data):
         errors = []
         if "cadastre" not in data:
