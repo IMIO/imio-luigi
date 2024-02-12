@@ -204,6 +204,8 @@ class TransformContact(core.GetFromRESTServiceInMemoryTask):
     def transform_data(self, data):
         errors = []
         search, error = self._generate_contact_name(data)
+        if search is None:
+            return data, errors
         if error:
             errors.append(error)
             return data, errors
