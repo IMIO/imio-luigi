@@ -70,7 +70,12 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
                 continue
             result = r.json()
             if result["items_total"] == 0:
-                errors.append(f"Aucun résultat pour l'adresse: '{params['term']}'")
+                error = "Aucun résultat"
+                if street_code:
+                    error += f" pour le code de rue: '{street_code}'"
+                elif term:
+                    error += f" pour l'adresse: '{term}'"
+                errors.append(error)
                 continue
             elif result["items_total"] > 1:
                 match, similarity_error = find_address_similarity(result["items"], term)
