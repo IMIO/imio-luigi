@@ -20,9 +20,9 @@ run-local-dison:
 	LUIGI_CONFIG_PATH=$(CURDIR)/dison.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_dison dison.GetFromAccess --counter="500" --filepath ./data/dison/AgoraWin/json/URBA.json --local-scheduler
 
 # Faimes
-.PHONY: run-local-dison
+.PHONY: run-local-faimes
 run-local-faimes:
-	LUIGI_CONFIG_PATH=$(CURDIR)/faimes.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_faimes faimes.GetFromAccess --filepath ./data/faimes/AgoraWin/json/URBA.json --local-scheduler
+	LUIGI_CONFIG_PATH=$(CURDIR)/faimes.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_faimes faimes.GetFromAccess --filepath ./data/faimes/AgoraWin/json/URBA_missingg_permis.json --local-scheduler
 
 .PHONY: import-faimes
 import-faimes:
