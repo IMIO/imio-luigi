@@ -106,6 +106,11 @@ run-local-olln:
 import-olln:
 	LUIGI_CONFIG_PATH=./olln.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-olln --local-scheduler
 
+#Hensies
+.PHONY: run-local-hensies
+run-local-hensies:
+	LUIGI_CONFIG_PATH=./hensies.cfg $(BIN_PATH)luigi --orga=hensies --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --dbname=urb53039ac --local-scheduler
+
 
 # Acropole
 .PHONY: run-local-acropole
