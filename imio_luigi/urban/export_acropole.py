@@ -417,7 +417,8 @@ class TransformWorkLocation(ucore.TransformWorkLocation):
         if not street:
             return None, "Pas de nom de rue présent"
         worklocation["street"] = self._fix_street(street)
-        worklocation["localite"] = self._fix_localite(worklocation["localite"])
+        if "localite" in worklocation:
+            worklocation["localite"] = self._fix_localite(worklocation["localite"])
         param_values = [
             str(v)
             for k, v in worklocation.items()
