@@ -111,6 +111,9 @@ import-olln:
 run-local-hensies:
 	LUIGI_CONFIG_PATH=./hensies.cfg $(BIN_PATH)luigi --orga=hensies --module imio_luigi.urban.export_acropole acropole.GetFromMySQL --dbname=urb53039ac --local-scheduler
 
+.PHONY: import-hensies
+import-hensies:
+	LUIGI_CONFIG_PATH=./hensies.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-hensies --local-scheduler
 
 # Acropole
 .PHONY: run-local-acropole
