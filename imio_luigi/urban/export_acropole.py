@@ -235,6 +235,8 @@ class AddTransitions(core.MappingValueWithFileInMemoryTask):
         return AddNISData(key=self.key, orga=self.orga)
 
     def transform_data(self, data):
+        if self.mapping_key in data:
+            data[self.mapping_key] = str(data[self.mapping_key])
         data = super().transform_data(data)
         if self.mapping_key in data:
             data[self.mapping_key] = [data[self.mapping_key]]
