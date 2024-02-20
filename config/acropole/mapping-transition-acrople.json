@@ -43,16 +43,16 @@
     {"key": "-12", "value": "accepted"},
     {"key": "-11", "value": "retired"},
     {"key": "-10", "value": "retired"},
-    {"key": "-9:", "value": "deposit"},
-    {"key": "-8:", "value": "refused"},
-    {"key": "-7:", "value": "accepted"},
-    {"key": "-6:", "value": "accepted"},
-    {"key": "-5:", "value": "refused"},
-    {"key": "-4:", "value": "retired"},
-    {"key": "-3:", "value": "deposit"},
-    {"key": "-2:", "value": "retired"},
-    {"key": "-1:", "value": "deposit"},
-    {"key": "0: ", "value": "refused"},
-    {"key": "1: ", "value": "accepted"}
+    {"key": "-9", "value": "deposit"},
+    {"key": "-8", "value": "refused"},
+    {"key": "-7", "value": "accepted"},
+    {"key": "-6", "value": "accepted"},
+    {"key": "-5", "value": "refused"},
+    {"key": "-4", "value": "retired"},
+    {"key": "-3", "value": "deposit"},
+    {"key": "-2", "value": "retired"},
+    {"key": "-1", "value": "deposit"},
+    {"key": "0", "value": "refused"},
+    {"key": "1", "value": "accepted"}
   ]
 }
