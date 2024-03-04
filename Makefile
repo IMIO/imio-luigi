@@ -28,6 +28,11 @@ run-local-faimes:
 import-faimes:
 	LUIGI_CONFIG_PATH=./faimes.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-faimes --local-scheduler
 
+# Flemalle
+.PHONY: run-local-flemalle-notaries
+run-local-flemalle-notaries:
+	LUIGI_CONFIG_PATH=$(CURDIR)/flemalle.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_flemalle_notaire flemalle.GetFromCSV --filepath ./data/flemalle/File_V_rename.csv --local-scheduler
+
 # Arlon
 .PHONY: run-local-arlon
 run-local-arlon:
