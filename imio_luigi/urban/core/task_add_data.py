@@ -36,6 +36,7 @@ class AddNISData(core.InMemoryTask):
 class AddUrbanEvent(core.InMemoryTask):
     create_recepisse = True
     create_delivery = True
+    override_event_path = luigi.OptionalParameter(default=None)
 
     def transform_data(self, data):
         if self.create_recepisse:
@@ -121,7 +122,27 @@ class AddUrbanEvent(core.InMemoryTask):
         data["__children__"].append(event)
         return data
 
+    def get_mapping_overide_file(self):
+        if self.override_event_path is None:
+            return None
+        return json.load(open(self.override_event_path, "r"))
+
+    def get_value_from_override(self, event_type, lic_type):
+        overide_mapping = self.get_mapping_overide_file()
+        if overide_mapping is None:
+            return None
+        overide_mapping_event_specific = overide_mapping.get(event_type, None)
+        if overide_mapping_event_specific is None:
+            return None
+        if lic_type not in overide_mapping_event_specific:
+            return None
+        return tuple(overide_mapping_event_specific[lic_type])
+
     def _mapping_recepisse_event(self, type):
+        overide_mapping_value = self.get_value_from_override("recepisse", type)
+        if overide_mapping_value is not None:
+            return overide_mapping_value
+
         data = {
             "BuildLicence": ("depot-de-la-demande", "UrbanEvent"),
             "CODT_BuildLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
@@ -152,6 +173,10 @@ class AddUrbanEvent(core.InMemoryTask):
         return data[type]
 
     def _mapping_delivery_event(self, type):
+        overide_mapping_value = self.get_value_from_override("delivery", type)
+        if overide_mapping_value is not None:
+            return overide_mapping_value
+
         data = {
             "BuildLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
             "CODT_BuildLicence": (
