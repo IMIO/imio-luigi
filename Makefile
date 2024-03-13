@@ -33,6 +33,11 @@ import-faimes:
 run-local-flemalle-notaries:
 	LUIGI_CONFIG_PATH=$(CURDIR)/flemalle.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_flemalle_notaire flemalle.GetFromCSV --filepath ./data/flemalle/File_V_rename.csv --local-scheduler
 
+
+.PHONY: import-flemalle
+import-flemalle:
+	LUIGI_CONFIG_PATH=./flemalle.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-flemalle --local-scheduler
+
 # Arlon
 .PHONY: run-local-arlon
 run-local-arlon:
