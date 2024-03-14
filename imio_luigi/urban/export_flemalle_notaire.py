@@ -364,6 +364,7 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
 class TransformWorkLocation(ucore.TransformWorkLocation):
     task_namespace = "flemalle"
     key = luigi.Parameter()
+    log_failure = True
     street_json = "./data/flemalle/json/Rues.json"
 
     @property
