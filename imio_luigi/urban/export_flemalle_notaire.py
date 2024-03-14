@@ -384,6 +384,8 @@ class TransformWorkLocation(ucore.TransformWorkLocation):
 
     def _handle_failed_street_code(self, worklocation, data):
         street_code, error = self._generate_street_code(worklocation, data)
+        if error:
+            return None, error
         street_name = self.get_street_dict.get(street_code, None)
         if street_name is None:
             return None, f"Pas de nom rue trouvé pour {street_code}"
@@ -392,6 +394,8 @@ class TransformWorkLocation(ucore.TransformWorkLocation):
         r = self.request(parameters=params)
         if r.status_code != 200:
             return None, f"Response code is '{r.status_code}', expected 200"
+        self.term = street_name
+        self.error_print = "term"
         return r.json(), None
 
     def requires(self):
