@@ -38,6 +38,10 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         """Generate street code for street to be search, return tuple of street code and error"""
         return None, None
 
+    def _handle_failed_street_code(self, worklocation, data):
+        """handle in case we failed to retrieve worklocation with street code"""
+        return None, None
+
     def transform_data(self, data):
         new_work_locations = []
         errors = []
@@ -69,6 +73,10 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
                 errors.append(f"Response code is '{r.status_code}', expected 200")
                 continue
             result = r.json()
+            if result["items_total"] == 0 and street_code and self._handle_failed_street_code(worklocation, data) is not None:
+                result, error = self._handle_failed_street_code(worklocation, data)
+                if error:
+                    errors.append(error)
             if result["items_total"] == 0:
                 error = "Aucun résultat"
                 if street_code:
@@ -137,6 +145,7 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
         if divison not in self.mapping_division_dict:
             return "99999"
         return self.mapping_division_dict[divison]
+
     def transform_data(self, data):
         errors = []
         if "cadastre" not in data:
