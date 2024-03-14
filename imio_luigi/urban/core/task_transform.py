@@ -48,22 +48,24 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         for worklocation in data["workLocations"]:
             params = {"match": self.search_match, "include_disable": self.seach_disable}
 
-            term, error = self._generate_term(worklocation, data)
+            self.term, error = self._generate_term(worklocation, data)
             if error:
                 errors.append(error)
                 continue
-            if term:
-                params["term"] = term
+            if self.term:
+                self.error_print = "term"
+                params["term"] = self.term
 
-            street_code, error = self._generate_street_code(worklocation, data)
+            self.street_code, error = self._generate_street_code(worklocation, data)
 
             if error:
                 errors.append(error)
                 continue
-            if street_code:
-                params["street_code"] = street_code
+            if self.street_code:
+                self.error_print = "street_code"
+                params["street_code"] = self.street_code
 
-            if term is None and street_code is None:
+            if self.term is None and self.street_code is None:
                 raise NotImplementedError(
                     "At least one of '_generate_term' or '_generate_street_code' must be impleted"
                 )
@@ -73,26 +75,27 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
                 errors.append(f"Response code is '{r.status_code}', expected 200")
                 continue
             result = r.json()
-            if result["items_total"] == 0 and street_code and self._handle_failed_street_code(worklocation, data) is not None:
+            if result["items_total"] == 0 and self.street_code and self._handle_failed_street_code(worklocation, data) is not None:
                 result, error = self._handle_failed_street_code(worklocation, data)
                 if error:
                     errors.append(error)
+                    continue
             if result["items_total"] == 0:
                 error = "Aucun résultat"
-                if street_code:
-                    error += f" pour le code de rue: '{street_code}'"
-                elif term:
-                    error += f" pour l'adresse: '{term}'"
+                if self.error_print == "street_code":
+                    error += f" pour le code de rue: '{self.street_code}'"
+                elif self.error_print == "term":
+                    error += f" pour l'adresse: '{self.term}'"
                 errors.append(error)
                 continue
             elif result["items_total"] > 1:
-                match, similarity_error = find_address_similarity(result["items"], term)
+                match, similarity_error = find_address_similarity(result["items"], self.term)
                 if not match:
                     error = "Plusieurs résultats"
-                    if street_code:
-                        error += f" pour le code de rue: '{street_code}'"
-                    elif term:
-                        error += f" pour l'adresse: '{term}'"
+                    if self.error_print == "street_code":
+                        error += f" pour le code de rue: '{self.street_code}'"
+                    elif self.error_print == "term":
+                        error += f" pour l'adresse: '{self.term}'"
                     errors.append(error)
                     continue
                 if similarity_error:
