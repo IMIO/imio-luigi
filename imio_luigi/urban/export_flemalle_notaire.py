@@ -364,13 +364,34 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
 class TransformWorkLocation(ucore.TransformWorkLocation):
     task_namespace = "flemalle"
     key = luigi.Parameter()
-    log_failure = True
+    street_json = "./data/flemalle/json/Rues.json"
+
+    @property
+    def get_street_dict(self):
+        with open(self.street_json, "r") as f:
+            output = {
+                str(json.loads(item)["coderue"]):json.loads(item)["libellerue"]
+                for item in f.readlines()
+            }
+        return output
 
     def _generate_street_code(self, worklocation, data):
         street = worklocation.get("street", None)
         if not street:
             return None, "Pas de nom de rue présent"
         return street, None
+
+    def _handle_failed_street_code(self, worklocation, data):
+        street_code, error = self._generate_street_code(worklocation, data)
+        street_name = self.get_street_dict.get(street_code, None)
+        if street_name is None:
+            return None, f"Pas de nom rue trouvé pour {street_code}"
+        params = {"match": self.search_match, "include_disable": self.seach_disable}
+        params["term"] = street_name
+        r = self.request(parameters=params)
+        if r.status_code != 200:
+            return None, f"Response code is '{r.status_code}', expected 200"
+        return r.json(), None
 
     def requires(self):
         return CreateWorkLocation(key=self.key)
