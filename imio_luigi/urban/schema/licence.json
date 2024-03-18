@@ -80,7 +80,8 @@
             "type": "string"
           },
           "street": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
           }
         },
         "additionalProperties": false,
@@ -308,7 +309,8 @@
           "type": "string"
         },
         "urbaneventtypes": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[0-9a-f]{32}$"
         }
       },
       "additionalProperties": false,
