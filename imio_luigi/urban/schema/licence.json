@@ -107,7 +107,8 @@
       "type": "array",
       "minItems": 1,
       "items": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$"
       }
     },
     "usage": {
