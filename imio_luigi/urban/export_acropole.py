@@ -162,6 +162,33 @@ class JoinApplicants(core.JoinFromMySQLInMemoryTask):
             return f"WRKDOSSIER_ID = {data['WRKDOSSIER_ID']}"
 
 
+class JoinArchitect(core.JoinFromMySQLInMemoryTask):
+    task_namespace = "acropole"
+    login = "root"
+    password = "password"
+    host = "localhost"
+    port = 3306
+    dbname = luigi.Parameter()
+    tablename = "ARCHI_VIEW"
+    columns = ["*"]
+    destination = "architects"
+    key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
+        return luigi.LocalTarget(fpath)
+
+    def requires(self):
+        return JoinApplicants(key=self.key, orga=self.orga)
+
+    def sql_condition(self):
+        with self.input().open("r") as f:
+            data = json.load(f)
+            return f"WRKDOSSIER_ID = {data['WRKDOSSIER_ID']}"
+
+
 class Mapping(core.MappingKeysInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
@@ -180,7 +207,7 @@ class Mapping(core.MappingKeysInMemoryTask):
         return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return JoinApplicants(key=self.key, orga=self.orga)
+        return JoinArchitect(key=self.key, orga=self.orga)
 
 
 class MappingType(ucore.UrbanTypeMapping):
@@ -367,6 +394,36 @@ class AddTitle(core.InMemoryTask):
         return CreateApplicant(key=self.key, orga=self.orga)
 
 
+class TransformArchitect(ucore.TransformContact):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+    orga = luigi.Parameter()
+    contact_type = "architects"
+    data_key = "architects"
+    log_failure = True
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
+        return luigi.LocalTarget(fpath)
+
+    def _fix_term(self, street):
+        """Fix street with locality in parentheses"""
+        street = street.replace("(", " ")
+        street = street.replace(")", " ")
+        return street.strip()
+
+    def _generate_contact_name(self, data):
+        architects = data.get('architects', None)
+        if architects is None:
+            return None, None
+        output = [self._fix_term(architect["ARCHITECT_DES"]) for architect in architects if architect["ARCHITECT_DES"] is not None]
+        return output, None
+
+    def requires(self):
+        return AddTitle(key=self.key, orga=self.orga)
+
+
 class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
@@ -387,7 +444,7 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
         return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return AddTitle(key=self.key, orga=self.orga)
+        return TransformArchitect(key=self.key, orga=self.orga)
 
 
 class TransformWorkLocation(ucore.TransformWorkLocation):
