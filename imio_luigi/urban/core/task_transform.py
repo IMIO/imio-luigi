@@ -158,6 +158,8 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
             if error:
                 errors.append(error)
                 continue
+            if params is None:
+                continue
             params["browse_old_parcels"] = self.browse_old_parcels
             r = self.request(parameters=params)
             if r.status_code != 200:
