@@ -223,17 +223,21 @@ class TransformContact(core.GetFromRESTServiceInMemoryTask):
         if error:
             errors.append(error)
             return data, errors
-        params = {"SearchableText": f"{search}", "metadata_fields": "UID"}
-        r = self.request(parameters=params)
-        if r.status_code != 200:
-            errors.append(f"Response code is '{r.status_code}', expected 200")
-            return data, errors
-        result = r.json()
-        if result["items_total"] == 0:
-            errors.append(f"Aucun résultat pour: '{search}'")
-            return data, errors
-        elif result["items_total"] > 1:
-            errors.append(f"Plusieurs résultats pour: '{search}'")
-            return data, errors
-        data[self.data_key] = [result["items"][0]["UID"]]
+        if type(search) == str:
+            search = [search]
+        data[self.data_key] = []
+        for architect in search:
+            params = {"SearchableText": f"{architect}", "metadata_fields": "UID"}
+            r = self.request(parameters=params)
+            if r.status_code != 200:
+                errors.append(f"Response code is '{r.status_code}', expected 200")
+                continue
+            result = r.json()
+            if result["items_total"] == 0:
+                errors.append(f"Aucun résultat pour: '{architect}'")
+                continue
+            elif result["items_total"] > 1:
+                errors.append(f"Plusieurs résultats pour: '{architect}'")
+                continue
+            data[self.data_key].append(result["items"][0]["UID"])
         return data, errors
