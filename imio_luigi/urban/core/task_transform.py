@@ -215,6 +215,15 @@ class TransformContact(core.GetFromRESTServiceInMemoryTask):
         """Generate contact name, return tuple of contact name and error"""
         return None, None
 
+    def handle_request_error(self, item, data):
+        return data
+
+    def handle_no_result(self, item, data):
+        return data
+
+    def handle_many_result(self, item, data):
+        return data
+
     def transform_data(self, data):
         errors = []
         search, error = self._generate_contact_name(data)
@@ -226,18 +235,21 @@ class TransformContact(core.GetFromRESTServiceInMemoryTask):
         if type(search) == str:
             search = [search]
         data[self.data_key] = []
-        for architect in search:
-            params = {"SearchableText": f"{architect}", "metadata_fields": "UID"}
+        for contact in search:
+            params = {"SearchableText": f"{contact}", "metadata_fields": "UID"}
             r = self.request(parameters=params)
             if r.status_code != 200:
                 errors.append(f"Response code is '{r.status_code}', expected 200")
+                data = self.handle_request_error(contact, data)
                 continue
             result = r.json()
             if result["items_total"] == 0:
-                errors.append(f"Aucun résultat pour: '{architect}'")
+                errors.append(f"Aucun résultat pour: '{contact}'")
+                data = self.handle_no_result(contact, data)
                 continue
             elif result["items_total"] > 1:
-                errors.append(f"Plusieurs résultats pour: '{architect}'")
+                errors.append(f"Plusieurs résultats pour: '{contact}'")
+                data = self.handle_many_result(contact, data)
                 continue
             data[self.data_key].append(result["items"][0]["UID"])
         return data, errors
