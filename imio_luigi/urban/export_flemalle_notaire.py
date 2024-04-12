@@ -228,6 +228,30 @@ class TransformNotary(ucore.TransformContact):
 
         return term, None
 
+    def handle_no_result(self, item, data):
+        applicant = {
+            "name1" : self._remove_dot(data["Nom"]),
+        }
+        name2 = data.get("Prenom", None)
+        if name2:
+            applicant["name2"] = self._remove_dot(name2)
+        data["applicants"] = [applicant]
+        return data
+
+
+class CreateApplicant(ucore.CreateApplicant):
+    task_namespace = "flemalle"
+    key = luigi.Parameter()
+    log_failure = True
+    subelement_base = {}
+    mapping_keys={
+        "name1" : "name1",
+        "name2" : "name2"
+    }
+
+    def requires(self):
+        return TransformNotary(key=self.key)
+
 
 class Nu2aCadastreSplit(core.StringToListInMemoryTask):
     task_namespace = "flemalle"
@@ -240,7 +264,7 @@ class Nu2aCadastreSplit(core.StringToListInMemoryTask):
         return [v for v in re.split(regexp, value) if v and v not in separators]
 
     def requires(self):
-        return TransformNotary(key=self.key)
+        return CreateApplicant(key=self.key)
 
 
 class Nu2bCadastreSplit(core.StringToListInMemoryTask):
@@ -420,7 +444,8 @@ class DropColumns(core.DropColumnInMemoryTask):
         'Tp',
         'Unnamed: 0',
         'cadastre',
-        'key'
+        'key',
+        "applicants"
     ]
 
     def requires(self):
