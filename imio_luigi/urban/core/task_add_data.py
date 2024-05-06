@@ -166,6 +166,78 @@ class AddUrbanEvent(core.InMemoryTask):
         return ["CODT_NotaryLetter"]
 
 
+class AddAllOtherEvents(core.InMemoryTask):
+    use_generic_event = False
+    # Use generic event in case of event not found urban
+    generic_event_name = ("generic_event", "UrbanEvent")
+
+    @property
+    @abc.abstractmethod
+    def mapping_filepath(self):
+        return None
+
+    @property
+    def get_mapping_event(self):
+        return json.load(open(self.mapping_filepath, "r"))
+
+    def continue_loop(self, event, data):
+        return False
+
+    def transform_data(self, data):
+        event_iter = self.get_event_iter(data)
+        if event_iter is None:
+            return data
+        for event in event_iter:
+            continue_status = self.continue_loop(event, data)
+            if continue_status:
+                continue
+            param = self.make_paramter(event, data)
+            if self.use_generic_event:
+                param["title"] = self.get_title(event)
+            data = self.create_event(data, **param)
+        return data
+
+    def make_paramter(self, event, data):
+        event_subtype, event_type = self._handle_get_urbaneventtypes(event, data)
+        params = {
+            "@type": event_type,
+            "urbaneventtypes": event_subtype,
+        }
+        date = self.get_date(event)
+        if date is not None:
+            params["eventDate"] = date
+        return params
+
+    def _handle_get_urbaneventtypes(self, event, data):
+        event_subtype, event_type = self.get_urbaneventtypes(event, data)
+        if self.use_generic_event and event_subtype is None:
+            return self.generic_event_name
+        return event_subtype, event_type
+
+    @abc.abstractmethod
+    def get_event_iter(self, data):
+        return None
+
+    @abc.abstractmethod
+    def get_urbaneventtypes(self, event, data):
+        return None, None
+
+    @abc.abstractmethod
+    def get_date(self, event):
+        return None
+    
+    def get_title(self, event):
+        if self.use_generic_event:
+            return NotImplementedError
+        return None
+
+    def create_event(self, data, **kwargs):
+        if "__children__" not in data:
+            data["__children__"] = []
+        data["__children__"].append(kwargs)
+        return data
+
+
 class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
     subelements_source_key = "applicants"
     subelements_destination_key = "__children__"
