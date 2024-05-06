@@ -238,6 +238,49 @@ class AddAllOtherEvents(core.InMemoryTask):
         return data
 
 
+class AddUrbanOpinion(AddAllOtherEvents):
+    generic_event_name = "generic_opinion"
+    child_type = "UrbanEventOpinionRequest"
+    generic_opinion_type = "externalDecision"
+    mapping_filepath = luigi.Parameter()
+
+    def make_paramter(self, event, data):
+        event_subtype, event_type, opinion_type = self._handle_get_urbaneventtypes(event, data)
+        params =  {
+            "@type": event_type,
+            "urbaneventtypes": event_subtype
+        }
+        date = self.get_date(event)
+        if date is not None:
+            params["eventDate"] = date
+        opinion_type_out = self.get_opinion(event, opinion_type)
+        if opinion_type_out is not None:
+            params[opinion_type] = opinion_type_out
+        return params
+
+    def get_urbaneventtypes(self, event, data):
+        return None
+
+    def _handle_get_urbaneventtypes(self, event, data):
+        urbaneventtypes = self.get_urbaneventtypes(event, data)
+        event_subtype, event_type = urbaneventtypes["type"]
+        opinion_type = urbaneventtypes["opinion"]
+        if self.use_generic_event and event_subtype is None:
+            return self.generic_event_name, self.child_type, self.generic_opinion_type
+        return event_subtype, event_type, opinion_type
+
+    @abc.abstractmethod
+    def get_opinion(self, event, opinion_type):
+        return None
+
+    def create_event(self, data, **kwargs):
+        data = super().create_event(data, **kwargs)
+        if "solicitOpinionsTo" not in data:
+            data["solicitOpinionsTo"] = []
+        data["solicitOpinionsTo"].append(kwargs["urbaneventtypes"])
+        return data
+
+
 class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
     subelements_source_key = "applicants"
     subelements_destination_key = "__children__"
