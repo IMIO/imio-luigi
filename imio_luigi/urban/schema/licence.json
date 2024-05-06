@@ -62,6 +62,14 @@
         "data"
       ]
     },
+    "solicitOpinionsTo": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "wf_transitions": {
       "type": "array",
       "minItems": 0,
@@ -281,7 +289,8 @@
         "@type": {
           "type": "string",
           "enum": [
-            "UrbanEvent"
+            "UrbanEvent",
+            "UrbanEventOpinionRequest"
           ]
         },
         "title": {
@@ -311,6 +320,15 @@
         "urbaneventtypes": {
           "type": "string",
           "pattern": "^[0-9a-f]{32}$"
+        },
+        "externalDecision": {
+          "type": "string",
+          "enum": [
+            "favorable-defaut",
+            "favorable",
+            "defavorable",
+            "favorable-conditionnel"
+          ]
         }
       },
       "additionalProperties": false,
