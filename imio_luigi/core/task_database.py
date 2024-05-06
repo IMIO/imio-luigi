@@ -98,6 +98,9 @@ class JoinFromMySQLTask(GetFromMySQLTask):
                 data = json.load(input_f)
                 rows = [{k: getattr(r, k) for k in r._fields} for r in self.query()]
                 rows = self.hook_before_serialization(rows)
+                if self.destination not in data:
+                    data[self.destination] = []    
+                data[self.destination] = data[self.destination] + rows
                 json.dump(data, output_f)
 
 
