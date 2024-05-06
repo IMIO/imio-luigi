@@ -37,6 +37,7 @@ class AddUrbanEvent(core.InMemoryTask):
     create_recepisse = True
     create_delivery = True
     override_event_path = luigi.OptionalParameter(default=None)
+    basic_event_mapping_path = "./config/global/mapping_basic_event.json"
 
     def transform_data(self, data):
         if self.create_recepisse:
@@ -138,38 +139,18 @@ class AddUrbanEvent(core.InMemoryTask):
             return None
         return tuple(overide_mapping_event_specific[lic_type])
 
+    @property
+    def get_basic_event_mapping(self):
+        with open(self.basic_event_mapping_path, "r") as f:
+            data = json.load(f)
+        return data
+
     def _mapping_recepisse_event(self, type):
         overide_mapping_value = self.get_value_from_override("recepisse", type)
         if overide_mapping_value is not None:
             return overide_mapping_value
 
-        data = {
-            "BuildLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_BuildLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "Article127": ("depot-de-la-demande", "UrbanEvent"),
-            "IntegratedLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_IntegratedLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "UniqueLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_UniqueLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "Declaration": ("depot-de-la-demande", "UrbanEvent"),
-            "UrbanCertificateOne": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_UrbanCertificateOne": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "UrbanCertificateTwo": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_UrbanCertificateTwo": ("depot-demande", "UrbanEvent"),
-            "PreliminaryNotice": ("depot-de-la-demande", "UrbanEvent"),
-            "EnvClassOne": ("depot-de-la-demande", "UrbanEvent"),
-            "EnvClassTwo": ("depot-de-la-demande", "UrbanEvent"),
-            "EnvClassThree": ("depot-de-la-demande", "UrbanEvent"),
-            "ParcelOutLicence": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_ParcelOutLicence": ("depot-de-la-demande-codt", "UrbanEvent"),
-            "MiscDemand": ("depot-de-la-demande", "UrbanEvent"),
-            "NotaryLetter": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_NotaryLetter": ("notaryletter-codt", "UrbanEvent"),
-            "Division": ("depot-de-la-demande", "UrbanEvent"),
-            "CODT_CommercialLicence": ("depot-demande", "UrbanEvent"),
-            "ExplosivesPossession": ("reception-de-la-demande", "UrbanEvent"),
-            "Ticket": ("depot-de-la-demande-codt", "UrbanEvent"),
-        }
+        data = self.get_basic_event_mapping["recepisse"]
         return data[type]
 
     def _mapping_delivery_event(self, type):
@@ -177,50 +158,7 @@ class AddUrbanEvent(core.InMemoryTask):
         if overide_mapping_value is not None:
             return overide_mapping_value
 
-        data = {
-            "BuildLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_BuildLicence": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
-                "UrbanEvent",
-            ),
-            "CODT_UrbanCertificateOne": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
-                "UrbanEvent",
-            ),
-            "CODT_UrbanCertificateTwo": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
-                "UrbanEvent",
-            ),
-            "Article127": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "IntegratedLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_IntegratedLicence": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
-                "UrbanEvent",
-            ),
-            "ParcelOutLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_ParcelOutLicence": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
-                "UrbanEvent",
-            ),
-            "Declaration": ("deliberation-college", "UrbanEvent"),
-            "UrbanCertificateOne": ("octroi-cu1", "UrbanEvent"),
-            "UrbanCertificateTwo": ("octroi-cu2", "UrbanEvent"),
-            "UniqueLicence": ("delivrance-du-permis-octroi-ou-refus", "UrbanEvent"),
-            "CODT_UniqueLicence": ("delivrance-permis", "UrbanEvent"),
-            "MiscDemand": ("deliberation-college", "UrbanEvent"),
-            "EnvClassOne": ("decision", "UrbanEvent"),
-            "EnvClassTwo": ("decision", "UrbanEvent"),
-            "EnvClassThree": ("passage-college", "UrbanEvent"),
-            "PreliminaryNotice": ("passage-college", "UrbanEvent"),
-            "NotaryLetter": ("octroi-lettre-notaire", " UrbanEvent"),
-            "Division": ("decision-octroi-refus", "UrbanEvent"),
-            "CODT_CommercialLicence": (
-                "delivrance-du-permis-octroi-ou-refus-codt",
-                " UrbanEvent",
-            ),
-            "ExplosivesPossession": {"decision", "UrbanEvent"},
-            "Ticket": ("decision", "UrbanEvent"),
-        }
+        data = self.get_basic_event_mapping["delivery"]
         return data[type]
 
     @property

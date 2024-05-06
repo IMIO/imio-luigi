@@ -1,0 +1,73 @@
+{
+  "recepisse": {
+    "BuildLicence": ["depot-de-la-demande", "UrbanEvent"],
+    "CODT_BuildLicence": ["depot-de-la-demande-codt", "UrbanEvent"],
+    "Article127": ["depot-de-la-demande", "UrbanEvent"],
+    "IntegratedLicence": ["depot-de-la-demande", "UrbanEvent"],
+    "CODT_IntegratedLicence": ["depot-de-la-demande-codt", "UrbanEvent"],
+    "UniqueLicence": ["depot-de-la-demande", "UrbanEvent"],
+    "CODT_UniqueLicence": ["depot-de-la-demande", "UrbanEvent"],
+    "Declaration": ["depot-de-la-demande", "UrbanEvent"],
+    "UrbanCertificateOne": ["depot-de-la-demande", "UrbanEvent"],
+    "CODT_UrbanCertificateOne": ["depot-de-la-demande-codt", "UrbanEvent"],
+    "UrbanCertificateTwo": ["depot-de-la-demande", "UrbanEvent"],
+    "CODT_UrbanCertificateTwo": ["depot-demande", "UrbanEvent"],
+    "PreliminaryNotice": ["depot-de-la-demande", "UrbanEvent"],
+    "EnvClassOne": ["depot-de-la-demande", "UrbanEvent"],
+    "EnvClassTwo": ["depot-de-la-demande", "UrbanEvent"],
+    "EnvClassThree": ["depot-de-la-demande", "UrbanEvent"],
+    "ParcelOutLicence": ["depot-de-la-demande", "UrbanEvent"],
+    "CODT_ParcelOutLicence": ["depot-de-la-demande-codt", "UrbanEvent"],
+    "MiscDemand": ["depot-de-la-demande", "UrbanEvent"],
+    "NotaryLetter": ["depot-de-la-demande", "UrbanEvent"],
+    "CODT_NotaryLetter": ["notaryletter-codt", "UrbanEvent"],
+    "Division": ["depot-de-la-demande", "UrbanEvent"],
+    "CODT_CommercialLicence": ["depot-demande", "UrbanEvent"],
+    "ExplosivesPossession": ["reception-de-la-demande", "UrbanEvent"],
+    "Ticket": ["depot-de-la-demande-codt", "UrbanEvent"]
+  },
+  "delivery": {
+    "BuildLicence": ["delivrance-du-permis-octroi-ou-refus", "UrbanEvent"],
+    "CODT_BuildLicence": [
+      "delivrance-du-permis-octroi-ou-refus-codt",
+      "UrbanEvent"
+    ],
+    "CODT_UrbanCertificateOne": [
+      "delivrance-du-permis-octroi-ou-refus-codt",
+      "UrbanEvent"
+    ],
+    "CODT_UrbanCertificateTwo": [
+      "delivrance-du-permis-octroi-ou-refus-codt",
+      "UrbanEvent"
+    ],
+    "Article127": ["delivrance-du-permis-octroi-ou-refus", "UrbanEvent"],
+    "IntegratedLicence": ["delivrance-du-permis-octroi-ou-refus", "UrbanEvent"],
+    "CODT_IntegratedLicence": [
+      "delivrance-du-permis-octroi-ou-refus-codt",
+      "UrbanEvent"
+    ],
+    "ParcelOutLicence": ["delivrance-du-permis-octroi-ou-refus", "UrbanEvent"],
+    "CODT_ParcelOutLicence": [
+      "delivrance-du-permis-octroi-ou-refus-codt",
+      "UrbanEvent"
+    ],
+    "Declaration": ["deliberation-college", "UrbanEvent"],
+    "UrbanCertificateOne": ["octroi-cu1", "UrbanEvent"],
+    "UrbanCertificateTwo": ["octroi-cu2", "UrbanEvent"],
+    "UniqueLicence": ["delivrance-du-permis-octroi-ou-refus", "UrbanEvent"],
+    "CODT_UniqueLicence": ["delivrance-permis", "UrbanEvent"],
+    "MiscDemand": ["deliberation-college", "UrbanEvent"],
+    "EnvClassOne": ["decision", "UrbanEvent"],
+    "EnvClassTwo": ["decision", "UrbanEvent"],
+    "EnvClassThree": ["passage-college", "UrbanEvent"],
+    "PreliminaryNotice": ["passage-college", "UrbanEvent"],
+    "NotaryLetter": ["octroi-lettre-notaire", " UrbanEvent"],
+    "Division": ["decision-octroi-refus", "UrbanEvent"],
+    "CODT_CommercialLicence": [
+      "delivrance-du-permis-octroi-ou-refus-codt",
+      " UrbanEvent"
+    ],
+    "ExplosivesPossession": ["decision", "UrbanEvent"],
+    "Ticket": ["decision", "UrbanEvent"]
+  }
+}
