@@ -12,7 +12,7 @@ import re
 
 
 class UrbanEventConfigUidResolver(core.GetFromRESTServiceInMemoryTask):
-    type_list = ["UrbanEvent"]
+    type_list = ["UrbanEvent", "UrbanEventOpinionRequest"]
     log_failure = True
 
     def on_failure(self, data, errors):
