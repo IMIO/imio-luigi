@@ -89,12 +89,15 @@ class JoinFromMySQLTask(GetFromMySQLTask):
             query += f" offset {offset}"
         return query
 
+    def hook_before_serialization(self, data):
+        return data
+
     def run(self):
         with self.input().open("r") as input_f:
             with self.output().open("w") as output_f:
                 data = json.load(input_f)
                 rows = [{k: getattr(r, k) for k in r._fields} for r in self.query()]
-                data[self.destination] = rows
+                rows = self.hook_before_serialization(rows)
                 json.dump(data, output_f)
 
 
