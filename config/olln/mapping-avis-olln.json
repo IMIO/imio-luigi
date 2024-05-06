@@ -1,0 +1,1015 @@
+{
+  "Article127": {
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["spw-dgo1", "UrbanEventOpinionRequest"]
+    },
+    "MRW_CENN": {
+      "opinion": "externalDecision",
+      "type": ["mrw_cenn", "UrbanEventOpinionRequest"]
+    },
+    "Police": {
+      "opinion": "externalDecision",
+      "type": ["police", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pompiers", "UrbanEventOpinionRequest"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "Travaux": {
+      "opinion": "externalDecision",
+      "type": ["travaux", "UrbanEventOpinionRequest"]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": ["ucl", "UrbanEventOpinionRequest"]
+    },
+    "VOO": {
+      "opinion": "externalDecision",
+      "type": ["voo", "UrbanEventOpinionRequest"]
+    },
+    "IBW": {
+      "opinion": "externalDecision",
+      "type": ["ibw", "UrbanEventOpinionRequest"]
+    },
+    "Juridique": {
+      "opinion": "externalDecision",
+      "type": ["juridique", "UrbanEventOpinionRequest"]
+    }
+  },
+  "BuildLicence": {
+    "ASTRID": {
+      "opinion": "externalDecision",
+      "type": ["astrid", "UrbanEventOpinionRequest"]
+    },
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "CCAT": {
+      "opinion": "externalDecision",
+      "type": ["ccat", "UrbanEventOpinionRequest"]
+    },
+    "CIBE": {
+      "opinion": "externalDecision",
+      "type": ["cibe", "UrbanEventOpinionRequest"]
+    },
+    "CRMSF": {
+      "opinion": "externalDecision",
+      "type": ["crmsf", "UrbanEventOpinionRequest"]
+    },
+    "D\u00e9putation": {
+      "opinion": "externalDecision",
+      "type": ["deputation", "UrbanEventOpinionRequest"]
+    },
+    "DGA": {
+      "opinion": "externalDecision",
+      "type": ["dga", "UrbanEventOpinionRequest"]
+    },
+    "IBW": {
+      "opinion": "externalDecision",
+      "type": ["ibw", "UrbanEventOpinionRequest"]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEventOpinionRequest"]
+    },
+    "Juridique": {
+      "opinion": "externalDecision",
+      "type": ["juridique", "UrbanEventOpinionRequest"]
+    },
+    "logement": {
+      "opinion": "externalDecision",
+      "type": ["logement", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["met_routes", "UrbanEventOpinionRequest"]
+    },
+    "MET_VH": {
+      "opinion": "externalDecision",
+      "type": ["met_vh", "UrbanEventOpinionRequest"]
+    },
+    "MRW_CENN": {
+      "opinion": "externalDecision",
+      "type": ["mrw_cenn", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DECHETS": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dechets", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DGTRE": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dgtre", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DNF": {
+      "opinion": "externalDecision",
+      "type": ["dnf", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DPA": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpa", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DPE": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpe", "UrbanEventOpinionRequest"]
+    },
+    "Police": {
+      "opinion": "externalDecision",
+      "type": ["police", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pompiers", "UrbanEventOpinionRequest"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "SNCB": {
+      "opinion": "externalDecision",
+      "type": ["sncb", "UrbanEventOpinionRequest"]
+    },
+    "SRWL": {
+      "opinion": "externalDecision",
+      "type": ["srwl", "UrbanEventOpinionRequest"]
+    },
+    "STP": {
+      "opinion": "externalDecision",
+      "type": ["stp", "UrbanEventOpinionRequest"]
+    },
+    "TEC": {
+      "opinion": "externalDecision",
+      "type": ["tec", "UrbanEventOpinionRequest"]
+    },
+    "Travaux": {
+      "opinion": "externalDecision",
+      "type": ["travaux", "UrbanEventOpinionRequest"]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": ["ucl", "UrbanEventOpinionRequest"]
+    },
+    "Urbanisme": {
+      "opinion": "externalDecision",
+      "type": ["urbanisme", "UrbanEventOpinionRequest"]
+    },
+    "VOO": {
+      "opinion": "externalDecision",
+      "type": ["voo", "UrbanEventOpinionRequest"]
+    }
+  },
+  "CODT_BuildLicence": {
+    "ASTRID": {
+      "opinion": "externalDecision",
+      "type": ["astrid", "UrbanEventOpinionRequest"]
+    },
+    "Awap": {
+      "opinion": "externalDecision",
+      "type": ["awap", "UrbanEventOpinionRequest"]
+    },
+    "AWaP": {
+      "opinion": "externalDecision",
+      "type": ["awap", "UrbanEventOpinionRequest"]
+    },
+    "AWAP": {
+      "opinion": "externalDecision",
+      "type": ["awap", "UrbanEventOpinionRequest"]
+    },
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "CCAT": {
+      "opinion": "externalDecision",
+      "type": ["ccat", "UrbanEventOpinionRequest"]
+    },
+    "CCATM": {
+      "opinion": "externalDecision",
+      "type": ["ccatm", "UrbanEventOpinionRequest"]
+    },
+    "Cellule GISER": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy5_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "Cion.Royale Monuments et sites": {
+      "opinion": "externalDecision",
+      "type": ["cion-royale-monuments-et-sites", "UrbanEventOpinionRequest"]
+    },
+    "CRMSF": {
+      "opinion": "externalDecision",
+      "type": ["crmsf", "UrbanEventOpinionRequest"]
+    },
+    "DGA - Agriculture": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy13_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "DGA Agriculture": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy13_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "DGA": {
+      "opinion": "externalDecision",
+      "type": ["dga", "UrbanEventOpinionRequest"]
+    },
+    "DGO 1 - Routes": {
+      "opinion": "externalDecision",
+      "type": ["dgo-1-routes", "UrbanEventOpinionRequest"]
+    },
+    "DGO 3 - CENN": {
+      "opinion": "externalDecision",
+      "type": ["dgo-3-cenn", "UrbanEventOpinionRequest"]
+    },
+    "DGO 3 - DNF": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy7_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "DGO 3": {
+      "opinion": "externalDecision",
+      "type": ["dgo-3", "UrbanEventOpinionRequest"]
+    },
+    "Dnf": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy7_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "FD": {
+      "opinion": "externalDecision",
+      "type": ["fd", "UrbanEventOpinionRequest"]
+    },
+    "i.n.B.W. - assainissement": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy3_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "IBW": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy2_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy3_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "iNFRABEL": {
+      "opinion": "externalDecision",
+      "type": ["infrabel", "UrbanEventOpinionRequest"]
+    },
+    "Juridique": {
+      "opinion": "externalDecision",
+      "type": ["juridique", "UrbanEventOpinionRequest"]
+    },
+    "logement": {
+      "opinion": "externalDecision",
+      "type": ["logement", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["met_routes", "UrbanEventOpinionRequest"]
+    },
+    "MRW_CENN": {
+      "opinion": "externalDecision",
+      "type": ["mrw_cenn", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DNF": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy7_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "MRW_DPA": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpa", "UrbanEventOpinionRequest"]
+    },
+    "Police": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy10_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["a-i-d-e", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - i.n.B.W.": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy2_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "R\u00e9gies - Ores": {
+      "opinion": "externalDecision",
+      "type": ["air-liquide-industries-belgium-s-a", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - Proximus": {
+      "opinion": "externalDecision",
+      "type": ["agriculture", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - Voo": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "Service \u00e9conomie": {
+      "opinion": "externalDecision",
+      "type": ["service-economie", "UrbanEventOpinionRequest"]
+    },
+    "Service environement": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy12_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "Service environnement": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy12_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "Service Juridique": {
+      "opinion": "externalDecision",
+      "type": ["service-juridique", "UrbanEventOpinionRequest"]
+    },
+    "Service Logement": {
+      "opinion": "externalDecision",
+      "type": ["service-logement", "UrbanEventOpinionRequest"]
+    },
+    "Service Travaux": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy11_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "SNCB": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy19_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "STE": {
+      "opinion": "externalDecision",
+      "type": ["ste", "UrbanEventOpinionRequest"]
+    },
+    "STP - Cours d'eau": {
+      "opinion": "externalDecision",
+      "type": ["stp-cours-d-eau", "UrbanEventOpinionRequest"]
+    },
+    "STP": {
+      "opinion": "externalDecision",
+      "type": ["stp", "UrbanEventOpinionRequest"]
+    },
+    "Travaux": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy11_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy4_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "UCLouvain": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy4_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "Vivaqua": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy9_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
+    "VOO": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    }
+  },
+  "CODT_ParcelOutLicence": {
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "CCAT": {
+      "opinion": "externalDecision",
+      "type": ["ccat", "UrbanEventOpinionRequest"]
+    },
+    "CCATM": {
+      "opinion": "externalDecision",
+      "type": ["ccatm", "UrbanEventOpinionRequest"]
+    },
+    "Cellule GISER": {
+      "opinion": "externalDecision",
+      "type": ["cellule-giser", "UrbanEventOpinionRequest"]
+    },
+    "DGO 1 - Routes": {
+      "opinion": "externalDecision",
+      "type": ["dgo-1-routes", "UrbanEventOpinionRequest"]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pompiers", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - i.n.B.W.": {
+      "opinion": "externalDecision",
+      "type": ["regies-i-n-b-w", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - Ores": {
+      "opinion": "externalDecision",
+      "type": ["regies-ores", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - Proximus": {
+      "opinion": "externalDecision",
+      "type": ["regies-proximus", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - Voo": {
+      "opinion": "externalDecision",
+      "type": ["regies-voo", "UrbanEventOpinionRequest"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "Service Juridique": {
+      "opinion": "externalDecision",
+      "type": ["service-juridique", "UrbanEventOpinionRequest"]
+    },
+    "Service Travaux": {
+      "opinion": "externalDecision",
+      "type": ["service-travaux", "UrbanEventOpinionRequest"]
+    },
+    "Travaux": {
+      "opinion": "externalDecision",
+      "type": ["travaux", "UrbanEventOpinionRequest"]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": ["ucl", "UrbanEventOpinionRequest"]
+    },
+    "VOO": {
+      "opinion": "externalDecision",
+      "type": ["voo", "UrbanEventOpinionRequest"]
+    }
+  },
+  "CODT_UrbanCertificateTwo": {
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "DGA": {
+      "opinion": "externalDecision",
+      "type": ["dga", "UrbanEventOpinionRequest"]
+    },
+    "DGO 3 - DNF": {
+      "opinion": "externalDecision",
+      "type": ["dgo-3-dnf", "UrbanEventOpinionRequest"]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEventOpinionRequest"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "VOO": {
+      "opinion": "externalDecision",
+      "type": ["voo", "UrbanEventOpinionRequest"]
+    }
+  },
+  "EnvClassOne": {
+    "DGA": {
+      "opinion": "externalDecision",
+      "type": ["dga", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["met_routes", "UrbanEventOpinionRequest"]
+    },
+    "MRW_CENN": {
+      "opinion": "externalDecision",
+      "type": ["mrw_cenn", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DECHETS": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dechets", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DGTRE": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dgtre", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DNF": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dnf", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DPA": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpa", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DPE": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpe", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pompiers", "UrbanEventOpinionRequest"]
+    },
+    "SNCB": {
+      "opinion": "externalDecision",
+      "type": ["sncb", "UrbanEventOpinionRequest"]
+    },
+    "SRWL": {
+      "opinion": "externalDecision",
+      "type": ["srwl", "UrbanEventOpinionRequest"]
+    },
+    "SRWT": {
+      "opinion": "externalDecision",
+      "type": ["srwt", "UrbanEventOpinionRequest"]
+    },
+    "STP": {
+      "opinion": "externalDecision",
+      "type": ["stp", "UrbanEventOpinionRequest"]
+    }
+  },
+  "EnvClassTwo": {
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "DGA": {
+      "opinion": "externalDecision",
+      "type": ["dga", "UrbanEventOpinionRequest"]
+    },
+    "IBW": {
+      "opinion": "externalDecision",
+      "type": ["ibw", "UrbanEventOpinionRequest"]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["met_routes", "UrbanEventOpinionRequest"]
+    },
+    "MRW_CENN": {
+      "opinion": "externalDecision",
+      "type": ["mrw_cenn", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DECHETS": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dechets", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DGTRE": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dgtre", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DNF": {
+      "opinion": "externalDecision",
+      "type": ["dnf", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DPA": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpa", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DPE": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpe", "UrbanEventOpinionRequest"]
+    },
+    "MRW_POLLUTION": {
+      "opinion": "externalDecision",
+      "type": ["mrw_pollution", "UrbanEventOpinionRequest"]
+    },
+    "Police": {
+      "opinion": "externalDecision",
+      "type": ["police", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pi", "UrbanEventOpinionRequest"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "Travaux": {
+      "opinion": "externalDecision",
+      "type": ["travaux", "UrbanEventOpinionRequest"]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": ["ucl", "UrbanEventOpinionRequest"]
+    },
+    "VOO": {
+      "opinion": "externalDecision",
+      "type": ["voo", "UrbanEventOpinionRequest"]
+    }
+  },
+  "EnvClassThree": {
+    "IBW": {
+      "opinion": "externalDecision",
+      "type": ["ibw", "UrbanEventOpinionRequest"]
+    }
+  },
+  "MiscDemand": {
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "CCAT": {
+      "opinion": "externalDecision",
+      "type": ["ccat", "UrbanEventOpinionRequest"]
+    },
+    "Cellule GISER": {
+      "opinion": "externalDecision",
+      "type": ["cellule-giser", "UrbanEventOpinionRequest"]
+    },
+    "DGA": {
+      "opinion": "externalDecision",
+      "type": ["dga", "UrbanEventOpinionRequest"]
+    },
+    "IBW": {
+      "opinion": "externalDecision",
+      "type": ["ibw", "UrbanEventOpinionRequest"]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEventOpinionRequest"]
+    },
+    "Juridique": {
+      "opinion": "externalDecision",
+      "type": ["juridique", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["met_routes", "UrbanEventOpinionRequest"]
+    },
+    "MET_VH": {
+      "opinion": "externalDecision",
+      "type": ["met_vh", "UrbanEventOpinionRequest"]
+    },
+    "MRW_CENN": {
+      "opinion": "externalDecision",
+      "type": ["mrw_cenn", "UrbanEventOpinionRequest"]
+    },
+    "Police": {
+      "opinion": "externalDecision",
+      "type": ["police", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pompiers", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - i.n.B.W.": {
+      "opinion": "externalDecision",
+      "type": ["regies-i-n-b-w", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - Ores": {
+      "opinion": "externalDecision",
+      "type": ["regies-ores", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - Proximus": {
+      "opinion": "externalDecision",
+      "type": ["regies-proximus", "UrbanEventOpinionRequest"]
+    },
+    "R\u00e9gies - Voo": {
+      "opinion": "externalDecision",
+      "type": ["regies-voo", "UrbanEventOpinionRequest"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "Service Travaux": {
+      "opinion": "externalDecision",
+      "type": ["service-travaux", "UrbanEventOpinionRequest"]
+    },
+    "Travaux": {
+      "opinion": "externalDecision",
+      "type": ["travaux", "UrbanEventOpinionRequest"]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": ["ucl", "UrbanEventOpinionRequest"]
+    },
+    "VOO": {
+      "opinion": "externalDecision",
+      "type": ["voo", "UrbanEventOpinionRequest"]
+    },
+    "DGO 1 - Routes": {
+      "opinion": "externalDecision",
+      "type": ["dgo-1-routes", "UrbanEventOpinionRequest"]
+    }
+  },
+  "ParcelOutLicence": {
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "CCAT": {
+      "opinion": "externalDecision",
+      "type": ["ccatm", "UrbanEventOpinionRequest"]
+    },
+    "IBW": {
+      "opinion": "externalDecision",
+      "type": ["ibw", "UrbanEventOpinionRequest"]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEventOpinionRequest"]
+    },
+    "Juridique": {
+      "opinion": "externalDecision",
+      "type": ["juridique", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["met_routes", "UrbanEventOpinionRequest"]
+    },
+    "MET_VH": {
+      "opinion": "externalDecision",
+      "type": ["met_vh", "UrbanEventOpinionRequest"]
+    },
+    "MRW_CENN": {
+      "opinion": "externalDecision",
+      "type": ["mrw_cenn", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DNF": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dnf", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DPE": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpe", "UrbanEventOpinionRequest"]
+    },
+    "Police": {
+      "opinion": "externalDecision",
+      "type": ["police", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pompiers", "UrbanEventOpinionRequest"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "SNCB": {
+      "opinion": "externalDecision",
+      "type": ["sncb", "UrbanEventOpinionRequest"]
+    },
+    "SRWL": {
+      "opinion": "externalDecision",
+      "type": ["srwl", "UrbanEventOpinionRequest"]
+    },
+    "SRWT": {
+      "opinion": "externalDecision",
+      "type": ["srwt", "UrbanEventOpinionRequest"]
+    },
+    "STP": {
+      "opinion": "externalDecision",
+      "type": ["stp", "UrbanEventOpinionRequest"]
+    },
+    "TEC": {
+      "opinion": "externalDecision",
+      "type": ["tec", "UrbanEventOpinionRequest"]
+    },
+    "Travaux": {
+      "opinion": "externalDecision",
+      "type": ["travaux", "UrbanEventOpinionRequest"]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": ["ucl", "UrbanEventOpinionRequest"]
+    },
+    "VOO": {
+      "opinion": "externalDecision",
+      "type": ["voo", "UrbanEventOpinionRequest"]
+    }
+  },
+  "PreliminaryNotice": {
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "DGA": {
+      "opinion": "externalDecision",
+      "type": ["dga", "UrbanEventOpinionRequest"]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["met_routes", "UrbanEventOpinionRequest"]
+    },
+    "Police": {
+      "opinion": "externalDecision",
+      "type": ["police", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pompiers", "UrbanEventOpinionRequest"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "SNCB": {
+      "opinion": "externalDecision",
+      "type": ["sncb", "UrbanEventOpinionRequest"]
+    },
+    "STP": {
+      "opinion": "externalDecision",
+      "type": ["stp", "UrbanEventOpinionRequest"]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": ["ucl", "UrbanEventOpinionRequest"]
+    }
+  },
+  "Ticket": {
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEvent"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pompiers", "UrbanEvent"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEvent"]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": ["ucl", "UrbanEvent"]
+    }
+  },
+  "UniqueLicence": {
+    "ASTRID": {
+      "opinion": "externalDecision",
+      "type": ["astrid", "UrbanEventOpinionRequest"]
+    },
+    "BELGACOM": {
+      "opinion": "externalDecision",
+      "type": ["belgacom", "UrbanEventOpinionRequest"]
+    },
+    "CCAT": {
+      "opinion": "externalDecision",
+      "type": ["ccatm", "UrbanEventOpinionRequest"]
+    },
+    "IBW": {
+      "opinion": "externalDecision",
+      "type": ["ibw", "UrbanEventOpinionRequest"]
+    },
+    "IECBW": {
+      "opinion": "externalDecision",
+      "type": ["iecbw", "UrbanEventOpinionRequest"]
+    },
+    "Juridique": {
+      "opinion": "externalDecision",
+      "type": ["juridique", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["met_routes", "UrbanEventOpinionRequest"]
+    },
+    "MRW_CENN": {
+      "opinion": "externalDecision",
+      "type": ["mrw_cenn", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DECHETS": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dechets", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DGTRE": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dgtre", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DNF": {
+      "opinion": "externalDecision",
+      "type": ["dnf", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DPA": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpa", "UrbanEventOpinionRequest"]
+    },
+    "MRW_DPE": {
+      "opinion": "externalDecision",
+      "type": ["mrw_dpe", "UrbanEventOpinionRequest"]
+    },
+    "Police": {
+      "opinion": "externalDecision",
+      "type": ["police", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pi", "UrbanEventOpinionRequest"]
+    },
+    "SEDILEC": {
+      "opinion": "externalDecision",
+      "type": ["sedilec", "UrbanEventOpinionRequest"]
+    },
+    "TEC": {
+      "opinion": "externalDecision",
+      "type": ["tec", "UrbanEventOpinionRequest"]
+    },
+    "Travaux": {
+      "opinion": "externalDecision",
+      "type": ["travaux", "UrbanEventOpinionRequest"]
+    },
+    "UCL": {
+      "opinion": "externalDecision",
+      "type": ["ucl", "UrbanEventOpinionRequest"]
+    },
+    "VOO": {
+      "opinion": "externalDecision",
+      "type": ["voo", "UrbanEventOpinionRequest"]
+    }
+  },
+  "UrbanCertificateOne": {
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pompiers", "UrbanEvent"]
+    }
+  },
+  "UrbanCertificateTwo": {
+    "DGA": {
+      "opinion": "externalDecision",
+      "type": ["dga", "UrbanEventOpinionRequest"]
+    },
+    "MET_ROUTES": {
+      "opinion": "externalDecision",
+      "type": ["met_routes", "UrbanEventOpinionRequest"]
+    },
+    "Police": {
+      "opinion": "externalDecision",
+      "type": ["police", "UrbanEventOpinionRequest"]
+    },
+    "Pompiers": {
+      "opinion": "externalDecision",
+      "type": ["pi", "UrbanEventOpinionRequest"]
+    }
+  }
+}

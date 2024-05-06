@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from imio_luigi import core, utils
 from imio_luigi.urban import core as ucore
 from imio_luigi.urban import tools
@@ -189,6 +190,133 @@ class JoinArchitect(core.JoinFromMySQLInMemoryTask):
             return f"WRKDOSSIER_ID = {data['WRKDOSSIER_ID']}"
 
 
+def handle_date(data, column_date=[]):
+    for column in column_date:
+        if data[column]:
+            data[column] = data[column].strftime("%Y-%m-%dT%H:%M")
+    return data
+
+
+class JoinEvents(core.JoinFromMySQLInMemoryTask):
+    task_namespace = "acropole"
+    login = "root"
+    password = "password"
+    host = "localhost"
+    port = 3306
+    dbname = luigi.Parameter()
+    tablename = "EVENTS_VIEW"
+    columns = ["*"]
+    destination = "all_events"
+    key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
+        return luigi.LocalTarget(fpath)
+
+    def requires(self):
+        return JoinArchitect(key=self.key, orga=self.orga)
+
+    def sql_condition(self):
+        with self.input().open("r") as f:
+            data = json.load(f)
+            return f"WRKDOSSIER_ID = {data['WRKDOSSIER_ID']}"
+
+    def hook_before_serialization(self, data):
+        return [handle_date(item, ["ETAPE_DATEDEPART"]) for item in data]
+
+
+class JoinOpinions(core.JoinFromMySQLInMemoryTask):
+    task_namespace = "acropole"
+    login = "root"
+    password = "password"
+    host = "localhost"
+    port = 3306
+    dbname = luigi.Parameter()
+    tablename = "AVIS_VIEW"
+    columns = ["*"]
+    destination = "all_opinions"
+    key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
+        return luigi.LocalTarget(fpath)
+
+    def requires(self):
+        return JoinEvents(key=self.key, orga=self.orga)
+
+    def sql_condition(self):
+        with self.input().open("r") as f:
+            data = json.load(f)
+            return f"WRKDOSSIER_ID = {data['WRKDOSSIER_ID']}"
+
+    def hook_before_serialization(self, data):
+        return [handle_date(item, ["AVIS_DATE"]) for item in data]
+
+
+class JoinDocumentsA(core.JoinFromMySQLInMemoryTask):
+    task_namespace = "acropole"
+    login = "root"
+    password = "password"
+    host = "localhost"
+    port = 3306
+    dbname = luigi.Parameter()
+    tablename = "DOCUMENT_VIEW"
+    columns = ["*"]
+    destination = "documents"
+    key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
+        return luigi.LocalTarget(fpath)
+
+    def requires(self):
+        return JoinOpinions(key=self.key, orga=self.orga)
+
+    def sql_condition(self):
+        with self.input().open("r") as f:
+            data = json.load(f)
+            return f"WRKDOSSIER_ID = {data['WRKDOSSIER_ID']}"
+
+    def hook_before_serialization(self, data):
+        return [handle_date(item, ["create_date"]) for item in data]
+
+
+class JoinDocumentsB(core.JoinFromMySQLInMemoryTask):
+    task_namespace = "acropole"
+    login = "root"
+    password = "password"
+    host = "localhost"
+    port = 3306
+    dbname = luigi.Parameter()
+    tablename = "DOCUMENT_VIEW_2"
+    columns = ["*"]
+    destination = "documents"
+    key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def log_failure_output(self):
+        fname = self.task_id.split("_")[-1]
+        fpath = f"./failures/{self.orga}-" f"{self.__class__.__name__}/{fname}.json"
+        return luigi.LocalTarget(fpath)
+
+    def requires(self):
+        return JoinDocumentsA(key=self.key, orga=self.orga)
+
+    def sql_condition(self):
+        with self.input().open("r") as f:
+            data = json.load(f)
+            return f"WRKDOSSIER_ID = {data['WRKDOSSIER_ID']}"
+
+    def hook_before_serialization(self, data):
+        return [handle_date(item, ["delivery_date", "create_date"]) for item in data]
+
+
 class Mapping(core.MappingKeysInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
@@ -207,7 +335,7 @@ class Mapping(core.MappingKeysInMemoryTask):
         return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return JoinArchitect(key=self.key, orga=self.orga)
+        return JoinDocumentsB(key=self.key, orga=self.orga)
 
 
 class MappingType(ucore.UrbanTypeMapping):
@@ -311,6 +439,84 @@ class AddEvents(ucore.AddUrbanEvent):
         return decision
 
 
+class AddAllEvents(ucore.AddAllOtherEvents):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+    orga = luigi.Parameter()
+    mapping_filepath = "./config/acropole/mapping-event-acropole.json"
+
+    def continue_loop(self, event, data):
+        with open("./config/global/mapping_basic_event.json", "r") as f:
+            mapping = json.load(f)
+        licence_type = data["@type"]
+        basic_event = [
+            mapping["recepisse"][licence_type][0],
+            mapping["delivery"][licence_type][0]
+        ]
+        event_type = self.get_urbaneventtypes(event, data)[0]
+        return event_type in basic_event
+
+    def get_event_iter(self, data):
+        event_iter = data.get("all_events", None)
+        if event_iter is None:
+            return None
+        return event_iter
+
+    def get_urbaneventtypes(self, event, data):
+        licence_type = data["@type"]
+        event_id = event["ETAPE_TETAPEID"]
+        return self.get_mapping_event[licence_type][str(event_id)]
+
+    def get_date(self, event):
+        return event.get("ETAPE_DATEDEPART", None)
+
+    def requires(self):
+        return AddEvents(key=self.key, orga=self.orga)
+
+
+def external_decision_adpater(value):
+    mapping = {
+        "favorable par défaut": "favorable-defaut",
+        "favorable": "favorable",
+        "défavorable": "defavorable",
+        "favorable partiellement": "favorable-conditionnel",
+    }
+    return mapping[value]
+
+
+class AddOpinions(ucore.AddUrbanOpinion):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+    orga = luigi.Parameter()
+    opinion_type_mapping = {
+        "externalDecision": external_decision_adpater
+    }
+
+    def get_event_iter(self, data):
+        event_iter = data.get("all_opinions", None)
+        if event_iter is None:
+            return None
+        return event_iter
+
+    def get_urbaneventtypes(self, event, data):
+        licence_type = data["@type"]
+        event_id = event["AVIS_NOM"]
+        return self.get_mapping_event[licence_type][str(event_id)]
+
+    def get_date(self, event):
+        return event.get("AVIS_DATE", None)
+
+    def requires(self):
+        return AddAllEvents(key=self.key, orga=self.orga)
+
+    def get_opinion(self, event, opinion_type):
+        opinion = event.get("AVIS_ETAT", None)
+        if opinion is None:
+            return None
+        return self.opinion_type_mapping[opinion_type](opinion)
+        
+
+
 class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
     task_namespace = "acropole"
     key = luigi.Parameter()
@@ -322,7 +528,7 @@ class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
         return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return AddEvents(key=self.key, orga=self.orga)
+        return AddOpinions(key=self.key, orga=self.orga)
 
 
 class MappingStateToTransition(ucore.UrbanTransitionMapping):
@@ -548,6 +754,46 @@ class TransformCadastre(ucore.TransformCadastre):
         return params, None
 
 
+class AddDocumentInDescription(core.InMemoryTask):
+    task_namespace = "acropole"
+    key = luigi.Parameter()
+    orga = luigi.Parameter()
+
+    def _date_iso_to_string(self, date_iso):
+        input_date = datetime.fromisoformat(date_iso)
+        return input_date.strftime("%d/%m/%Y")
+
+    def transform_data(self, data):
+        documents = data.get("documents", None)
+        if documents is None:
+            return data
+        if "description" not in data:
+            data["description"] = {
+                "content-type": "text/html",
+                "data": "",
+            }
+        if len(documents) > 0:
+            data["description"]["data"] += "<H3>Documents Liée</H3>\n<ul>"
+        for document in documents:
+            data["description"]["data"] += f"<li><a href='file:///{document['url']}'>{document['title']}</a>"
+
+            delivery_date = document.get("delivery_date", None)
+            if delivery_date is not None:
+                data["description"]["data"] += f" - émis le {self._date_iso_to_string(delivery_date)}"
+
+            create_date = document.get("create_date", None)
+            if create_date is not None:
+                data["description"]["data"] += f" - créée le {self._date_iso_to_string(create_date)}"
+
+            data["description"]["data"] += "</li>\n"
+        if len(documents) > 0:
+            data["description"]["data"] += "</ul>"
+        return data
+
+    def requires(self):
+        return TransformCadastre(key=self.key, orga=self.orga)
+
+
 class DropColumns(core.DropColumnInMemoryTask):
     task_namespace = "acropole"
     key = luigi.Parameter()
@@ -564,6 +810,9 @@ class DropColumns(core.DropColumnInMemoryTask):
         "TDOSSIER_OBJETFR",
         "cadastre",
         "zip",
+        'all_events',
+        'all_opinions',
+        'documents'
     ]
 
     def log_failure_output(self):
@@ -572,7 +821,7 @@ class DropColumns(core.DropColumnInMemoryTask):
         return luigi.LocalTarget(fpath)
 
     def requires(self):
-        return TransformCadastre(key=self.key, orga=self.orga)
+        return AddDocumentInDescription(key=self.key, orga=self.orga)
 
 
 class ValidateData(core.JSONSchemaValidationTask):
