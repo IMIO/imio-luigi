@@ -370,6 +370,13 @@
         "UrbanEventOpinionRequest"
       ]
     },
+    "Service Environnement": {
+      "opinion": "externalDecision",
+      "type": [
+        "copy12_of_air-liquide-industries-belgium-s-a",
+        "UrbanEventOpinionRequest"
+      ]
+    },
     "Service Juridique": {
       "opinion": "externalDecision",
       "type": ["service-juridique", "UrbanEventOpinionRequest"]
