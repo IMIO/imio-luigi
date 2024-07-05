@@ -302,3 +302,45 @@ class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
         self.apply_subelement_base_type(data)
         data = super().transform_data(data)
         return data
+
+
+class AddValuesInDescription(core.InMemoryTask):
+    title = ""
+    list_style = "ul"
+
+    @abc.abstractmethod
+    def get_values(self, data):
+        return None
+
+    @abc.abstractmethod
+    def handle_value(self, value, data):
+        return data
+
+    def transform_data(self, data):
+        values = self.get_values(data)
+
+        if values is None:
+            return data
+
+        if "description" not in data:
+            data["description"] = {
+                "content-type": "text/html",
+                "data": "",
+            }
+
+        if len(values) > 0:
+            data["description"]["data"] += f"<H3>{self.title}</H3>\n"
+        if len(values) > 1:
+            data["description"]["data"] += f"<{self.list_style}>"
+
+        for value in values:
+            if len(values) > 1:
+                data["description"]["data"] += "<li>"
+            data = self.handle_value(value, data)
+            if len(values) > 1:
+                data["description"]["data"] += "</li>\n"
+
+        if len(values) > 1:
+            data["description"]["data"] += f"</{self.list_style}>\n"
+
+        return data
