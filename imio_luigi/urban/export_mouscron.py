@@ -745,6 +745,113 @@ class TransformFolderManager(core.MappingValueWithFileInMemoryTask):
         return TransformArchitect(key=self.key)
 
 
+class AddEventInDescription(ucore.AddValuesInDescription):
+    task_namespace = "mouscron"
+    key = luigi.Parameter()
+    event_list_path = "./config/mouscron/config_all_events.json"
+    title = "Les évenements"
+
+    @property
+    def event_list(self):
+        with open(self.event_list_path, "r") as f:
+            output = json.load(f)
+        return output
+
+    def get_values(self, data):
+        return [
+            {
+                "key": key,
+                "value": data[key]
+            }
+            for key in data
+            if key in self.event_list and data[key] is not None
+        ]
+
+    def handle_key_title(self, key):
+        if key == "cre_date":
+            return "Date de création"
+        if key.endswith("_fk"):
+            key = key.replace("_fk", "")
+        key = key.replace("_", " ")
+        return key.capitalize()
+
+    def handle_date(self, value, config):
+        dates = [
+            f"<li>{self.handle_key_title(date)}: {value[date]}</li>"
+            for date in config
+            if value.get(date, None) is not None
+        ]
+        if len(dates) < 1:
+            return None
+        joiner = "\n"
+        return f"<li>Les dates :\n<ul>{joiner.join(dates)}</ul></li>"
+
+    def handle_avis(self, value, config):
+        avis_list = []
+        for key in config:
+            key_value, key_child = key.split("/")
+            child = value.get(key_value, None)
+            if child is None:
+                continue
+            avis = child.get(key_child, None)
+            if avis is None:
+                continue
+            avis_list.append(f"<li>{self.handle_key_title(key_value)} : {avis}</li>")
+        if len(avis_list) < 1:
+            return None
+        joiner = "\n"
+        return f"<li>Les avis :\n<ul>{joiner.join(avis_list)}</ul></li>"
+
+    def handle_decision(self, value, config):
+        decisions = [
+            f"<li>{self.handle_key_title(key)}: {value[key]}</li>"
+            for key in config
+            if value.get(key, None) is not None
+        ]
+        if len(decisions) < 1:
+            return None
+        joiner = "\n"
+        return f"<li>Les décisions :\n<ul>{joiner.join(decisions)}</ul></li>"
+
+    def handle_value(self, value, data):
+        key = value["key"]
+        value = value["value"]
+        config = self.event_list[key]
+        title = config["title"]
+
+        output_text = []
+        if "date_keys" in config:
+            result = self.handle_date(
+                value=value,
+                config=config["date_keys"]
+            )
+            if result is not None:
+                output_text.append(result)
+
+        if "avis_keys" in config:
+            result = self.handle_avis(
+                value=value,
+                config=config["avis_keys"]
+            )
+            if result is not None:
+                output_text.append(result)
+
+        if "decision_keys" in config:
+            result = self.handle_decision(
+                value=value,
+                config=config["decision_keys"]
+            )
+            if result is not None:
+                output_text.append(result)
+        if len(output_text) > 0:
+            joiner = "\n"
+            data["description"]["data"] += f"{title} :\n<ul>{joiner.join(output_text)}</ul></li>"
+        return data
+
+    def requires(self):
+        return TransformFolderManager(key=self.key)
+
+
 class DropColumns(core.DropColumnInMemoryTask):
     task_namespace = "mouscron"
     key = luigi.Parameter()
@@ -943,7 +1050,7 @@ class DropColumns(core.DropColumnInMemoryTask):
     ]
 
     def requires(self):
-        return TransformFolderManager(key=self.key)
+        return AddEventInDescription(key=self.key)
 
 
 class ValidateData(core.JSONSchemaValidationTask):
