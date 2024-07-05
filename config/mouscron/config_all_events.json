@@ -1,0 +1,230 @@
+{
+  "annonce_projet_fk": {
+    "title": "Annonce projet",
+    "date_keys": ["cre_date", "date_debut_affichage", "date_pv_enquete"]
+  },
+  "assainissement_fk": {
+    "title": "Assainissement",
+    "date_keys": ["cre_date", "date_annonce"]
+  },
+  "audition_souhaitee_fk": {
+    "title": "Audition souhaitee",
+    "date_keys": ["cre_date", "date_audition", "date_pv"]
+  },
+  "autorisation_codt_fk": {
+    "title": "Autorisation codt",
+    "date_keys": [
+      "cre_date",
+      "date_decision_college",
+      "date_decision_gvt_suspension",
+      "date_decision_saisine_gvt"
+    ],
+    "decision_keys": [
+      "decision_college_",
+      "decision_gvt_suspension_",
+      "decision_saisine_fd",
+      "nouvelle_decision_"
+    ]
+  },
+  "autorisation_cu_fk": {
+    "title": "Autorisation de certificat d'urbanisme",
+    "date_keys": [
+      "cre_date",
+      "date_autorisation_college",
+      "date_autorisation_college2",
+      "date_avis_college",
+      "date_refus_college"
+    ],
+    "avis_keys": ["avis_college_fk/libelle_f", "avis_fk/libelle_f"]
+  },
+  "autorisation_fk": {
+    "title": "Autorisation",
+    "date_keys": [
+      "cre_date",
+      "date_autorisation_college",
+      "date_autorisation_college2",
+      "date_autorisation_tutelle",
+      "date_avis_college",
+      "date_avis_prorogation",
+      "date_refus_college",
+      "date_refus_tutelle"
+    ],
+    "avis_keys": ["avis_college_fk/libelle_f", "avis_fk/libelle_f"]
+  },
+  "autorisation_notaire_fk": {
+    "title": "Autorisation notaire",
+    "date_keys": ["cre_date", "date_delibe_college"]
+  },
+  "cessation_fk": {
+    "title": "Cessation",
+    "date_keys": ["cre_date", "date_cessation_prevue"]
+  },
+  "charge_imposee_fk": {
+    "title": "Charge imposee",
+    "date_keys": ["cre_date", "date_execution"]
+  },
+  "commission_consultative_fk": {
+    "title": "Commission consultative",
+    "date_keys": ["cre_date", "date_seance"],
+    "avis_keys": ["avis_fk/libelle_f"]
+  },
+  "completude_fk": {
+    "title": "Completude",
+    "date_keys": ["cre_date", "date_statut_completude"]
+  },
+  "decision_environnement_classe3_fk": {
+    "title": "Decision environnement classe 3",
+    "date_keys": [
+      "cre_date",
+      "date_recevable",
+      "date_recevable_avec_condition",
+      "date_decision",
+      "date_non_recevable",
+      "date_delivrance_college"
+    ],
+    "avis_keys": ["avis_college_fk/libelle_f"],
+    "decision_keys": ["decision"]
+  },
+  "decision_environnement_fk": {
+    "title": "Decision environnement",
+    "date_keys": ["cre_date", "date_avis_college"],
+    "avis_keys": ["avis_college_fk/libelle_f"],
+    "decision_keys": ["decision_autorite"]
+  },
+  "decision_fk": {
+    "title": "Decision",
+    "date_keys": ["cre_date", "date_avis_college"],
+    "avis_keys": ["avis_college_fk/libelle_f"]
+  },
+  "decision_unique_fk": {
+    "title": "Decision unique",
+    "date_keys": ["cre_date", "date_avis_college"],
+    "avis_keys": ["avis_college_fk/libelle_f"],
+    "decision_keys": ["decision_autorite"]
+  },
+  "directive_fk": {
+    "title": "Directive",
+    "date_keys": ["cre_date"]
+  },
+  "ech_observation_exploitant_fk": {
+    "title": "Echeance observation exploitant",
+    "date_keys": ["cre_date"]
+  },
+  "ech_peremption_fk": {
+    "title": "Echeance peremption",
+    "date_keys": ["cre_date"]
+  },
+  "echeance_envoi_irrecevable_fk": {
+    "title": "Echeance envoi irrecevable",
+    "date_keys": ["cre_date"]
+  },
+  "enquete_publique_eu_fk": {
+    "title": "Enquete publique europeen",
+    "date_keys": [
+      "cre_date",
+      "date_premiere_consultation",
+      "date_deuxieme_consultation",
+      "date_debut",
+      "date_fin"
+    ]
+  },
+  "enquete_publique_fk": {
+    "title": "Enquete Publique",
+    "date_keys": ["cre_date", "date_consultation", "date_debut", "date_fin"]
+  },
+  "etude_incidence_fk": {
+    "title": "Etude incidence",
+    "date_keys": ["cre_date", "date_accuse"]
+  },
+  "fonctionnaire_delegue_fk": {
+    "title": "Fonctionnaire delegue",
+    "date_keys": ["cre_date", "date_envoi"]
+  },
+  "fonctionnaire_technique_fk": {
+    "title": "Fonctionnaire technique",
+    "date_keys": ["cre_date", "date_recevable", "date_irrecevable"],
+    "decision_keys": ["decision_avis_demande1", "decision_avis_demande2"]
+  },
+  "infraction_fk": {
+    "title": "Infraction",
+    "date_keys": ["cre_date", "date_pv"],
+    "decision_keys": ["decision"]
+  },
+  "instruction_codt_fk": {
+    "title": "Instruction codt",
+    "date_keys": ["cre_date", "date_pv"]
+  },
+  "instruction_infraction_urbanistique_fk": {
+    "title": "Instruction infraction urbanistique",
+    "date_keys": ["cre_date", "date_decision_college"],
+    "decision_keys": ["decision_college_sur_transaction_"]
+  },
+  "instruction_insalubrite_logement_fk": {
+    "title": "Instruction insalubrite logement",
+    "date_keys": ["cre_date", "date_decision"],
+    "decision_keys": ["decision"]
+  },
+  "instruction_permis_location_fk": {
+    "title": "Instruction permis location",
+    "date_keys": ["cre_date", "date_decision"],
+    "decision_keys": ["decision"],
+    "avis_keys": ["avis_enqueteur_fk/libelle_f"]
+  },
+  "instruction_reclamation_plainte_fk": {
+    "title": "Instruction reclamation plainte",
+    "date_keys": ["cre_date", "date_decision"]
+  },
+  "instruction_reunion_fk": {
+    "title": "Instruction reunion",
+    "date_keys": ["cre_date"]
+  },
+  "performance_energetique_batiment_fk": {
+    "title": "Performance energetique batiment",
+    "date_keys": ["cre_date"]
+  },
+  "rapport_technique_fk": {
+    "title": "Rapport technique",
+    "date_keys": ["cre_date"]
+  },
+  "recevabilite_fk": {
+    "title": "Recevabilite",
+    "date_keys": [
+      "cre_date",
+      "date_autorisation_college",
+      "date_irrecevable",
+      "date_recevable"
+    ]
+  },
+  "recour_eu_fk": {
+    "title": "Recour europeen",
+    "date_keys": ["cre_date", "date_decision_gouvernement"],
+    "decision_keys": ["decision_recours_gouvernement"]
+  },
+  "recour_fk": {
+    "title": "Recour",
+    "date_keys": ["cre_date", "date_decision_tutelle"],
+    "avis_keys": ["avis_fk/libelle_f"],
+    "decision_keys": ["decision_tutelle"]
+  },
+  "resume_eu_fk": {
+    "title": "Resume europeen",
+    "date_keys": ["cre_date"]
+  },
+  "travaux_fk": {
+    "title": "Travaux",
+    "date_keys": ["cre_date", "date_debut", "date_fin"]
+  },
+  "urbanisme_fk": {
+    "title": "Urbanisme",
+    "date_keys": ["cre_date"],
+    "avis_keys": ["avis_fk/libelle_f", "avis_phase_3_fk/libelle_f"]
+  },
+  "voirie_fk": {
+    "title": "Voirie",
+    "date_keys": ["cre_date"]
+  },
+  "voirie_rt_fk": {
+    "title": "Voirie rt",
+    "date_keys": ["cre_date"]
+  }
+}
