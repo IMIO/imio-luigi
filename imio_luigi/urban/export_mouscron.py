@@ -775,9 +775,13 @@ class AddEventInDescription(ucore.AddValuesInDescription):
         key = key.replace("_", " ")
         return key.capitalize()
 
+    def pretify_date(self, date):
+        iso_date = datetime.fromisoformat(date[:10])
+        return iso_date.strftime("%d/%m/%Y")
+
     def handle_date(self, value, config):
         dates = [
-            f"<li>{self.handle_key_title(date)}: {value[date]}</li>"
+            f"<li>{self.handle_key_title(date)}: {self.pretify_date(value[date])}</li>"
             for date in config
             if value.get(date, None) is not None
         ]
