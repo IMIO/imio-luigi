@@ -9,3 +9,10 @@ def get_value_from_path(data, path):
         else:
             return None
     return current_data
+
+
+def fix_search_term(term):
+    """Fix term with parentheses"""
+    term = term.replace("(", " ")
+    term = term.replace(")", " ")
+    return term.strip()
