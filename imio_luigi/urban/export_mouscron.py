@@ -706,7 +706,7 @@ class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
         architecte_fname = utils.get_value_from_path(data, "organisme_fk/prenom")
         if architecte_fname and architecte_fname != ".":
             architecte_name = f"{architecte_name} {architecte_fname}"
-        params = {"SearchableText": f"{architecte_name}", "metadata_fields": "UID"}
+        params = {"SearchableText": f"{utils.fix_search_term(architecte_name)}", "metadata_fields": "UID"}
         r = self.request(parameters=params)
         if r.status_code != 200:
             errors.append(f"Response code is '{r.status_code}', expected 200")
