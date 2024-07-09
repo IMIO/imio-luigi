@@ -776,8 +776,13 @@ class AddEventInDescription(ucore.AddValuesInDescription):
         return key.capitalize()
 
     def pretify_date(self, date):
-        iso_date = datetime.fromisoformat(date[:10])
-        return iso_date.strftime("%d/%m/%Y")
+        try:
+            iso_date = datetime.fromisoformat(date[:10])
+            export_date = iso_date.strftime("%d/%m/%Y")
+        except Exception:
+            export_date = f"Erreur avec la date : {date}"
+
+        return export_date
 
     def handle_date(self, value, config):
         dates = [
