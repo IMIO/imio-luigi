@@ -508,8 +508,8 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
     subelement_base = {}
     log_failure = True
 
-    def _remove_end_parentesis(self, element):
-        pattern = r"(?P<street>.*)(?P<letter>\([A-Z]\))?$"
+    def _remove_end_parenthesis(self, element):
+        pattern = r"(?P<street>.*)(?P<letter>\([A-Z]\))$"
         find = re.search(pattern, element)
         if not find:
             return element
@@ -529,7 +529,7 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
             return data
         for index, element in enumerate(data[self.subelements_source_key]):
             new_element = {
-                "street": f"{self._remove_end_parentesis(element['info_rue_f'])} ({element['localite_fk']['code_postal']} - {element['localite_fk']['libelle_f']})"
+                "street": f"{self._remove_end_parenthesis(element['info_rue_f'])} ({element['localite_fk']['code_postal']} - {element['localite_fk']['libelle_f']})"
             }
             new_element["number"] = element["numero"]
             data[self.subelements_destination_key].append(new_element)
