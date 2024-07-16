@@ -78,6 +78,8 @@ class AddUrbanEvent(core.InMemoryTask):
 
     def _create_recepisse(self, data):
         """Create recepisse event"""
+        if data["@type"] in self._no_recepisse_event:
+            return data
         if not self.get_recepisse_check(data):
             return data
 
@@ -163,7 +165,11 @@ class AddUrbanEvent(core.InMemoryTask):
 
     @property
     def _no_delivery_event(self):
-        return ["CODT_NotaryLetter"]
+        return ["CODT_NotaryLetter", "ProjectMeeting"]
+
+    @property
+    def _no_recepisse_event(self):
+        return ["ProjectMeeting"]
 
 
 class AddAllOtherEvents(core.InMemoryTask):
