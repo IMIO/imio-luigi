@@ -86,9 +86,13 @@ def add_color(output, percentage):
 
 @cli.command()
 @click.option("--percent", default=False, is_flag=True, help="Add percentage of failure against the result")
-def list(percent):
+@click.option("--filter", default=None, help="Enter a specific name you want to filter")
+def list(percent, filter):
     """List tasks in error"""
-    for dirname in sorted(os.listdir("./failures")):
+    dirs = sorted(os.listdir("./failures"))
+    if filter is not None:
+        dirs = [dirname for dirname in dirs if dirname.startswith(filter)]
+    for dirname in dirs:
         count = len(os.listdir(f"./failures/{dirname}"))
         output = f"{dirname} ({count})"
         if percent:
