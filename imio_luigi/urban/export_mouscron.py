@@ -143,7 +143,7 @@ class Transform(luigi.Task):
         return result.to_dict(orient=orient)
 
     def add_outside_data(self, data, table, key):
-        values = self.get_table(table, self.key, key, orient="records")
+        values = self.get_table(table, data["id"], key, orient="records")
         values = [
             self.populate_cross_data(value, whitelist=self.whitelist)
             for value in values
@@ -431,13 +431,15 @@ class CreateApplicant(ucore.CreateApplicant):
     }
     subelement_base = {}
 
-    def _get_values(self, data):
+    def _get_values(self, applicant):
         output = {}
         for key, destination in self.mapping_keys.items():
-            value = utils.get_value_from_path(data, key)
+            value = utils.get_value_from_path(applicant, key)
             if not value:
                 continue
             output[destination] = value
+        if "name1" not in output:
+            output["name1"] = applicant["prenom"] or applicant["localite"] or ""
         return output
 
     def _fix_country(self, new_element):
@@ -479,7 +481,7 @@ class CreateApplicant(ucore.CreateApplicant):
         if not applicants:
             return data
 
-        if not "__children__" in data:
+        if "__children__" not in data:
             data["__children__"] = []
 
         for applicant in applicants:
@@ -506,6 +508,16 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
     subelement_base = {}
     log_failure = True
 
+    def _remove_end_parentesis(self, element):
+        pattern = r"(?P<street>.*)(?P<letter>\([A-Z]\))?$"
+        find = re.search(pattern, element)
+        if not find:
+            return element
+        groups = find.groupdict()
+        if "street" not in groups:
+            return element
+        return groups["street"]
+
     def transform_data(self, data):
         if self.subelements_destination_key not in data:
             if self.create_container is False:
@@ -517,7 +529,7 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
             return data
         for index, element in enumerate(data[self.subelements_source_key]):
             new_element = {
-                "street": f"{element['info_rue_f']} ({element['localite_fk']['code_postal']} - {element['localite_fk']['libelle_f']})"
+                "street": f"{self._remove_end_parentesis(element['info_rue_f'])} ({element['localite_fk']['code_postal']} - {element['localite_fk']['libelle_f']})"
             }
             new_element["number"] = element["numero"]
             data[self.subelements_destination_key].append(new_element)
@@ -643,6 +655,9 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
 
         return parcelle_info, None
 
+    def _remove_none_value(self, cadastre):
+        return {key: value for key, value in cadastre.items() if value is not None}
+
     def transform_data(self, data):
         if "p_parcelle" not in data:
             return data
@@ -669,7 +684,7 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
             else:
                 new_cadastre["outdated"] = False
 
-            data["__children__"].append(new_cadastre)
+            data["__children__"].append(self._remove_none_value(new_cadastre))
         return data, errors
 
 
