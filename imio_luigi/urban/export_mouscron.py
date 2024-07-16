@@ -528,6 +528,8 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
                 raise KeyError(f"Missing key {self.subelements_source_key}")
             return data
         for index, element in enumerate(data[self.subelements_source_key]):
+            if element['info_rue_f'] is None:
+                continue
             new_element = {
                 "street": f"{self._remove_end_parenthesis(element['info_rue_f'])} ({element['localite_fk']['code_postal']} - {element['localite_fk']['libelle_f']})"
             }
