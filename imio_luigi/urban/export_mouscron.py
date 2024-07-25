@@ -598,96 +598,61 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         return data, errors
 
 
-class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
+class TransformCadastre(ucore.TransformCadastre):
     task_namespace = "mouscron"
     key = luigi.Parameter()
     log_failure = True
+    cadastre_key = "p_parcelle"
+    mapping_division_dict = {
+        "1" : "54007",
+        "2" : "54432",
+        "3" : "54433",
+        "4" : "54434",
+        "5" : "54435",
+        "6" : "54436",
+        "7" : "54003",
+        "8" : "54004",
+        "9" : "54006"
+    }
 
     def requires(self):
         return TransformWorkLocation(key=self.key)
 
-    @property
-    def request_url(self):
-        return f"{self.url}/@parcel"
-
-    def on_failure(self, data, errors):
-        if "description" not in data:
-            data["description"] = {
-                "content-type": "text/html",
-                "data": "",
-            }
-        for error in errors:
-            # cleanup
-            error = error.replace(", 'browse_old_parcels': True", "")
-            error = error.replace("'", "")
-            data["description"]["data"] += f"<p>{error}</p>\r\n"
-        return data
-
-    def _extract_cadastre(self, cadastre):
-        output = {}
-        pattern = r"(\d{4})\/(\d{2})([A-Z]{1})(\d{3})"
-        match = re.match(pattern, cadastre)
+    def _generate_cadastre_dict(self, cadastre, data):
+        capkey = cadastre.get("cadastre", None)
+        if capkey is None:
+            return None, "Pas de numeros de cadastre"
+        pattern = r"(?P<radical>\d{4})\/(?P<bis>\d{2})(?P<exposant>[A-Z#]{1})(?P<puissance>\d{3})"
+        match = re.match(pattern, capkey)
         if not match:
-            return output
-        part_order = ("radical", "bis", "exposant", "puissance")
-        for count, part in enumerate(match.groups()):
+            return None, f"Cadastre non reconnu : {capkey}"
+        output = match.groupdict()
+        new_output = {}
+        for key, value in output.items():
             try:
-                part_int = int(part)
-                if part_int == 0:
-                    part_int = ""
+                value = int(value)
+                if value == 0:
+                    value= ""
             except ValueError:
-                part_int = part
-            output[part_order[count]] = str(part)
-        return output
-
-    def get_cadastre_by_rest(self, params):
-        r = self.request(parameters=params)
-        if r.status_code != 200:
-            return None, f"Response code is '{r.status_code}', expected 200"
-        result = r.json()
-        if result["items_total"] == 0:
-            del params["browse_old_parcels"]
-            return None, f"Aucun résultat pour la parcelle '{params}'"
-        elif result["items_total"] > 1:
-            del params["browse_old_parcels"]
-            return None, f"Plusieurs résultats pour la parcelle '{params}'"
-
-        parcelle_info = result["items"][0]
-        parcelle_info["date_fin"] = parcelle_info.get("old", False)
-
-        return parcelle_info, None
-
-    def _remove_none_value(self, cadastre):
-        return {key: value for key, value in cadastre.items() if value is not None}
-
-    def transform_data(self, data):
-        if "p_parcelle" not in data:
-            return data
-
-        if not "__children__" in data:
-            data["__children__"] = []
-
-        errors = []
-        for cadastre in data["p_parcelle"]:
-            new_cadastre = self._extract_cadastre(cadastre["cadastre"])
-            new_cadastre["division"] = cadastre["division_fk"]["code_ins"]
-            new_cadastre["section"] = cadastre["section_cadastrale"]
-            parcelle_info = cadastre.get("parcelle_info_fk", None)
-            if not parcelle_info and "capakey" not in parcelle_info:
-                parcelle_info, error = self.get_cadastre_by_rest(new_cadastre)
-                if error:
-                    errors.append(error)
-                    continue
-
-            new_cadastre["@type"] = "Parcel"
-            new_cadastre["id"] = parcelle_info["capakey"].replace("/", "_")
-            if parcelle_info["date_fin"]:
-                new_cadastre["outdated"] = True
+                value = value
+            if value == "#":
+                value = ""
+            new_output[key] = str(value)
+        section = cadastre.get('section_cadastrale', None)
+        if section is not None:
+            new_output["section"] = str(section)
+        division = cadastre.get('division_fk', None)
+        if division is not None:
+            code_ins = division.get("code_ins", None)
+            if code_ins is None:
+                numero = division.get("numero", None)
+                if numero is None:
+                    code_ins = ""
             else:
-                new_cadastre["outdated"] = False
-
-            data["__children__"].append(self._remove_none_value(new_cadastre))
-        return data, errors
+                    code_ins = self._mapping_division(str(numero))
+            new_output["division"] = code_ins
+        new_output["original_cadastre"] = capkey
+        return new_output, None
 
 
 class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
