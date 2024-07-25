@@ -162,6 +162,7 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
             if params is None:
                 continue
             params["browse_old_parcels"] = self.browse_old_parcels
+            original_cadastre = params.pop("original_cadastre", None)
             r = self.request(parameters=params)
             if r.status_code != 200:
                 errors.append(f"Response code is '{r.status_code}', expected 200")
@@ -169,7 +170,10 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
             result = r.json()
             if result["items_total"] == 0:
                 del params["browse_old_parcels"]
-                errors.append(f"Aucun résultat pour la parcelle '{params}'")
+                error_res = f"Aucun résultat pour la parcelle '{params}'"
+                if original_cadastre is not None:
+                    error_res += f" (original : {original_cadastre})"
+                errors.append(error_res)
                 continue
             elif result["items_total"] > 1:
                 del params["browse_old_parcels"]
