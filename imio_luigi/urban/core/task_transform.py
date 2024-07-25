@@ -115,6 +115,7 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
 class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
     browse_old_parcels = True
     mapping_division_dict = {}
+    cadastre_key = "cadastre"
 
     @property
     def request_url(self):
@@ -151,9 +152,9 @@ class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
 
     def transform_data(self, data):
         errors = []
-        if "cadastre" not in data:
+        if self.cadastre_key not in data:
             return data, errors
-        for cadastre in data["cadastre"]:
+        for cadastre in data[self.cadastre_key]:
             params, error = self._generate_cadastre_dict(cadastre, data)
             if error:
                 errors.append(error)
