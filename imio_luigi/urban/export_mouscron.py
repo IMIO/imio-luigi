@@ -632,7 +632,7 @@ class TransformCadastre(ucore.TransformCadastre):
             try:
                 value = int(value)
                 if value == 0:
-                    value= ""
+                    value = ""
             except ValueError:
                 value = value
             if value == "#":
@@ -648,7 +648,7 @@ class TransformCadastre(ucore.TransformCadastre):
                 numero = division.get("numero", None)
                 if numero is None:
                     code_ins = ""
-            else:
+                else:
                     code_ins = self._mapping_division(str(numero))
             new_output["division"] = code_ins
         new_output["original_cadastre"] = capkey
