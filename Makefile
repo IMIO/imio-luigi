@@ -75,7 +75,7 @@ import-mouscron-architecte:
 
 .PHONY: import-mouscron
 import-mouscron:
-	LUIGI_CONFIG_PATH=./mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-mouscron --local-scheduler
+	LUIGI_CONFIG_PATH=./mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-mouscron --local-scheduler --logging-conf-file logging.ini
 
 .PHONY: run-local-fix-ref-mouscron
 run-local-fix-ref-mouscron:
