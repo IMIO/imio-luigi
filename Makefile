@@ -97,6 +97,10 @@ run-local-gracehollogne:
 	LUIGI_CONFIG_PATH=$(CURDIR)/gracehollogne.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_gracehollogne gracehollogne.GetFromAccess --filepath ./data/gracehollogne/customer_ouput_formated.json --local-scheduler
 
 
+.PHONY: clear-gracehollogne-env
+clear-gracehollogne-env:
+	rm -rf result-gracehollogne-env/ failures/gracehollogne_env-*
+
 .PHONY: import-local-gracehollogne
 import-gracehollogne:
 	LUIGI_CONFIG_PATH=./gracehollogne.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-gracehollogne --local-scheduler
