@@ -105,6 +105,10 @@ clear-gracehollogne-env:
 import-gracehollogne:
 	LUIGI_CONFIG_PATH=./gracehollogne.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-gracehollogne --local-scheduler
 
+.PHONY: import-local-gracehollogne-env
+import-gracehollogne-env:
+	LUIGI_CONFIG_PATH=./gracehollogne.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-gracehollogne-env --local-scheduler
+
 # Bastonge
 .PHONY: run-local-bastogne
 run-local-bastogne:
