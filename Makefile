@@ -35,7 +35,7 @@ run-local-flemalle-notaries:
 
 .PHONY: import-flemalle-notaries
 import-flemalle-notaries:
-	LUIGI_CONFIG_PATH=./flemalle.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-flemalle-notaries --local-scheduler
+	LUIGI_CONFIG_PATH=./flemalle.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-flemalle-notaries --local-scheduler --logging-conf-file logging_flemalle.ini
 
 # Arlon
 .PHONY: run-local-arlon
