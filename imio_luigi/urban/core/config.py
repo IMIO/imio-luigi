@@ -341,7 +341,7 @@ config = {
         'contact_type': 'Proprietary'
     },
     "ProjectMeeting": {
-        "folder": "projectmeeting",
+        "folder": "projectmeetings",
         "config_folder": "projectmeeting",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
