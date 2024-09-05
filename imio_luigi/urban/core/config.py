@@ -297,7 +297,7 @@ config = {
         "config_folder": "codt_notaryletter",
         "config": DEFAULT_CONFIG,
         "workflow": "urban_licence_workflow",
-        'contact_type': 'Applicant'
+        'contact_type': 'Proprietary'
     },
     "Inspection": {
         "folder": "inspections",
