@@ -54,7 +54,7 @@ class GetFiles(core.WalkFS):
         for fpath in self.filepaths:
             with open(fpath, "r") as f:
                 content = json.load(f)
-                if content["reference"].upper() in COMPLETE_REFERENCES:
+                if content["reference"].upper().strip() in COMPLETE_REFERENCES:
                     continue
                 yield RESTPost(
                     key=content[config[content["@type"]]["config"]["key"]],
