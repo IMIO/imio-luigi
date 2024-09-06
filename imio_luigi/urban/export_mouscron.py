@@ -386,12 +386,12 @@ class AddEvents(ucore.AddUrbanEvent):
         return decision
 
     def get_recepisse_check(self, data):
-        return "date_recepisse" not in data or not data["date_recepisse"]
+        return "date_recepisse" in data or data["date_recepisse"]
 
     def get_delivery_check(self, data):
         columns = ("date_cloture", "wf_transitions")
         matching_columns = [c for c in columns if c in data]
-        return not matching_columns
+        return matching_columns
 
 
 class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
