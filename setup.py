@@ -47,6 +47,7 @@ setup(
         'console_scripts': [
             "failure_report = imio_luigi.report.failure:main",
             "access_report = imio_luigi.report.access:main",
+            "result = imio_luigi.report.result:main",
         ],
     }
 )

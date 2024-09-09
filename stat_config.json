@@ -1,0 +1,28 @@
+[
+  {
+    "key": "licenceSubject"
+  },
+  {
+    "key": "wf_transitions"
+  },
+  {
+    "id": "UrbanEvent",
+    "key": "__children__/@type",
+    "value": "UrbanEvent|UrbanEventOpinionRequest"
+  },
+  {
+    "id": "File",
+    "key": "__children__/@type",
+    "value": "File"
+  },
+  {
+    "id": "Parcel",
+    "key": "__children__/@type",
+    "value": "Parcel"
+  },
+  {
+    "id": "Contact",
+    "key": "__children__/@type",
+    "value": "Applicant|Corporation|Proprietary"
+  }
+]
