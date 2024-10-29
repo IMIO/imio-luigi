@@ -33,6 +33,51 @@ class AddNISData(core.InMemoryTask):
         return data
 
 
+class AddEvents(core.InMemoryTask):
+    @property
+    def event_config(self):
+        raise NotImplementedError
+
+    def _check(self, data, checks):
+        return all([check in data and data[check] for check in checks])
+
+    def _add_date(self, event, data, mapping, config):
+        dates = mapping.get("date", [])
+        for date in dates:
+            date_mapping = config["date_mapping"][date]
+            date_value = data[date_mapping]
+            event[data] = date_value
+        return event
+
+    def _add_decision(self, event, data, mapping, config):
+        decision_key = mapping.get("decision", None)
+        if decision_key is not None:
+            wf_transition = data.get("wf_transitions", None)
+            if wf_transition is not None:
+                return event
+            decision = config["decision_mapping"][wf_transition]
+            event[decision_key] = decision
+        return event
+
+    def transform_data(self, data):
+        if "__children__" not in data:
+            data["__children__"] = []
+        for config in self.event_config.values():
+            if not self._check(data, config["check_key"]):
+                continue
+            mapping = config["mapping"][data["@type"]]
+            event_type = mapping["urban_type"]
+            event = {
+                "@type": "UrbanEvent",
+                "urbaneventtypes": event_type
+            }
+            event = self._add_date(event, data, mapping, config)
+            event = self._add_decision(event)
+
+            data["__children__"].append(event)
+        return data
+
+
 class AddUrbanEvent(core.InMemoryTask):
     create_recepisse = True
     create_delivery = True
