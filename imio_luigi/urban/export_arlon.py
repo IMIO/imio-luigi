@@ -4,6 +4,7 @@ from imio_luigi import core, utils
 from imio_luigi.urban.address import find_address_match
 from imio_luigi.core.utils import _cache
 from imio_luigi.urban import tools
+from imio_luigi.urban import core as ucore
 from datetime import datetime
 
 import json
@@ -16,32 +17,16 @@ import re
 logger = logging.getLogger("luigi-interface")
 
 
+def date_error():
+    with open("./data/arlon/date_error.json", "r") as f:
+        data = json.load(f)
+    return data
+
 class GetFromAccess(core.GetFromAccessJSONTask):
     task_namespace = "arlon"
     filepath = luigi.Parameter()
     line_range = luigi.Parameter(default=None)
     counter = luigi.Parameter(default=None)
-    columns = [
-        "année",
-        "auteur_de_projet",
-        "clé",
-        "demandeur",
-        "division_cadastrale",
-        "entrée",
-        "localité",
-        "n°_cadastral",
-        "objet",
-        "remarques",
-        "rue-place",
-        "référence_communale",
-        "section_cadastrale",
-        "type_dossier",
-        "n°",
-        "octroi",
-        "refus",
-        "début_travaux",
-        "irrecevabilité"
-    ]
 
     def _complete(self, key):
         """Method to speed up process that verify if output exist or not"""
@@ -219,8 +204,10 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
             data[self.mapping_key] = f"{data[self.mapping_key]}{suffix}"
         
         return data
-        
+
     def _cwatup_codt(self, data):
+        if self.key in date_error():
+            __import__('pdb').set_trace()
         if data["@type"] not in self.codt_trigger:
             return data
         year = None
@@ -275,7 +262,7 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
         return AddExtraData(key=self.key)
 
 
-class AddNISData(tools.AddNISData):
+class AddNISData(ucore.AddNISData):
     task_namespace = "arlon"
     key = luigi.Parameter()
 
@@ -397,12 +384,30 @@ class AddEvents(core.InMemoryTask):
         return data[type]
 
 
-class EventConfigUidResolver(tools.UrbanEventConfigUidResolver):
+class AddOtherEvent(ucore.AddEvents):
+    task_namespace = "arlon"
+    key = luigi.Parameter()
+    event_config = {
+        "travaux": {
+            "check_key": "début_travaux",
+            "date_mapping": {"eventDate": "début_travaux"},
+            "mapping": {
+                "BuildLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
+                "CODT_BuildLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
+                "Article127": {"urban_type": "debut-des-travaux", "date": ["eventDate"]}
+            }
+        }
+    }
+    
+    def requires(self):
+        return AddEvents(key=self.key)
+
+class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
     task_namespace = "arlon"
     key = luigi.Parameter()
     
     def requires(self):
-        return AddEvents(key=self.key)
+        return AddOtherEvent(key=self.key)
     
     
 class AddTransitions(core.InMemoryTask):
@@ -425,6 +430,14 @@ class AddTransitions(core.InMemoryTask):
         return data
 
 
+class UrbanTransitionMapping(ucore.UrbanTransitionMapping):
+    task_namespace = "arlon"
+    key = luigi.Parameter()
+    
+    def requires(self):
+        return AddTransitions(key=self.key)
+
+
 class WorkLocationStreetSplit(core.StringToListInMemoryTask):
     task_namespace = "arlon"
     key = luigi.Parameter()
@@ -435,7 +448,7 @@ class WorkLocationStreetSplit(core.StringToListInMemoryTask):
         return item.strip()
 
     def requires(self):
-        return AddTransitions(key=self.key)
+        return UrbanTransitionMapping(key=self.key)
 
 
 class WorkLocationNumberSplit(core.StringToListInMemoryTask):
@@ -790,9 +803,11 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
                 **self.subelement_base,
                 **self.mapping_demandeur_keys(result[0])
             }
-        if len(result) > 1:
-            output = [f'"{res["demandeur"]}"' for res in result]
-            raise ValueError(f'Trop de demandeures correspondent : {",".join(output)} ')
+        if (len(result) > 1 or len(result) == 0):
+            self.subelement_base = {
+                **self.subelement_base,
+                "name1": demandeur
+            }
 
     def transform_data(self, data):
         applicant = data.get("demandeur", None)
@@ -808,7 +823,7 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
             self.subelement_base["@type"] == "Corporation"
         
         if "country" in self.subelement_base:
-            maping_country = {"BELGIQUE": "belgium"}
+            maping_country = {"BELGIQUE": "belgium", "G.D. LUXEMBOURG": "luxembourg"}
             self.subelement_base["country"] = maping_country[self.subelement_base["country"]]
         
         # Filter applicants without name
@@ -854,7 +869,12 @@ class DropColumns(core.DropColumnInMemoryTask):
         "octroi",
         "refus",
         "début_travaux",
-        "irrecevabilité"
+        "irrecevabilité",
+        'lot',
+        'lotissement',
+        'n°_dossier',
+        'référence_DGATLP',
+        'mandataire'
     ]
 
     def requires(self):

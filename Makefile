@@ -40,7 +40,7 @@ import-flemalle-notaries:
 # Arlon
 .PHONY: run-local-arlon
 run-local-arlon:
-	LUIGI_CONFIG_PATH=$(CURDIR)/arlon.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_arlon arlon.GetFromAccess --filepath ./data/arlon/json/REGISTRES.json --local-scheduler
+	LUIGI_CONFIG_PATH=$(CURDIR)/arlon.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_arlon arlon.GetFromAccess --filepath ./data/arlon/json/registre_merge.json --local-scheduler
 
 .PHONY: import-arlon
 import-arlon:
