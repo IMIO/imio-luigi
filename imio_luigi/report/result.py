@@ -37,7 +37,9 @@ def check_value(value, check=None):
         if check:
             return [1 for item in value if match_value(item, check)]
         else:
-            return [1 for item in value]
+            return [
+                1 if item is not None or item != "" else 0 for item in value
+            ]
     if check:
         return [1 if match_value(value, check) else 0]
     else:
@@ -48,6 +50,58 @@ def get_title_config(config):
     return config.get("id", config["key"])
 
 
+def get_stat_data(path, configs, select=None):
+    files = os.listdir(path)
+    output = {
+        get_title_config(config): {
+            "results": {},
+            "type": config.get("type", "normal")
+        }
+        for config in configs
+    }
+    for filename in files:
+        fpath = os.path.join(path, filename)
+        with open(fpath, 'r') as f:
+            data = json.load(f)
+        for config in configs:
+            if select is not None and get_title_config(config) not in select:
+                continue
+            key = config["key"]
+            data_value = get_value(data, key)
+            if not data_value:
+                continue
+            value_to_chek = config.get("value", None)
+            result = sum(check_value(data_value, value_to_chek))
+            output[get_title_config(config)]["results"][data["reference"]] = {
+                "path": filename,
+                "result": result
+            }
+    return output, files
+
+
+def unique_value_count(list):
+    output = {}
+    for item in list:
+        if item in output:
+            output[item] = output[item] + 1
+        else:
+            output[item] = 1
+    return output
+
+
+def print_unique_values(values, total):
+    click.echo(f"\t\tUnique value stats :")
+    all_values_sum = sum(values.values())
+    remain_values = total - all_values_sum
+    if 0 in values:
+        values[0] = values[0] + remain_values
+    else:
+        values[0] = remain_values
+    for key, value in values.items():
+        percentage = (value / total) * 100
+        click.echo(f"\t\t\t{key}: {value} (Percentage: {percentage:.2f}%)")
+
+
 @cli.command()
 @click.argument("path")
 @click.argument("config")
@@ -55,28 +109,17 @@ def stat(path, config):
     """Display stat of a series of key for all result"""
     with open(config, "r") as f:
         configs = json.load(f)
-    files = os.listdir(path)
-    output = {get_title_config(config): {} for config in configs}
-    for filename in files:
-        fpath = os.path.join(path, filename)
-        with open(fpath, 'r') as f:
-            data = json.load(f)
-        for config in configs:
-            key = config["key"]
-            data_value = get_value(data, key)
-            if not data_value:
-                continue
-            value_to_chek = config.get("value", None)
-            result = sum(check_value(data_value, value_to_chek))
-            output[get_title_config(config)][data["reference"]] = result
+    output, files = get_stat_data(path, configs)
 
     click.echo(f"Stat (for {len(files)} files):")
+
     for out in output:
         title = out
         click.echo(f"\t{title}:")
         total_count = len(files)
-        values = output[out]
-        list_values = [value for value in values.values() if value >= 1]
+        values = output[out]["results"]
+        result_type = output[out]["type"]
+        list_values = [value["result"] for value in values.values() if value["result"] >= 1]
         count = len(list_values)
         click.echo(f"\t\tCount: {count}")
         percentage = (count / total_count) * 100
@@ -89,6 +132,33 @@ def stat(path, config):
         median_value = median(list_values)
         mean_value = fmean(list_values)
         click.echo(f"\t\tMedian/Average: {median_value:.2f} / {mean_value:.2f}")
+        if result_type == "list":
+            value_by_count = unique_value_count(list_values)
+            print_unique_values(value_by_count, total_count)
+
+
+@cli.command()
+@click.argument("path")
+@click.argument("config")
+@click.argument("filter-path")
+def filter(path, config, filter_path):
+    with open(config, "r") as f:
+        configs = json.load(f)
+    with open(filter_path, "r") as f:
+        filter = json.load(f)
+
+    stats, files = get_stat_data(path, configs, select=filter["key"])
+    results = stats[filter["key"]]
+    output = []
+    for result in results:
+        obj = results[result]["results"]
+        value = obj["result"]
+        filename = obj["path"]
+        eval_string = f"{value}{filter['operator']}{filter['value']}"
+        if eval(eval_string):
+            output.append(filename)
+
+    click.echo(" ".join(output))
 
 
 @cli.command()
