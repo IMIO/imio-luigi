@@ -35,6 +35,37 @@ def distinct(filepath, column, filter, example):
             for data in value["examples"]:
                 click.echo(data)
 
+def clean_str(string):
+    if isinstance(string, str) and len(string) > 200:
+        return string[:200]
+    return string
+
+def clean_dict(dict):
+    output = {}
+    for key, value in dict.items():
+        output[key] = clean_str(value)
+    return output
+
+@cli.command()
+@click.argument("filepath")
+@click.option("--example", is_flag=True)
+def keys(filepath, example=False):
+    result = {}
+    with open(filepath, "r") as f:
+        for line in f.readlines():
+            data = json.loads(line)
+            for key, value in data.items():
+                if key not in result:
+                    result[key] = value
+    if example:
+        for element, value in result.items():
+            value = clean_str(value)
+            if isinstance(value, dict):
+                value = clean_dict(value)
+            click.echo(f"{element}: {value}")
+    else:
+        click.echo(", ".join(list(set(result.keys()))))
+
 
 def main():
     cli()
