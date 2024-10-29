@@ -112,6 +112,124 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         return data, errors
 
 
+class TransformWorkLocationMultiParams(core.GetFromRESTServiceInMemoryTask):
+    search_match = True
+    seach_disable = True
+
+    @property
+    def report_path(self):
+        return None
+
+    @property
+    def request_url(self):
+        return f"{self.url}/@address"
+
+    def on_failure(self, data, errors):
+        if "description" not in data:
+            data["description"] = {
+                "content-type": "text/html",
+                "data": "",
+            }
+        for error in errors:
+            data["description"]["data"] += f"<p>{error}</p>\r\n"
+        return data
+
+    def _generate_params(self, worklocation, data):
+        """
+            Generate list of param for street to be search, return tuple of list and error
+            list schema : 
+            [
+                {
+                    key : "term" | "street_code",
+                    value : string | street_code
+                    handle_error : None | func(params, worklocation, data) -> data, action
+                }
+            ]
+        """
+        return None, None
+
+    def _output_report(self, result, expectation):
+        if self.report_path is None:
+            return
+        with open(self.report_path, "a") as f:
+            f.write(f"{self.key} : result : {result}, expectation : {expectation}\n")
+
+    def request_params(self, params, params_obj):
+        r = self.request(parameters=params)
+        if r.status_code != 200:
+            return None, f"Response code is '{r.status_code}', expected 200"
+        result = r.json()
+        if result["items_total"] == 0:
+            error = "Aucun résultat"
+            if params_obj["key"] == "street_code":
+                error += " pour le code de rue: "
+            elif params_obj["key"] == "term":
+                error += " pour l'adresse: "
+            value = params_obj['value']
+            error += f"'{value}'"
+            return None, error
+        elif result["items_total"] > 1:
+            match, similarity_error = find_address_similarity(result["items"], params_obj["value"])
+            if not match:
+                error = "Plusieurs résultats"
+                if params_obj["key"] == "street_code":
+                    error += " pour le code de rue: "
+                elif params_obj["key"] == "term":
+                    error += " pour l'adresse: "
+                value = params_obj['value']
+                error += f"'{value}'"
+                return None, error
+            if similarity_error:
+                return None, similarity_error
+        else:
+            match = result["items"][0]
+
+        return match, None
+
+    def transform_data(self, data):
+        new_work_locations = []
+        errors = []
+        for worklocation in data["workLocations"]:
+            base_params = {"match": self.search_match, "include_disable": self.seach_disable}
+            params_list, error = self._generate_params(worklocation, data)
+            if error:
+                errors.append(error)
+                continue
+
+            error = None
+            for params_obj in params_list:
+                params = base_params
+                params[params_obj["key"]] = params_obj["value"]
+
+                result, error = self.request_params(params, params_obj)
+
+                if error:
+                    handle_error = params_obj.get("handle_error", None)
+                    if handle_error:
+                        data, action = handle_error(params_obj, worklocation, data)
+                        if action == "break":
+                            break
+                        if action == "continue":
+                            continue
+
+                if result:
+                    break
+
+            if result:
+                self._output_report(result["name"], worklocation)
+                new_work_locations.append(
+                    {
+                        "street": result["uid"],
+                        "number": worklocation.get("number", ""),
+                    }
+                )
+            if error is not None:
+                errors.append(error)
+
+        data["workLocations"] = new_work_locations
+        return data, errors
+
+
 class TransformCadastre(core.GetFromRESTServiceInMemoryTask):
     browse_old_parcels = True
     mapping_division_dict = {}
