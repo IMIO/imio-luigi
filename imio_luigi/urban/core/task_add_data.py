@@ -47,7 +47,7 @@ class AddEvents(core.InMemoryTask):
         for date in dates:
             date_mapping = config["date_mapping"][date]
             date_value = data[date_mapping]
-            event[data] = date_value
+            event[date] = date_value
         return event
 
     def _add_decision(self, event, data, mapping, config):
@@ -73,7 +73,7 @@ class AddEvents(core.InMemoryTask):
                 "urbaneventtypes": event_type
             }
             event = self._add_date(event, data, mapping, config)
-            event = self._add_decision(event)
+            event = self._add_decision(event, data, mapping, config)
 
             data["__children__"].append(event)
         return data
