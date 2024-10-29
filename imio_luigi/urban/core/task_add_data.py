@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
+from datetime import datetime
 from imio_luigi import core, utils
 from imio_luigi.urban import core as ucore
 
@@ -370,6 +371,8 @@ class CreateApplicant(core.CreateSubElementsFromSubElementsInMemoryTask):
 class AddValuesInDescription(core.InMemoryTask):
     title = ""
     list_style = "ul"
+    date_format = "%d/%m/%Y"
+    keys_date = []
 
     @abc.abstractmethod
     def get_values(self, data):
@@ -379,11 +382,33 @@ class AddValuesInDescription(core.InMemoryTask):
     def handle_value(self, value, data):
         return data
 
+    def format_date(self, key, value):
+        if key in self.keys_date:
+            date = datetime.fromisoformat(value)
+            value = date.strftime(self.date_format)
+        return value
+
+    def transform_value(self, values):
+        result = []
+        for value in values:
+            key = value["key"]
+            value = value["value"]
+            value = self.format_date(key, value)
+            result.append(
+                {
+                    "key": key,
+                    "value": value
+                }
+            )
+        return result
+
     def transform_data(self, data):
         values = self.get_values(data)
 
         if values is None:
             return data
+
+        values = self.transform_value(values)
 
         if "description" not in data:
             data["description"] = {
