@@ -121,6 +121,9 @@ class AddUrbanEvent(core.InMemoryTask):
             raise NotImplementedError
         return None
 
+    def add_additonal_data_in_recepisse(self, event, data):
+        return event
+
     def _create_recepisse(self, data):
         """Create recepisse event"""
         if data["@type"] in self._no_recepisse_event:
@@ -137,10 +140,15 @@ class AddUrbanEvent(core.InMemoryTask):
         if date:
             event["eventDate"] = date
 
+        event = self.add_additonal_data_in_recepisse(event, data)
+
         if "__children__" not in data:
             data["__children__"] = []
         data["__children__"].append(event)
         return data
+
+    def add_additonal_data_in_delivery(self, event, data):
+        return event
 
     def _create_delivery(self, data):
         if data["@type"] in self._no_delivery_event:
@@ -159,6 +167,7 @@ class AddUrbanEvent(core.InMemoryTask):
             "decision": decision,
             "urbaneventtypes": event_subtype,
         }
+        event = self.add_additonal_data_in_delivery(event, data)
 
         date = self.get_delivery_date(data)
         if date:
