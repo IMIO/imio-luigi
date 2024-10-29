@@ -256,6 +256,10 @@ class ConvertDateTask(luigi.Task):
         """The output target"""
         return None
 
+    @property
+    def key_to_ignore_exception(self):
+        return ()
+
     def log_failure_output(self):
         fname = self.key.replace("/", "-")
         fpath = (
@@ -283,16 +287,20 @@ class ConvertDateTask(luigi.Task):
             }
             f.write(json.dumps(error))
 
+    def format_date(self, input_date):
+        date = datetime.strptime(input_date, self.date_format_input)
+        return date.strftime(self.date_format_output)
+
     def transform_data(self, data):
         for key in self.keys:
             if key not in data and self.ignore_missing is False:
                 raise KeyError(f"Missing key '{key}'")
             if key in data and data[key]:
                 try:
-                    date = datetime.strptime(data[key], self.date_format_input)
-                    data[key] = date.strftime(self.date_format_output)
+                    data[key] = self.format_date(data[key])
                 except ValueError as e:
-                    self._handle_exception(data, e)
+                    if key not in self.key_to_ignore_exception:
+                        self._handle_exception(data, e)
         return data
 
     def run(self):
@@ -305,3 +313,29 @@ class ConvertDateTask(luigi.Task):
 class ConvertDateInMemoryTask(ConvertDateTask):
     def output(self):
         return MockTarget(mock_filename(self, "ConvertDate"), mirror_on_stderr=True)
+
+
+class ConvertDateTaskMultiFormat(ConvertDateTask):
+    @abc.abstractproperty
+    def date_format_input(self):
+        """List of possible format (in string) of the dates"""
+        return None
+
+    def format_date(self, input_date):
+        error = None
+        result = None
+        for input_format in self.date_format_input:
+            try:
+                date = datetime.strptime(input_date, input_format)
+                result = date.strftime(self.date_format_output)
+            except ValueError as e:
+                error = e
+                continue
+        if result is None and error is not None:
+            raise ValueError(error)
+        return result
+
+
+class ConvertDateInMultiFormatMemoryTask(ConvertDateTaskMultiFormat):
+    def output(self):
+        return MockTarget(mock_filename(self, "ConvertDateMultiFormat"), mirror_on_stderr=True)

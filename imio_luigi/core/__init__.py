@@ -9,6 +9,8 @@ from imio_luigi.core.target_rest import (
 from imio_luigi.core.task_access import GetFromAccessJSONTask
 from imio_luigi.core.task_basic import InMemoryTask
 from imio_luigi.core.task_cleanup import (
+    ConvertDateInMultiFormatMemoryTask,
+    ConvertDateTaskMultiFormat,
     ConvertDateInMemoryTask,
     ConvertDateTask,
     DropColumnInMemoryTask,
@@ -105,4 +107,6 @@ __all__ = (
     "WalkFS",
     "WriteToJSONTask",
     "frozendict_to_dict",
+    "ConvertDateTaskMultiFormat",
+    "ConvertDateInMultiFormatMemoryTask"
 )
