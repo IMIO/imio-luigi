@@ -61,11 +61,11 @@
     "EnvClassTwo": ["decision", "UrbanEvent"],
     "EnvClassThree": ["passage-college", "UrbanEvent"],
     "PreliminaryNotice": ["passage-college", "UrbanEvent"],
-    "NotaryLetter": ["octroi-lettre-notaire", " UrbanEvent"],
+    "NotaryLetter": ["octroi-lettre-notaire", "UrbanEvent"],
     "Division": ["decision-octroi-refus", "UrbanEvent"],
     "CODT_CommercialLicence": [
       "delivrance-du-permis-octroi-ou-refus-codt",
-      " UrbanEvent"
+      "UrbanEvent"
     ],
     "ExplosivesPossession": ["decision", "UrbanEvent"],
     "Ticket": ["decision", "UrbanEvent"]
