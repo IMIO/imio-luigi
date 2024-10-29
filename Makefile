@@ -96,6 +96,9 @@ import-ecaussinnes:
 run-local-gracehollogne:
 	LUIGI_CONFIG_PATH=$(CURDIR)/gracehollogne.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_gracehollogne gracehollogne.GetFromAccess --filepath ./data/gracehollogne/customer_ouput_formated.json --local-scheduler
 
+.PHONY: run-local-gracehollogne-env
+run-local-gracehollogne-env:
+	LUIGI_CONFIG_PATH=$(CURDIR)/gracehollogne.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_gracehollogne_env gracehollogne_env.GetJSON --filepath ./data/gracehollogne/environements/json/merge_permis.json --local-scheduler
 
 .PHONY: clear-gracehollogne-env
 clear-gracehollogne-env:
