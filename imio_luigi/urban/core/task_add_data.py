@@ -83,6 +83,7 @@ class AddUrbanEvent(core.InMemoryTask):
     create_delivery = True
     override_event_path = luigi.OptionalParameter(default=None)
     basic_event_mapping_path = "./config/global/mapping_basic_event.json"
+    ignore_event_missing_decision = True
 
     def transform_data(self, data):
         if self.create_recepisse:
@@ -157,16 +158,18 @@ class AddUrbanEvent(core.InMemoryTask):
         if not self.get_delivery_check(data):
             return data
 
-        decision = self.get_delivery_decision(data)
-        if not decision:
-            return data
-
         event_subtype, event_type = self._mapping_delivery_event(data["@type"])
         event = {
             "@type": event_type,
-            "decision": decision,
             "urbaneventtypes": event_subtype,
         }
+
+        decision = self.get_delivery_decision(data)
+        if self.ignore_event_missing_decision and not decision:
+            return data
+        if decision:
+            event["decision"] = decision
+
         event = self.add_additonal_data_in_delivery(event, data)
 
         date = self.get_delivery_date(data)
