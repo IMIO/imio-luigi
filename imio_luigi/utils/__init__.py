@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from imio_luigi.utils.helpers import fix_search_term, get_value_from_path
+from imio_luigi.utils.helpers import (
+    add_data_to_description,
+    fix_search_term,
+    get_value_from_path,
+)
 from imio_luigi.utils.mapping import MappingCountryInMemoryTask, MappingCountryTask
 from imio_luigi.utils.summary import (
     get_all_keys,
@@ -18,5 +22,6 @@ __all__ = (
     "get_value_from_path",
     "get_all_unique_values_with_first_ref",
     "get_all_unique_value_with_callback",
-    "fix_search_term"
+    "fix_search_term",
+    "add_data_to_description"
 )

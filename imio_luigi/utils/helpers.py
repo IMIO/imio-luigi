@@ -16,3 +16,13 @@ def fix_search_term(term):
     term = term.replace("(", " ")
     term = term.replace(")", " ")
     return term.strip()
+
+
+def add_data_to_description(data, value):
+    if "description" not in data:
+        data["description"] = {
+            "content-type": "text/html",
+            "data": "",
+        }
+    data["description"]["data"] += value
+    return data
