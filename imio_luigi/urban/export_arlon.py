@@ -22,7 +22,37 @@ class GetFromAccess(core.GetFromAccessJSONTask):
     filepath = luigi.Parameter()
     line_range = luigi.Parameter(default=None)
     counter = luigi.Parameter(default=None)
-    column = ["auteur_de_projet", "clé", "année", "appartements", "division_cadastrale", "référence_DGATLP", "irrecevabilité", "référence_communale", "rue-place", "entrée", "objet", "refus", "remarques", "n°_cadastral", "section_cadastrale", "mandataire", "octroi", "logements régularisés", "début_travaux", "maisons", "type_dossier", "localité", "référence_communale_Old", "n°_dossier", "demandeur", "lotissement", "Charges d'urbanisme", "n°", "lot"]
+    columns = [
+        "auteur_de_projet",
+        "clé",
+        "année",
+        "appartements",
+        "division_cadastrale",
+        "référence_DGATLP",
+        "irrecevabilité",
+        "référence_communale",
+        "rue-place",
+        "entrée",
+        "objet",
+        "refus",
+        "remarques",
+        "n°_cadastral",
+        "section_cadastrale",
+        "mandataire",
+        "octroi",
+        "logements régularisés",
+        "début_travaux",
+        "maisons",
+        "type_dossier",
+        "localité",
+        "référence_communale_Old",
+        "n°_dossier",
+        "demandeur",
+        "lotissement",
+        "Charges d'urbanisme",
+        "n°",
+        "lot"
+    ]
 
     def _complete(self, key):
         """Method to speed up process that verify if output exist or not"""
