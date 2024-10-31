@@ -64,6 +64,8 @@ class AddEvents(core.InMemoryTask):
         if "__children__" not in data:
             data["__children__"] = []
         for config in self.event_config.values():
+            if data["@type"] not in config["mapping"]:
+                continue
             if not self._check(data, config["check_key"]):
                 continue
             mapping = config["mapping"][data["@type"]]
