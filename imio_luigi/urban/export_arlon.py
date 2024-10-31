@@ -901,7 +901,8 @@ class DropColumns(core.DropColumnInMemoryTask):
         "mandataire"
         "appartements",
         "maisons",
-        "logements régularisés"
+        "logements régularisés",
+        "référence_communale_Old"
     ]
 
     def requires(self):
