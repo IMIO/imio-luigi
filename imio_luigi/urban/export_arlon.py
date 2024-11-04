@@ -866,6 +866,47 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
         return TransformArchitect(key=self.key)
 
 
+class AddValuesInDescription(ucore.AddValuesInDescription):
+    task_namespace = "arlon"
+    key = luigi.Parameter()
+    title = "Info complémentaire"
+    key_to_description = [
+        "lotissement",
+        "lot",
+        "référence_DGATLP",
+        "mandataire",
+        "maisons",
+        "appartements",
+        "logements régularisés",
+        "Charges d'urbanisme",
+        "référence_communale_Old",
+    ]
+    key_dict = {
+        "référence_communale_Old": "Ancien référence communale",
+        "référence_DGATLP": "Référence DGATLP",
+    }
+
+    def fix_key(self, key):
+        return self.key_dict.get(key, key)
+
+    def get_values(self, data):
+        result = []
+        for key, value in data.items():
+            if key in self.key_to_description and value is not None:
+                result.append(
+                    {"key": key, "value": value}
+                )
+        return result
+
+    def handle_value(self, value, data):
+        key = value["key"]
+        value = value["value"]
+        data["description"]["data"] += f"{self.fix_key(key)} : {value}"
+        return data
+
+    def requires(self):
+        return TransformArchitect(key=self.key)
+
 class DropColumns(core.DropColumnInMemoryTask):
     task_namespace = "arlon"
     key = luigi.Parameter()
@@ -902,7 +943,7 @@ class DropColumns(core.DropColumnInMemoryTask):
     ]
 
     def requires(self):
-        return CreateApplicant(key=self.key)
+        return AddValuesInDescription(key=self.key)
 
 
 class ValidateData(core.JSONSchemaValidationTask):
