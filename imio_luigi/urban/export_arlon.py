@@ -935,7 +935,7 @@ class DropColumns(core.DropColumnInMemoryTask):
         "lotissement",
         "n°_dossier",
         "référence_DGATLP",
-        "mandataire"
+        "mandataire",
         "appartements",
         "maisons",
         "logements régularisés",
