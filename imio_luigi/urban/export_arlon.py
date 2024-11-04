@@ -236,20 +236,16 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
             return data
         year = None
         date = data.get("entrée", None)
-        if not date:
+        if date:
+            date = datetime.fromisoformat(date)
+        else:
             year = data.get("année", None)
 
-        if not date or year == self.codt_start_year:
+        if not (date or year != self.codt_start_year):
             raise KeyError("Manque une date pour déterminer si c'est un permis CODT")
 
-        date = datetime.fromisoformat(date)
-
-        if date > self.codt_start_date:
+        if (date and date > self.codt_start_date) or (year and year > self.codt_start_year):
             data["@type"] = f"CODT_{data['@type']}"
-            
-        if year and year > self.codt_start_year:
-            data["@type"] = f"CODT_{data['@type']}"
-            
 
         return data
     
