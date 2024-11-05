@@ -385,18 +385,18 @@ class AddOtherEvent(ucore.AddEvents):
             "date_mapping": {"decisionDate": "AvisCollège", "eventDate": "AvisCollège"},
             "decision_mapping": {"accepted": "favorable", "refused": "defavorable", "inacceptable": "defavorable"},
             "mapping": {
-                "EnvClassOne": {"urban_type": "avis-college", "date": ["decisionDate", "eventDate"], "decision": "externalDecision"},
+                "EnvClassOne": {"urban_type": "copy_of_avis-college", "date": ["decisionDate", "eventDate"], "decision": "externalDecision"},
                 "EnvClassTwo": {"urban_type": "avis-college", "date": ["decisionDate", "eventDate"], "decision": "externalDecision"},
                 "EnvClassThree": {"urban_type": "acceptation-de-la-demande", "date": ["eventDate"]},
             }
         },
         "enquete": {
             "check_key": ["pv_enquete"],
-            "date_mapping": {"eventDate": "pv_enquete"},
+            "date_mapping": {"investigationStart": "pv_enquete", "investigationEnd": "pv_enquete", "eventDate": "pv_enquete"},
             "mapping": {
-                "EnvClassOne": {"urban_type": "enquete-publique", "date": ["eventDate"]},
-                "EnvClassTwo": {"urban_type": "enquete-publique", "date": ["eventDate"]},
-                "MiscDemand": {"urban_type": "enquete-publique", "date": ["eventDate"]},
+                "EnvClassOne": {"urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd", "eventDate"]},
+                "EnvClassTwo": {"urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd", "eventDate"]},
+                "MiscDemand": {"urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd", "eventDate"]},
             }
         }
     }
