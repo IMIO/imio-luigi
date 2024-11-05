@@ -231,6 +231,16 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
         
         return data
 
+    def get_secondary_date(self, data):
+        date_keys = ["octroi", "refus", "début_travaux", "irrecevabilité"]
+        for key in date_keys:
+            if key not in data:
+                continue
+            date = datetime.fromisoformat(data[key])
+            if date < self.codt_start_date:
+                return True
+        return False
+
     def _cwatup_codt(self, data):
         if data["@type"] not in self.codt_trigger:
             return data
@@ -242,7 +252,8 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
             year = data.get("année", None)
 
         if not (date or year != self.codt_start_year):
-            raise KeyError("Manque une date pour déterminer si c'est un permis CODT")
+            if not self.get_secondary_date(data):
+                raise KeyError("Manque une date pour déterminer si c'est un permis CODT")
 
         if (date and date > self.codt_start_date) or (year and year > self.codt_start_year):
             data["@type"] = f"CODT_{data['@type']}"
