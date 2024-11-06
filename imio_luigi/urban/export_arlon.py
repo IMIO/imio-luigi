@@ -521,7 +521,8 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
             return data
         for index, element in enumerate(data[self.subelements_source_key]):
             new_element = {"street": self._prepeare_street(element)}
-            new_element["locality"] = data["localité"]
+            if "localité" in data:
+                new_element["locality"] = data["localité"]
             if "n°" in data and len(data["n°"]) >= index + 1:
                 new_element["number"] = data["n°"][index].strip()
 
@@ -950,7 +951,8 @@ class DropColumns(core.DropColumnInMemoryTask):
         "appartements",
         "maisons",
         "logements régularisés",
-        "référence_communale_Old"
+        "référence_communale_Old",
+        "Charges d'urbanisme"
     ]
 
     def requires(self):
