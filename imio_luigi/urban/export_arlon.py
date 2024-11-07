@@ -556,7 +556,12 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         return data
 
     def _prepare_term(self, worklocation):
-        return {"term": f"{worklocation['locality']}, {worklocation['street']}"}
+        term = ""
+        if "locality" in worklocation:
+            term += worklocation['locality']
+        if "street" in worklocation:
+            term += f", {worklocation['street']}"
+        return {"term": term}
 
     def transform_data(self, data):
         new_work_locations = []
