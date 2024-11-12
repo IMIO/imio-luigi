@@ -70,8 +70,9 @@ class AddEvents(core.InMemoryTask):
                 continue
             mapping = config["mapping"][data["@type"]]
             event_type = mapping["urban_type"]
+            content_type = mapping.get("@type", "UrbanEvent")
             event = {
-                "@type": "UrbanEvent",
+                "@type": content_type,
                 "urbaneventtypes": event_type
             }
             event = self._add_date(event, data, mapping, config)
