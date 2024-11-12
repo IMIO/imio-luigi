@@ -392,11 +392,11 @@ class AddOtherEvent(ucore.AddEvents):
         },
         "enquete": {
             "check_key": ["pv_enquete"],
-            "date_mapping": {"investigationStart": "pv_enquete", "investigationEnd": "pv_enquete", "eventDate": "pv_enquete"},
+            "date_mapping": {"investigationStart": "pv_enquete", "displayDate": "pv_enquete"},
             "mapping": {
-                "EnvClassOne": {"urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd", "eventDate"]},
-                "EnvClassTwo": {"urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd", "eventDate"]},
-                "MiscDemand": {"urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd", "eventDate"]},
+                "EnvClassOne": {"@type": "UrbanEventInquiry", "urban_type": "copy_of_enquete-publique", "date": ["investigationStart"]},
+                "EnvClassTwo": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart"]},
+                "MiscDemand": {"urban_type": "enquete-publique", "date": ["displayDate"]},
             }
         }
     }
