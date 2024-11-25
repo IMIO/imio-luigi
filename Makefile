@@ -44,7 +44,7 @@ run-local-arlon:
 
 .PHONY: import-arlon
 import-arlon:
-	LUIGI_CONFIG_PATH=./arlon.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-arlon --local-scheduler
+	LUIGI_CONFIG_PATH=./arlon.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-arlon --local-scheduler  --logging-conf-file logging_arlon.ini
 
 .PHONY: change_workflow_arlon
 change_workflow_arlon:
