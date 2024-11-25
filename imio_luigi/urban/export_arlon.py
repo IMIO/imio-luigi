@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from imio_luigi import core, utils
-from imio_luigi.urban.address import find_address_match
-from imio_luigi.core.utils import _cache
-from imio_luigi.urban import tools
-from imio_luigi.urban import core as ucore
 from datetime import datetime
+from imio_luigi import core, utils
+from imio_luigi.core.utils import _cache
+from imio_luigi.urban import core as ucore
+from imio_luigi.urban import tools
+from imio_luigi.urban.address import find_address_match
 
 import json
 import logging
@@ -741,7 +741,7 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
     log_failure = True
     subelement_container_key = "__children__"
     mapping_keys = {}
-    subelement_base = {"@type": "Applicant"}      
+    subelement_base = {"@type": "Applicant"}
     demandeur_path = "./data/arlon/json/DEMANDEURS.json"
     mapping = {
         'localité': "city",
@@ -813,11 +813,11 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
         for original, destination in self.mapping.items():
             if original in obj:
                 new_obj[destination] = obj[original]
-            
+
         if "personTitle" in new_obj:
             title = self.mapping_civilte.get(new_obj["personTitle"], None)
             if title:
-               new_obj["personTitle"] = title
+                new_obj["personTitle"] = title
             else:
                 del new_obj["personTitle"]
         return new_obj
@@ -855,14 +855,14 @@ class CreateApplicant(core.CreateSubElementInMemoryTask):
         data['title'] += f" - {applicant}"
 
         self.get_demandeur_data(applicant)
-        
+
         if "legalForm" in self.subelement_base:
             self.subelement_base["@type"] == "Corporation"
-        
+
         if "country" in self.subelement_base:
             maping_country = {"BELGIQUE": "belgium", "G.D. LUXEMBOURG": "luxembourg"}
             self.subelement_base["country"] = maping_country[self.subelement_base["country"]]
-        
+
         # Filter applicants without name
         if "__children__" in data:
             data["__children__"].append(self.subelement_base)
@@ -922,7 +922,8 @@ class AddValuesInDescription(ucore.AddValuesInDescription):
         return data
 
     def requires(self):
-        return TransformArchitect(key=self.key)
+        return CreateApplicant(key=self.key)
+
 
 class DropColumns(core.DropColumnInMemoryTask):
     task_namespace = "arlon"
