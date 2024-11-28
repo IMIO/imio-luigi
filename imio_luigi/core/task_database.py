@@ -50,6 +50,7 @@ class GetFromDatabaseTask(luigi.Task):
         with engine.connect() as connection:
             if not self.check_if_table_exist(connection):
                 return []
+            result = connection.execute(sqlalchemy.text(self.sql_query(limit, offset, where))).fetchall()
         return result
 
     def log_failure_output(self):
