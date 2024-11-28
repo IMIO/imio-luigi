@@ -402,15 +402,11 @@ class AddValuesInDescription(core.InMemoryTask):
     def transform_value(self, values):
         result = []
         for value in values:
-            key = value["key"]
-            value = value["value"]
-            value = self.format_date(key, value)
-            result.append(
-                {
-                    "key": key,
-                    "value": value
-                }
-            )
+            output = {}
+            for key, dict_value in value.items():
+                dict_value = self.format_date(key, dict_value)
+                output[key] = dict_value
+            result.append(output)
         return result
 
     def transform_data(self, data):
