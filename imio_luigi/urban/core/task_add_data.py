@@ -129,11 +129,15 @@ class AddUrbanEvent(core.InMemoryTask):
     def add_additonal_data_in_recepisse(self, event, data):
         return event
 
+    def handle_failed_check_recepisse(self, data):
+        return data
+
     def _create_recepisse(self, data):
         """Create recepisse event"""
         if data["@type"] in self._no_recepisse_event:
             return data
         if not self.get_recepisse_check(data):
+            data = self.handle_failed_check_recepisse(data)
             return data
 
         event_subtype, event_type = self._mapping_recepisse_event(data["@type"])
@@ -155,11 +159,15 @@ class AddUrbanEvent(core.InMemoryTask):
     def add_additonal_data_in_delivery(self, event, data):
         return event
 
+    def handle_failed_check_delivery(self, data):
+        return data
+
     def _create_delivery(self, data):
         if data["@type"] in self._no_delivery_event:
             return data
 
         if not self.get_delivery_check(data):
+            data = self.handle_failed_check_delivery(data)
             return data
 
         event_subtype, event_type = self._mapping_delivery_event(data["@type"])
