@@ -86,6 +86,7 @@ class GetFromMySQLTask(GetFromDatabaseTask):
 
 class JoinFromMySQLTask(GetFromMySQLTask):
     destination = luigi.Parameter()
+    destination_type = "array"
 
     @abc.abstractmethod
     def sql_condition(self):
