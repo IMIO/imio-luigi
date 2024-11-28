@@ -28,7 +28,15 @@ class GetFromDatabaseTask(luigi.Task):
     def tablename(self):
         return None
 
-    def sql_query(self, limit=None, offset=None):
+    def check_if_table_exist(self, connection):
+        query = (
+            "select count(*) "
+            "from information_schema.tables "
+            f"where table_schema = DATABASE() AND table_name = '{self.tablename}';"
+        )
+        result = connection.execute(sqlalchemy.text(query)).fetchall()
+        return result[0][0] > 0
+
         columns = ",".join(self.columns)
         query = f"select {columns} from {self.tablename}"
         if limit:
@@ -40,7 +48,8 @@ class GetFromDatabaseTask(luigi.Task):
     def query(self, limit=None, offset=None):
         engine = sqlalchemy.create_engine(self.url)
         with engine.connect() as connection:
-            result = connection.execute(sqlalchemy.text(self.sql_query(limit, offset))).fetchall()
+            if not self.check_if_table_exist(connection):
+                return []
         return result
 
     def log_failure_output(self):
