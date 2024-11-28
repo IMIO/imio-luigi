@@ -37,6 +37,7 @@ class GetFromDatabaseTask(luigi.Task):
         result = connection.execute(sqlalchemy.text(query)).fetchall()
         return result[0][0] > 0
 
+    def sql_query(self, limit=None, offset=None):
         columns = ",".join(self.columns)
         query = f"select {columns} from {self.tablename}"
         if limit:
@@ -50,7 +51,7 @@ class GetFromDatabaseTask(luigi.Task):
         with engine.connect() as connection:
             if not self.check_if_table_exist(connection):
                 return []
-            result = connection.execute(sqlalchemy.text(self.sql_query(limit, offset, where))).fetchall()
+            result = connection.execute(sqlalchemy.text(self.sql_query(limit, offset))).fetchall()
         return result
 
     def log_failure_output(self):
