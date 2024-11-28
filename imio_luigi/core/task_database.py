@@ -112,11 +112,11 @@ class JoinFromMySQLTask(GetFromMySQLTask):
                 rows = self.hook_before_serialization(rows)
                 if self.destination not in data:
                     if self.destination_type == "array":
-                    data[self.destination] = []    
+                        data[self.destination] = []
                     elif self.destination_type == "dict":
                         data[self.destination] = {}
                 if self.destination_type == "array":
-                data[self.destination] = data[self.destination] + rows
+                    data[self.destination] = data[self.destination] + rows
                 elif self.destination_type == "dict":
                     data[self.destination] = data[self.destination] | rows
 

@@ -848,12 +848,12 @@ class AddDocumentInDescription(ucore.AddValuesInDescription):
         data["description"]["data"] += f"{value['title']} : {value['url']}"
 
         delivery_date = value.get("delivery_date", None)
-            if delivery_date is not None:
-                data["description"]["data"] += f" - émis le {self._date_iso_to_string(delivery_date)}"
+        if delivery_date is not None:
+            data["description"]["data"] += f" - émis le {self._date_iso_to_string(delivery_date)}"
 
         create_date = value.get("create_date", None)
-            if create_date is not None:
-                data["description"]["data"] += f" - créée le {self._date_iso_to_string(create_date)}"
+        if create_date is not None:
+            data["description"]["data"] += f" - créée le {self._date_iso_to_string(create_date)}"
 
         return data
 
