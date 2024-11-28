@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from imio_luigi import core, utils
 from imio_luigi.urban import core as ucore
-from datetime import datetime
 
 import abc
 import json
@@ -153,18 +153,18 @@ class UrbanTypeMapping(core.MappingValueWithFileInMemoryTask):
 
         year = None
         date = self.get_date(data)
-        if not date:
+        if date:
+            date = datetime.fromisoformat(date)
+        else:
             year = self.get_year(data)
 
-        if not date or year == self.codt_start_year:
+        if not (date or year != self.codt_start_year):
             raise KeyError("Manque une date pour déterminer si c'est un permis CODT")
 
-        date = datetime.fromisoformat(date)
-
-        if date > self.codt_start_date:
-            data[self.mapping_key] = f"CODT_{data[self.mapping_key]}"
-
-        if year and year > self.codt_start_year:
+        if (
+                (date and date > self.codt_start_date) 
+                or (year and year > self.codt_start_year)
+            ):
             data[self.mapping_key] = f"CODT_{data[self.mapping_key]}"
 
         return data
