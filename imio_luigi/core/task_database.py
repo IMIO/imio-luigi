@@ -108,8 +108,15 @@ class JoinFromMySQLTask(GetFromMySQLTask):
                 rows = [{k: getattr(r, k) for k in r._fields} for r in self.query()]
                 rows = self.hook_before_serialization(rows)
                 if self.destination not in data:
+                    if self.destination_type == "array":
                     data[self.destination] = []    
+                    elif self.destination_type == "dict":
+                        data[self.destination] = {}
+                if self.destination_type == "array":
                 data[self.destination] = data[self.destination] + rows
+                elif self.destination_type == "dict":
+                    data[self.destination] = data[self.destination] | rows
+
                 json.dump(data, output_f)
 
 
