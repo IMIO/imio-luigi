@@ -1,5 +1,9 @@
 [
   {
+    "key": "workLocations",
+    "type": "list"
+  },
+  {
     "key": "licenceSubject"
   },
   {
@@ -8,7 +12,8 @@
   {
     "id": "UrbanEvent",
     "key": "__children__/@type",
-    "value": "UrbanEvent|UrbanEventOpinionRequest"
+    "value": "UrbanEvent|UrbanEventOpinionRequest",
+    "type": "list"
   },
   {
     "id": "File",
@@ -23,6 +28,7 @@
   {
     "id": "Contact",
     "key": "__children__/@type",
-    "value": "Applicant|Corporation|Proprietary"
+    "value": "Applicant|Corporation|Proprietary",
+    "type": "list"
   }
 ]
