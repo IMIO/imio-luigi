@@ -518,8 +518,8 @@ class AddEvents(ucore.AddUrbanEvent):
             "@type": event_type,
             "urbaneventtypes": event_subtype,
         }
-        new_event["decisionDate"] = events[0]
-        new_event["eventDate"] = events[0]
+        new_event["decisionDate"] = events[0]["ETAPE_DATEDEPART"]
+        new_event["eventDate"] = events[0]["ETAPE_DATEDEPART"]
         data["__children__"].append(new_event)
         return data
 
