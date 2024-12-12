@@ -460,6 +460,12 @@ class AddEvents(ucore.AddUrbanEvent):
     task_namespace = "acropole"
     key = luigi.Parameter()
     orga = luigi.Parameter()
+    possible_event_delivery = [
+        "Décision du Collège",
+        "décision finale du Collège",
+        "décision du Gvt wallon",
+        "décision du Collège sur conditions complémentaires",
+    ]
 
     def log_failure_output(self):
         fname = self.task_id.split("_")[-1]
@@ -495,6 +501,27 @@ class AddEvents(ucore.AddUrbanEvent):
         else:
             return None
         return decision
+
+    def handle_failed_check_delivery(self, data):
+        if "all_events" not in data:
+            return data
+        events = []
+        for event in data["all_events"]:
+            if event["title"] in self.possible_event_delivery:
+                events.append(event)
+        if len(events) == 0:
+            return data
+        if "__children__" not in data:
+            data["__children__"] = []
+        event_subtype, event_type = self._mapping_delivery_event(data["@type"])
+        new_event = {
+            "@type": event_type,
+            "urbaneventtypes": event_subtype,
+        }
+        new_event["decisionDate"] = events[0]
+        new_event["eventDate"] = events[0]
+        data["__children__"].append(new_event)
+        return data
 
 
 class AddEventInDescription(ucore.AddValuesInDescription):
