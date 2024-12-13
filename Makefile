@@ -133,7 +133,7 @@ run-local-hensies:
 
 .PHONY: import-hensies
 import-hensies:
-	LUIGI_CONFIG_PATH=./hensies.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-hensies --local-scheduler
+	LUIGI_CONFIG_PATH=./hensies.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-hensies --local-scheduler  --logging-conf-file logging_hensies.ini
 
 # Acropole
 .PHONY: run-local-acropole
