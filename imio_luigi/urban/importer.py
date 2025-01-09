@@ -2,18 +2,34 @@
 
 from imio_luigi import core
 from imio_luigi.urban.core import config
-from timeit import default_timer as timer
 
 import base64
+import datetime
 import json
 import logging
 import luigi
 import requests
+import time
 
 
 logger = logging.getLogger("luigi-interface")
 
 COMPLETE_REFERENCES = []
+
+START_HOUR = datetime.time(14,35)
+END_HOUR = datetime.time(7,0)
+
+
+def check_time(time_to_check, on_time, off_time):
+    if on_time > off_time:
+        if time_to_check > on_time or time_to_check < off_time:
+            return True
+    elif on_time < off_time:
+        if time_to_check > on_time and time_to_check < off_time:
+            return True
+    elif time_to_check == on_time:
+        return True
+    return False
 
 
 class GetFiles(core.WalkFS):
@@ -23,6 +39,7 @@ class GetFiles(core.WalkFS):
     url = luigi.Parameter()
     login = luigi.Parameter()
     password = luigi.Parameter()
+    limit_hour = luigi.BoolParameter()
     task_complete = False
 
     def _get_url(self, data):
@@ -80,13 +97,40 @@ class RESTPost(core.PostRESTTask):
     login = luigi.Parameter()
     password = luigi.Parameter()
     search_on = luigi.Parameter()
+    limit_hour = luigi.BoolParameter()
     has_run = False
 
     @property
     def test_url(self):
         return f"{self.url}/@search"
 
+    @property
+    def get_start_date(self):
+        now = datetime.datetime.now()
+        now_date = now.date()
+        if now.time() > START_HOUR:
+            now_date = now_date + datetime.timedelta(days=1)
+        return datetime.datetime.combine(now_date, START_HOUR)
+
+    @property
+    def check_hour(self):
+        now = datetime.datetime.now().time()
+        return check_time(now, START_HOUR, END_HOUR)
+
+    @property
+    def time_to_sleep(self):
+        if self.check_hour:
+            return 0
+        now = datetime.datetime.now()
+        return int((self.get_start_date - now).total_seconds())
+
     def run(self):
+        if (
+            self.limit_hour and not self.check_hour
+        ):
+            logger.info(f"Waiting ... will start on {self.get_start_date.strftime('%d/%m/%Y, %H:%M:%S')}")
+            time.sleep(self.time_to_sleep + 5)
+            self.run() 
         self.output().request()
         self.has_run = True
 

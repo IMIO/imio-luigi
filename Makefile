@@ -110,7 +110,7 @@ import-gracehollogne:
 
 .PHONY: import-local-gracehollogne-env
 import-gracehollogne-env:
-	LUIGI_CONFIG_PATH=./gracehollogne.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-gracehollogne-env --local-scheduler --logging-conf-file logging_gracehollogne.ini
+	LUIGI_CONFIG_PATH=./gracehollogne.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --limit-hour --path ./result-gracehollogne-env --local-scheduler --logging-conf-file logging_gracehollogne.ini
 
 # Bastonge
 .PHONY: run-local-bastogne
@@ -133,7 +133,7 @@ run-local-hensies:
 
 .PHONY: import-hensies
 import-hensies:
-	LUIGI_CONFIG_PATH=./hensies.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./result-hensies --local-scheduler  --logging-conf-file logging_hensies.ini
+	LUIGI_CONFIG_PATH=./hensies.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --limit-hour --path ./result-hensies --local-scheduler  --logging-conf-file logging_hensies.ini
 
 # Acropole
 .PHONY: run-local-acropole
