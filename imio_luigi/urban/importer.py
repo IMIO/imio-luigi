@@ -16,7 +16,7 @@ logger = logging.getLogger("luigi-interface")
 
 COMPLETE_REFERENCES = []
 
-START_HOUR = datetime.time(14,35)
+START_HOUR = datetime.time(17,0)
 END_HOUR = datetime.time(7,0)
 
 
@@ -79,7 +79,8 @@ class GetFiles(core.WalkFS):
                     url=self._get_url(content),
                     login=self.login,
                     password=self.password,
-                    search_on=config[content["@type"]]["config"]["search_on"]
+                        search_on=config[content["@type"]]["config"]["search_on"],
+                        limit_hour=self.limit_hour
                 )
 
     def run(self):
