@@ -18,7 +18,8 @@ COMPLETE_REFERENCES = []
 
 START_HOUR = datetime.time(17,0)
 END_HOUR = datetime.time(7,0)
-
+START_DAY = 5
+END_DAY = 6
 
 def check_time(time_to_check, on_time, off_time):
     if on_time > off_time:
@@ -115,8 +116,10 @@ class RESTPost(core.PostRESTTask):
 
     @property
     def check_hour(self):
-        now = datetime.datetime.now().time()
-        return check_time(now, START_HOUR, END_HOUR)
+        now = datetime.datetime.now()
+        now_time = now.time()
+        tm_wday = now.timetuple().tm_wday
+        return check_time(now_time, START_HOUR, END_HOUR) or (tm_wday >= START_DAY and tm_wday <= END_DAY)
 
     @property
     def time_to_sleep(self):
