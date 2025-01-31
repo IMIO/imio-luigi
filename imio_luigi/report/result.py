@@ -165,7 +165,8 @@ def filter(path, config, filter_path):
 @click.argument("key")
 @click.argument("path")
 @click.option("--display-no-key", default=False, is_flag=True, help="Display file where the key wasn't found")
-def list_key(key, path, display_no_key):
+@click.option("--unique", default=False, is_flag=True, help="Only show unique key")
+def list_key(key, path, display_no_key, unique):
     """List value of a specifc key in json result"""
     files = os.listdir(path)
     output = []
@@ -178,6 +179,9 @@ def list_key(key, path, display_no_key):
             output.append(data[key])
         else:
             no_key.append(filename)
+
+    if unique:
+        output = list(set(output))
 
     if len(output) > 0:
         click.echo(f"List of value for the key '{key}' found in '{path}'\n")
