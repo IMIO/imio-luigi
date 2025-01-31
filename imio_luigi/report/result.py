@@ -38,7 +38,7 @@ def check_value(value, check=None):
             return [1 for item in value if match_value(item, check)]
         else:
             return [
-                1 if item is not None or item != "" else 0 for item in value
+                1 if item is not None and item != "" else 0 for item in value
             ]
     if check:
         return [1 if match_value(value, check) else 0]
