@@ -166,31 +166,40 @@ def filter(path, config, filter_path):
 @click.argument("path")
 @click.option("--display-no-key", default=False, is_flag=True, help="Display file where the key wasn't found")
 @click.option("--unique", default=False, is_flag=True, help="Only show unique key")
-def list_key(key, path, display_no_key, unique):
+@click.option("--count", default=False, is_flag=True, help="Show count occurence when unique selected")
+def list_key(key, path, display_no_key, unique, count):
     """List value of a specifc key in json result"""
     files = os.listdir(path)
     output = []
     no_key = []
+    count_dict = {}
     for filename in files:
         fpath = os.path.join(path, filename)
         with open(fpath, 'r') as f:
             data = json.load(f)
         if key in data:
             output.append(data[key])
+            if count:
+                if data[key] not in count_dict:
+                    count_dict[data[key]] = 0
+                count_dict[data[key]] += 1
         else:
             no_key.append(filename)
 
     if unique:
         output = list(set(output))
 
+    if count:
+        output = [f"{item}: {int(count_dict.get(item, 0))}" for item in output]
+
     if len(output) > 0:
-        click.echo(f"List of value for the key '{key}' found in '{path}'\n")
+        click.echo(f"List of value for the key '{key}' found in '{path}'")
         click.echo("\n".join(sorted(output)))
     else:
         click.echo(f"The key ({key}) not found in files in '{path}'")
 
     if display_no_key:
-        click.echo(f"These files doesn't have the key '{key}'\n")
+        click.echo(f"These files doesn't have the key '{key}'")
         click.echo("\n".join(sorted(no_key)))
 
 
