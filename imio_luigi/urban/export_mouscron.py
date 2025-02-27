@@ -164,16 +164,6 @@ class Transform(luigi.Task):
                 data[key] = self.populate_cross_data(value, whitelist=self.whitelist)
         return data
 
-    def _get_value_from_path(self, data, path):
-        path_split = path.split("/")
-        current_data = data
-        for key in path_split:
-            if isinstance(current_data, dict) and key in current_data:
-                current_data = current_data[key]
-            else:
-                return None
-        return current_data
-
     def extract_data(self, data, from_path, to):
         result = utils.get_value_from_path(data, from_path)
         if not result:
@@ -200,7 +190,7 @@ class Transform(luigi.Task):
                 # data = self.add_outside_data(data, "p_services_a_consulter", "permis_fk")
                 # data = self.add_outside_data(data, "p_permis_avis_fonctionnaire", "permis_fk")
                 data = self.extract_data(data, "type_permis_fk/valeur", "@type")
-                data = self.extract_data(data, "utilisateur_fk/login", "foldermanagers")
+                # data = self.extract_data(data, "utilisateur_fk/login", "foldermanagers")
                 data = self.extract_data(data, "organisme_fk/nom", "architecte")
                 data = self.extract_data(data, "nature_fk/libelle_f", "libnat_alt")
                 f.write(json.dumps(data))
@@ -302,22 +292,31 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
     key = luigi.Parameter()
     mapping_filepath = "./config/mouscron/mapping-type-mouscron.json"
     mapping_key = "@type"
-    codt_trigger = {
+    codt_trigger = [
         "UrbanCertificateOne",
         "NotaryLetter",
         "UniqueLicence",
         "IntegratedLicence",
-    }
+        "Article127"
+    ]
     codt_start_date = datetime(2017, 6, 1)
+
+    def hanlde_article127(self, data):
+        date_autorisation_tutelle = utils.get_value_from_path(
+            data, "autorisation_fk/date_autorisation_tutelle"
+        )
+        if date_autorisation_tutelle:
+            data["@type"] = "Article127"
+        return data
 
     def transform_data(self, data):
         data = super().transform_data(data)
+        data = self.hanlde_article127(data)
 
         date = data.get("date_demande", None)
         if not date:
             date = data.get("cre_date", None)
         if not date:
-            __import__("pdb").set_trace()
             return data
 
         date = datetime.fromisoformat(date)
@@ -366,17 +365,35 @@ class AddTransitions(core.MappingValueWithFileInMemoryTask):
 class AddEvents(ucore.AddUrbanEvent):
     task_namespace = "mouscron"
     key = luigi.Parameter()
+    delivery_config = None
 
     def requires(self):
         return AddTransitions(key=self.key)
 
+    # recipisse
+    def get_recepisse_check(self, data):
+        return "date_recepisse" in data or data["date_recepisse"]
+
     def get_recepisse_date(self, data):
         return data["date_recepisse"]
 
-    def get_delivery_date(self, data):
-        return data.get("date_cloture", None)
+    def handle_numeral_descision(self, value, _):
+        if value == 0:
+            return "octroi"
+        return "refus"
 
-    def get_delivery_decision(self, data):
+    def handle_avis_descision(self, value, _):
+        if value in ["Favorable", "Favorable et Abstention", "Favorable Conditionné", "Réputé Favovable"]:
+            decision = "favorable"
+        elif value in ["Défavorable", "Refus direct"]:
+            decision = "defavorable"
+        elif value in ["Refus direct"]:
+            decision = "refus"
+        else:
+            decision = None
+        return decision
+
+    def handle_transition_descision(self, _, data):
         if data.get("wf_transitions")[0] in ["accepted"]:
             decision = "favorable"
         elif data.get("wf_transitions")[0] in ["refused", "inacceptable"]:
@@ -385,13 +402,108 @@ class AddEvents(ucore.AddUrbanEvent):
             return None
         return decision
 
-    def get_recepisse_check(self, data):
-        return "date_recepisse" in data or data["date_recepisse"]
-
+    # delivery
     def get_delivery_check(self, data):
-        columns = ("date_cloture", "wf_transitions")
-        matching_columns = [c for c in columns if c in data]
-        return matching_columns
+        columns = [
+            {
+                "date": "autorisation_codt_fk/date_decision_college",
+                "decision": "autorisation_codt_fk/decision_college_",
+                "decision_adapter": self.handle_numeral_descision
+            },
+            {
+                "date": "autorisation_fk/date_autorisation_tutelle",
+                "decision": "autorisation_fk/avis_fk/libelle_f",
+                "decision_adapter": self.handle_avis_descision
+            },
+            {
+                "date": "decision_environnement_classe3_fk/date_decision",
+                "decision": "decision_environnement_classe3_fk/decision",
+                "decision_adapter": self.handle_numeral_descision
+            },
+            {
+                "date": "decision_environnement_fk/date_avis_college",
+                "decision": "decision_environnement_fk/decision_autorite",
+                "decision_adapter": self.handle_numeral_descision
+            },
+            {
+                "date": "decision_unique_fk/date_avis_college",
+                "decision": "decision_unique_fk/decision_autorite",
+                "decision_adapter": self.handle_numeral_descision
+            },
+            {
+                "date": "date_cloture",
+                "decision": "wf_transitions",
+                "decision_adapter": self.handle_transition_descision
+            }
+        ]
+        for column in columns:
+            if utils.get_value_from_path(data, column["date"]) and utils.get_value_from_path(data, column["decision"]):
+                self.delivery_config = column
+                return True
+        return False
+
+    def get_delivery_date(self, data):
+        date_config = self.delivery_config["date"]
+        return utils.get_value_from_path(data, date_config)
+
+    def get_delivery_decision(self, data):
+        decision_path = self.delivery_config["decision"]
+        decision_adapter = self.delivery_config["decision_adapter"]
+        decision = utils.get_value_from_path(data, decision_path)
+        return decision_adapter(decision, data)
+
+
+class AddOtherEvent(ucore.AddEvents):
+    task_namespace = "gracehollogne_env"
+    key = luigi.Parameter()
+    event_config = {
+        "rapport": {
+            "parents_keys": ["autorisation_cu_fk", "autorisation_fk", "decision_environnement_fk", "decision_fk", "decision_unique_fk"],
+            "check_key": ["date_avis_college"],
+            "date_mapping": {"decisionDate": "date_avis_college", "eventDate": "date_avis_college"},
+            "decision_mapping": {"decision": "avis_college_fk/libelle_f"},
+            "decision_value_mapping": {
+                # "Attente": "",
+                # "Abstention": "",
+                # "Conditionné": "",
+                "Défavorable": "defavorable",
+                "Favorable": "favorable",
+                "Favorable et Abstention": "favorable",
+                "Favorable Conditionné": "favorable",
+                # "Favorable & Défavorable": "",
+                "Réputé Favovable": "favorable",
+                # "s'abstient": "",
+            },
+            "mapping": {
+                "Article127": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "BuildLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "CODT_CommercialLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "CODT_IntegratedLicence": {"urban_type": "rapport-synthese", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "CODT_UniqueLicence": {"urban_type": "rapport-synthese", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "EnvClassTwo": {"urban_type": "rapport-synthese", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "ParcelOutLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "UniqueLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "UrbanCertificateTwo": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+            }
+        },
+        "enquete": {
+            "parents_keys": ["enquete_publique_eu_fk", "enquete_publique_fk"],
+            "check_key": ["date_debut", "date_fin"],
+            "date_mapping": {"investigationStart": "date_debut", "investigationEnd": "date_fin"},
+            "mapping": {               
+                "Article127": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
+                "BuildLicence": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
+                "CODT_BuildLicence": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique-codt", "date": ["investigationStart", "investigationEnd"]},
+                "CODT_ParcelOutLicence": {"@type": "UrbanEventInquiry", "urban_type": "copy_of_enquete-publique-codt", "date": ["investigationStart", "investigationEnd"]},
+                "CODT_UrbanCertificateTwo": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
+                "ParcelOutLicence": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
+                "UrbanCertificateTwo": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
+            }
+        }
+    }
+
+    def requires(self):
+        return AddEvents(key=self.key)
 
 
 class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
@@ -399,7 +511,7 @@ class EventConfigUidResolver(ucore.UrbanEventConfigUidResolver):
     key = luigi.Parameter()
 
     def requires(self):
-        return AddEvents(key=self.key)
+        return AddOtherEvent(key=self.key)
 
 
 class MappingStateToTransition(ucore.UrbanTransitionMapping):
@@ -563,6 +675,24 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
             data["description"]["data"] += f"<p>{error}</p>\r\n"
         return data
 
+    def generate_street_item(self, street_uid, number):
+        if "-" in number:
+            numbers = number.split("-")
+            if len(numbers) == 2:
+                numbers = [number for number in range(int(numbers[0]), int(numbers[1]))]
+        elif "/" in number:
+            numbers = number.split("/")
+        else:
+            numbers = [number]
+
+        return [
+            {
+                "street": street_uid,
+                "number": number
+            }
+            for number in list(set(numbers))
+        ]
+
     def transform_data(self, data):
         errors = []
         workLocations = data.get("workLocations", None)
@@ -588,12 +718,8 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
                     continue
             else:
                 match = result["items"][0]
-            new_work_locations.append(
-                {
-                    "street": match["uid"],
-                    "number": worklocation.get("numero", ""),
-                }
-            )
+            new_work_locations += self.generate_street_item(match["uid"], worklocation.get("number", ""))
+
         data["workLocations"] = new_work_locations
         return data, errors
 
@@ -702,29 +828,6 @@ class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
             return data, errors
         data["architects"] = [result["items"][0]["UID"]]
         return data, errors
-
-
-class TransformFolderManager(core.MappingValueWithFileInMemoryTask):
-    task_namespace = "mouscron"
-    key = luigi.Parameter()
-    mapping_filepath = "./config/mouscron/mapping-folder-manager-mouscron.json"
-    mapping_key = "foldermanagers"
-
-    @property
-    @core.utils._cache(ignore_args=True)
-    def mapping(self):
-        mapping = json.load(open(self.mapping_filepath, "r"))
-        return {l["key"]: l["value"] for l in mapping["keys"]}
-
-    def transform_data(self, data):
-        if self.mapping_key not in data:
-            data[self.mapping_key] = None
-        data = super().transform_data(data)
-        data[self.mapping_key] = [data[self.mapping_key]]
-        return data
-
-    def requires(self):
-        return TransformArchitect(key=self.key)
 
 
 class AddEventInDescription(ucore.AddValuesInDescription):
@@ -840,7 +943,7 @@ class AddEventInDescription(ucore.AddValuesInDescription):
         return data
 
     def requires(self):
-        return TransformFolderManager(key=self.key)
+        return TransformArchitect(key=self.key)
 
 
 class DropColumns(core.DropColumnInMemoryTask):
