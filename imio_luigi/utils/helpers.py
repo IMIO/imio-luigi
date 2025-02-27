@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 def get_value_from_path(data, path):
     path_split = path.split("/")
     current_data = data
