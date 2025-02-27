@@ -39,25 +39,29 @@ class AddEvents(core.InMemoryTask):
     def event_config(self):
         raise NotImplementedError
 
-    def _check(self, data, checks):
-        return all([check in data and data[check] for check in checks])
+    def _check(self, data, checks, parents):
+        return all([utils.get_value_from_path_with_parents(data, check, parents) for check in checks])
 
     def _add_date(self, event, data, mapping, config):
         dates = mapping.get("date", [])
         for date in dates:
             date_mapping = config["date_mapping"][date]
-            date_value = data[date_mapping]
+            date_value = utils.get_value_from_path_with_parents(data, date_mapping, config.get("parents_keys", None))
             event[date] = date_value
         return event
 
     def _add_decision(self, event, data, mapping, config):
         decision_key = mapping.get("decision", None)
-        if decision_key is not None:
-            wf_transition = data.get("wf_transitions", None)
-            if wf_transition is not None:
-                return event
-            decision = config["decision_mapping"][wf_transition]
-            event[decision_key] = decision
+        if decision_key is None:
+            return event
+        decision_mapping = config.get("decision_mapping", None)
+        if decision_mapping is None:
+            raise KeyError("Missing decision_mapping")
+
+        decision_value = utils.get_value_from_path_with_parents(data, decision_mapping.get(decision_key, ""), config.get("parents_keys", None))
+        decision_value = config["decision_value_mapping"].get(decision_value, None)
+        if decision_value is not None:
+            event[decision_key] = decision_value
         return event
 
     def transform_data(self, data):
@@ -66,7 +70,7 @@ class AddEvents(core.InMemoryTask):
         for config in self.event_config.values():
             if data["@type"] not in config["mapping"]:
                 continue
-            if not self._check(data, config["check_key"]):
+            if not self._check(data, config["check_key"], parents=config.get("parents_keys", None)):
                 continue
             mapping = config["mapping"][data["@type"]]
             event_type = mapping["urban_type"]
