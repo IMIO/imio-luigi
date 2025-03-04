@@ -676,6 +676,8 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         return data
 
     def generate_street_item(self, street_uid, number):
+        if not number:
+            return [{"street": street_uid, "number": ""}]
         if "-" in number:
             numbers = number.split("-")
             if len(numbers) == 2:
@@ -688,7 +690,7 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         return [
             {
                 "street": street_uid,
-                "number": number
+                "number": str(number)
             }
             for number in list(set(numbers))
         ]
@@ -718,7 +720,7 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
                     continue
             else:
                 match = result["items"][0]
-            new_work_locations += self.generate_street_item(match["uid"], worklocation.get("number", ""))
+            new_work_locations += self.generate_street_item(match["uid"], worklocation.get("number", None))
 
         data["workLocations"] = new_work_locations
         return data, errors
@@ -763,10 +765,10 @@ class TransformCadastre(ucore.TransformCadastre):
                 value = value
             if value == "#":
                 value = ""
-            new_output[key] = str(value)
+            new_output[key] = str(value).upper()
         section = cadastre.get('section_cadastrale', None)
         if section is not None:
-            new_output["section"] = str(section)
+            new_output["section"] = str(section).upper()
         division = cadastre.get('division_fk', None)
         if division is not None:
             code_ins = division.get("code_ins", None)
@@ -803,6 +805,20 @@ class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
             data["description"]["data"] += f"<p>{error}</p>\r\n"
         return data
 
+    def fix_architect_mapping(self, name):
+        mapping = {
+            "Atelier 3A S.P.R.L" : "2be22db5cffd40878235a3edc4522a19",
+            "ATELIER D'ARCHITECTURE 3A": "2be22db5cffd40878235a3edc4522a19",
+            "DE DEURWAERDER Hélène": "08ebfd5d6135465e957eab5e4934aa5f",
+            "DEWULF Jean-Luc": "4dfc3efddcaa4a4b980d3ec8db40aef2",
+            "DUPONCHEEL Jean": "26bfd98d0a3e4873a0847c00f30e9d48",
+            "MENTEN J-P" : "8237d8dd9098419d80559386f2237585",
+            "WINDELS Jean et paul": "5ec4e9c708e34edcb1c680c9e583edda"
+        }
+        if name not in mapping:
+            return None
+        return mapping[name]
+
     def transform_data(self, data):
         errors = []
         type_list = utils.get_value_from_path(data, "organisme_fk/type_list")
@@ -814,6 +830,10 @@ class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
         architecte_fname = utils.get_value_from_path(data, "organisme_fk/prenom")
         if architecte_fname and architecte_fname != ".":
             architecte_name = f"{architecte_name} {architecte_fname}"
+        fix_uid_mapping = self.fix_architect_mapping(architecte_name)
+        if fix_uid_mapping:
+            data["architects"] = [fix_uid_mapping]
+            return data, errors
         params = {"SearchableText": f"{utils.fix_search_term(architecte_name)}", "metadata_fields": "UID"}
         r = self.request(parameters=params)
         if r.status_code != 200:
@@ -824,9 +844,17 @@ class TransformArchitect(core.GetFromRESTServiceInMemoryTask):
             errors.append(f"Aucun résultat pour l'architecte: '{architecte_name}'")
             return data, errors
         elif result["items_total"] > 1:
-            errors.append(f"Plusieurs résultats pour l'architecte: '{architecte_name}'")
-            return data, errors
-        data["architects"] = [result["items"][0]["UID"]]
+            value, error = utils.find_result_similarity(result["items"], architecte_name, key="title")
+            if isinstance(error, float):
+                error = f"Attention, la ressemblance entre les noms des architect trouvé n'est de que {(error)*100}%"
+            if not value:
+                errors.append(f"Plusieurs résultats pour l'architecte: '{architecte_name}'")
+                return data, errors
+            if error:
+                errors.append(error)
+            data["architects"] = [value["UID"]]
+        else:
+            data["architects"] = [result["items"][0]["UID"]]
         return data, errors
 
 
