@@ -355,7 +355,7 @@ class TransformContact(core.GetFromRESTServiceInMemoryTask):
         if error:
             errors.append(error)
             return data, errors
-        if type(search) == str:
+        if isinstance(search, str):
             search = [search]
         data[self.data_key] = []
         for contact in search:
