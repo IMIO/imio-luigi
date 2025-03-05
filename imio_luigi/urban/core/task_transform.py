@@ -42,6 +42,22 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
         """handle in case we failed to retrieve worklocation with street code"""
         return None, None
 
+    def generate_street_item(self, street_uid, number):
+        """
+        handle street item creation
+
+        :param street_uid: uid of the street
+        :type street_uid: string
+        :param number: street number
+        :type number: string
+        :return: list of street items
+        :rtype: list of dict
+        """
+        return  [{
+            "street": street_uid,
+            "number": number,
+        }]
+
     def transform_data(self, data):
         new_work_locations = []
         errors = []
@@ -102,12 +118,7 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
                     errors.append(similarity_error)
             else:
                 match = result["items"][0]
-            new_work_locations.append(
-                {
-                    "street": match["uid"],
-                    "number": worklocation.get("number", ""),
-                }
-            )
+            new_work_locations += self.generate_street_item(match["uid"], worklocation.get("number", ""))
         data["workLocations"] = new_work_locations
         return data, errors
 
