@@ -653,7 +653,7 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
         return CreateApplicant(key=self.key)
 
 
-class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
+class TransformWorkLocation(ucore.TransformWorkLocation):
     task_namespace = "mouscron"
     key = luigi.Parameter()
     log_failure = True
@@ -661,26 +661,12 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
     def requires(self):
         return CreateWorkLocation(key=self.key)
 
-    @property
-    def request_url(self):
-        return f"{self.url}/@address"
-
-    def on_failure(self, data, errors):
-        if "description" not in data:
-            data["description"] = {
-                "content-type": "text/html",
-                "data": "",
-            }
-        for error in errors:
-            data["description"]["data"] += f"<p>{error}</p>\r\n"
-        return data
-
     def generate_street_item(self, street_uid, number):
         if not number:
             return [{"street": street_uid, "number": ""}]
         if "-" in number:
             numbers = number.split("-")
-            if len(numbers) == 2:
+            if len(numbers) == 2 and isinstance(numbers[0], int) and isinstance(numbers[1], int):
                 numbers = [number for number in range(int(numbers[0]), int(numbers[1]))]
         elif "/" in number:
             numbers = number.split("/")
@@ -695,35 +681,8 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
             for number in list(set(numbers))
         ]
 
-    def transform_data(self, data):
-        errors = []
-        workLocations = data.get("workLocations", None)
-        if not workLocations:
-            return data, errors
-        new_work_locations = []
-        for worklocation in workLocations:
-            params = {"term": worklocation["street"], "include_disable": "t"}
-            r = self.request(parameters=params)
-            if r.status_code != 200:
-                errors.append(f"Response code is '{r.status_code}', expected 200")
-                continue
-            result = r.json()
-            if result["items_total"] == 0:
-                errors.append(f"Aucun résultat pour l'adresse: '{params['term']}'")
-                continue
-            elif result["items_total"] > 1:
-                match = find_address_match(result["items"], worklocation["street"])
-                if not match:
-                    errors.append(
-                        f"Plusieurs résultats pour l'adresse: '{params['term']}'"
-                    )
-                    continue
-            else:
-                match = result["items"][0]
-            new_work_locations += self.generate_street_item(match["uid"], worklocation.get("number", None))
-
-        data["workLocations"] = new_work_locations
-        return data, errors
+    def _generate_term(self, worklocation, data):
+        return worklocation["street"], None
 
 
 class TransformCadastre(ucore.TransformCadastre):
