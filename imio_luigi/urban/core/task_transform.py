@@ -40,6 +40,8 @@ class TransformWorkLocation(core.GetFromRESTServiceInMemoryTask):
 
     def _handle_failed_street_code(self, worklocation, data):
         """handle in case we failed to retrieve worklocation with street code"""
+        if self._generate_street_code(worklocation, data)[0]:
+            raise NotImplementedError
         return None, None
 
     def generate_street_item(self, street_uid, number):
