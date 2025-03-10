@@ -101,6 +101,8 @@ class RESTPost(core.PostRESTTask):
     search_on = luigi.Parameter()
     limit_hour = luigi.BoolParameter()
     has_run = False
+    retry_count = 1
+    disable_window = 86400 #1 day
 
     @property
     def test_url(self):
