@@ -133,7 +133,16 @@ run-local-hensies:
 
 .PHONY: import-hensies
 import-hensies:
-	LUIGI_CONFIG_PATH=./hensies.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --limit-hour --path ./result-hensies --local-scheduler  --logging-conf-file logging_hensies.ini
+
+#Lierneux
+.PHONY: run-local-lierneux
+run-local-lierneux:
+	LUIGI_CONFIG_PATH=./lierneux.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_lierneux lierneux.GetFromAccess --filepath ./data/lierneux/json/Urbi7/DOSSIERS.json  --local-scheduler
+
+.PHONY: import-lierneux
+import-lierneux:
+	LUIGI_CONFIG_PATH=./theux.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./results/result-theux --local-scheduler
+
 
 # Acropole
 .PHONY: run-local-acropole
