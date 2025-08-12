@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import abc
+import logging
 import luigi
 import requests
 import time
+
+
+logger = logging.getLogger('luigi-interface')
 
 
 class RESTTarget(luigi.Target):
@@ -68,6 +72,8 @@ class RESTTarget(luigi.Target):
         result = me(self.url, **self.request_kwargs)
         if not hasattr(result, "status_code"):
             raise RuntimeError("Request result has no status code")
+        if result.status_code == 403:
+            logger.info(f"Error 403 : {result.content}")
         if result.status_code not in self.expected_codes and self.retry > 0:
             while self.current_retry < self.retry:
                 self.current_retry += 1
