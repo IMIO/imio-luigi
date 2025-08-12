@@ -14,16 +14,28 @@ import re
 
 
 class AddNISData(core.InMemoryTask):
+    """
+    Add mandatory NIS value to data for some licence type
+    """
     nis_list_licence_path = "./config/global/list_ins_licence.json"
     nis_data_key = "usage"
     type_key = "@type"
     possible_value = ["for_habitation", "not_for_habitation", "not_applicable"]
+    log_failure = True
 
     @property
     def get_list(self):
         return json.load(open(self.nis_list_licence_path, "r"))
 
     def get_value(self, data):
+        """
+        Method that can be overridden to return value from data
+
+        :param data: licence data
+        :type data: dict
+        :return: the value expected from 0 to 2, 0 = for private use, 1 = for other than private use, 2 = n/a
+        :rtype: int
+        """
         return 2
 
     def transform_data(self, data):
@@ -32,6 +44,46 @@ class AddNISData(core.InMemoryTask):
         if data[self.type_key] in self.get_list:
             data[self.nis_data_key] = self.possible_value[self.get_value(data)]
         return data
+
+    def on_failure(self, data, errors):
+        if "description" not in data:
+            data["description"] = {
+                "content-type": "text/html",
+                "data": "",
+            }
+        for error in errors:
+            data["description"]["data"] += f"<p>{error}</p>\r\n"
+        return data
+
+    def log_failure_output(self):
+        fname = self.key.replace("/", "-")
+        fpath = (
+            f"./failures/{self.task_namespace}-"
+            f"{self.__class__.__name__}/{fname}.json"
+        )
+        return luigi.LocalTarget(fpath)
+
+    def _handle_exception(self, data, error, output_f):
+        """Method called when an exception occured"""
+        if not self.log_failure:
+            raise error
+        data = self.on_failure(data, [str(error)])
+        json.dump(data, output_f)
+        with self.log_failure_output().open("w") as f:
+            error = {
+                "error": str(error),
+                "data": data,
+            }
+            f.write(json.dumps(error))
+
+    def run(self):
+        with self.input().open("r") as input_f:
+            with self.output().open("w") as output_f:
+                data = json.load(input_f)
+                try:
+                    json.dump(self.transform_data(data), output_f)
+                except Exception as e:
+                    self._handle_exception(data, e, output_f)
 
 
 class AddEvents(core.InMemoryTask):
