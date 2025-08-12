@@ -56,6 +56,7 @@ from imio_luigi.core.task_transform import (
     UpdateReferenceInMemoryTask,
 )
 from imio_luigi.core.task_validation import JSONSchemaValidationTask
+from imio_luigi.core.task_relation import RelationAcessInMemoryTask, RelationAcessTask
 from imio_luigi.core.utils import frozendict_to_dict
 from luigi.mock import MockTarget as InMemoryTarget
 
@@ -108,5 +109,7 @@ __all__ = (
     "WriteToJSONTask",
     "frozendict_to_dict",
     "ConvertDateTaskMultiFormat",
-    "ConvertDateInMultiFormatMemoryTask"
+    "ConvertDateInMultiFormatMemoryTask",
+    "RelationAcessInMemoryTask",
+    "RelationAcessTask"
 )
