@@ -2,6 +2,8 @@
 
 from datetime import datetime
 from imio_luigi.core.utils import mock_filename
+from imio_luigi.utils.helpers import get_value_from_path
+from imio_luigi.utils.helpers import set_value_from_path
 from luigi.mock import MockTarget
 
 import abc
@@ -293,11 +295,16 @@ class ConvertDateTask(luigi.Task):
 
     def transform_data(self, data):
         for key in self.keys:
-            if key not in data and self.ignore_missing is False:
+            if not get_value_from_path(data, key) and self.ignore_missing is False:
                 raise KeyError(f"Missing key '{key}'")
-            if key in data and data[key]:
+            if get_value_from_path(data, key):
                 try:
-                    data[key] = self.format_date(data[key])
+                    set_value_from_path(
+                        data,
+                        key,
+                        self.format_date(get_value_from_path(data, key))
+                    )
+                    # data[key] = self.format_date(data[key])
                 except ValueError as e:
                     if key not in self.key_to_ignore_exception:
                         self._handle_exception(data, e)
