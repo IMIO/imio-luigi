@@ -33,16 +33,24 @@ class MappingKeysTask(luigi.Task):
         """The output target"""
         return None
 
+    def apply_change(self, data, destination, original):
+        if isinstance(destination, list):
+            for key in destination:
+                data[key] = data[original]
+        else:
+            data[destination] = data[original]
+        return data
+
     def transform_data(self, data):
         """Transform data with the mapping table"""
         for original, destination in self.mapping.items():
             if self.ignore_missing is True:
                 if original in data:
                     if data[original] is not None:
-                        data[destination] = data[original]
+                        data = self.apply_change(data, destination, original)
                     del data[original]
             else:
-                data[destination] = data[original]
+                data = self.apply_change(data, destination, original)
                 del data[original]
         return data
 
