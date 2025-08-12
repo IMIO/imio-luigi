@@ -38,6 +38,15 @@ def get_value_from_path(data, path):
     return current_data
 
 
+def set_value_from_path(data, path, value):
+    keys = path.split("/")
+    d = data
+    for key in keys[:-1]:
+        d = d.setdefault(key, {})  # Create nested dicts if missing
+    d[keys[-1]] = value
+    return data
+
+
 def get_value_from_path_with_parents(data, path, parents=None):
     """
     Return value from a dict with a path seprate with /
