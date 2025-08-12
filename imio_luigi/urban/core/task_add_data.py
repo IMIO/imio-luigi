@@ -182,6 +182,7 @@ class AddUrbanEvent(core.InMemoryTask):
     create_recepisse = True
     create_delivery = True
     override_event_path = luigi.OptionalParameter(default=None)
+    override_event = luigi.OptionalParameter(default=None)
     basic_event_mapping_path = "./config/global/mapping_basic_event.json"
     ignore_event_missing_decision = True
 
@@ -230,6 +231,8 @@ class AddUrbanEvent(core.InMemoryTask):
 
     def _create_recepisse(self, data):
         """Create recepisse event"""
+        if "@type" not in data:
+            return data
         if data["@type"] in self._no_recepisse_event:
             return data
         if not self.get_recepisse_check(data):
@@ -259,6 +262,8 @@ class AddUrbanEvent(core.InMemoryTask):
         return data
 
     def _create_delivery(self, data):
+        if "@type" not in data:
+            return data
         if data["@type"] in self._no_delivery_event:
             return data
 
@@ -291,8 +296,10 @@ class AddUrbanEvent(core.InMemoryTask):
         return data
 
     def get_mapping_overide_file(self):
-        if self.override_event_path is None:
+        if self.override_event_path is None and self.override_event is None:
             return None
+        if self.override_event :
+            return self.override_event
         return json.load(open(self.override_event_path, "r"))
 
     def get_value_from_override(self, event_type, lic_type):
