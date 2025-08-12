@@ -87,18 +87,56 @@ class AddNISData(core.InMemoryTask):
 
 
 class AddEvents(core.InMemoryTask):
+    """
+    Task to add urban event to data
+    """
+
     @property
     def event_config(self):
+        """
+        _summary_
+
+        :raises NotImplementedError: _description_
+        """
         raise NotImplementedError
 
-    def _check(self, data, checks, parents):
+    def check(self, data, config):
+        if "check_key" in config or "check_all_key" in config:
+            check_key = config.get("check_all_key", config["check_key"])
+            return not self._check_all(data, check_key, parents=config.get("parents_keys", None))
+        if "check_any_key" in config:
+            return not self._check_any(data, config["check_any_key"], parents=config.get("parents_keys", None))
+        return False
+
+    def _check_all(self, data, checks, parents):
         return all([utils.get_value_from_path_with_parents(data, check, parents) for check in checks])
+
+    def _check_any(self, data, checks, parents):
+        return any([utils.get_value_from_path_with_parents(data, check, parents) for check in checks])
+
+    def get_check_key_list(self, config):
+        check_key = "check_key"
+        if "check_all_key" in config:
+            check_key = "check_all_key"
+        elif "check_any_key" in config:
+            check_key = "check_any_key"
+        return config[check_key]
 
     def _add_date(self, event, data, mapping, config):
         dates = mapping.get("date", [])
         for date in dates:
             date_mapping = config["date_mapping"][date]
-            date_value = utils.get_value_from_path_with_parents(data, date_mapping, config.get("parents_keys", None))
+            if "*" in date_mapping:
+                date_mapping.remove("*")
+                date_mapping += self.get_check_key_list(config)
+            if isinstance(date_mapping, str):
+                date_mapping = [date_mapping]
+            for date_map in date_mapping:
+                date_value = utils.get_value_from_path_with_parents(data, date_map, config.get("parents_keys", None))
+                if date_value is not None:
+                    continue
+            if date_value is None:
+                continue
             event[date] = date_value
         return event
 
@@ -111,18 +149,20 @@ class AddEvents(core.InMemoryTask):
             raise KeyError("Missing decision_mapping")
 
         decision_value = utils.get_value_from_path_with_parents(data, decision_mapping.get(decision_key, ""), config.get("parents_keys", None))
-        decision_value = config["decision_value_mapping"].get(decision_value, None)
+        decision_value = config["decision_value_mapping"].get(decision_key,{}).get(decision_value, None)
         if decision_value is not None:
             event[decision_key] = decision_value
         return event
 
     def transform_data(self, data):
+        if "@type" not in data:
+            return data
         if "__children__" not in data:
             data["__children__"] = []
         for config in self.event_config.values():
             if data["@type"] not in config["mapping"]:
                 continue
-            if not self._check(data, config["check_key"], parents=config.get("parents_keys", None)):
+            if self.check(data, config):
                 continue
             mapping = config["mapping"][data["@type"]]
             event_type = mapping["urban_type"]
