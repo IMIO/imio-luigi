@@ -203,7 +203,11 @@ class AddEvents(ucore.AddUrbanEvent):
     log_failure = False
     override_event= {
         "recepisse" : {
-            "CODT_CommercialLicence" : ["depot-de-la-demande-codt", "UrbanEvent"]
+            "CODT_CommercialLicence" : ["depot-de-la-demande-codt", "UrbanEvent"],
+            "CODT_UrbanCertificateTwo" : ["depot-de-la-demande-codt", "UrbanEvent"]
+        },
+        "delivery" : {
+            "CODT_UrbanCertificateTwo" : ["copy_of_delivrance-du-permis-octroi-ou-refus-codt", "UrbanEvent"]
         }
     }
 
