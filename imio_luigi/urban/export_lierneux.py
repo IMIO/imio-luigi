@@ -526,7 +526,9 @@ class AddValuesInDescription(ucore.AddValuesInDescription):
         'EcheanceDate',
         'EcheanceStatus',
         'Auteur_projet',
-        'AvisFonctionnaire'
+        'AvisFonctionnaire',
+        "DGATLP",
+        "encours"
     ]
     key_dict = {
         'EcheanceAction': 'Echeance action',
