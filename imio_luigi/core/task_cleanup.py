@@ -81,10 +81,8 @@ class StringToListInMemoryTask(StringToListTask):
 
 class StringToListRegexpTask(StringToListTask):
     def _recursive_split(self, value, separators):
-        result = []
-        for regexp in separators:
-            result.extend(re.findall(regexp, value))
-        return result
+        pattern = rf"\s*(?:{'|'.join(separators)})\s*"
+        return re.split(pattern, value)
 
     def transform_data(self, data):
         value = data.get(self.attribute_key, None)
@@ -95,8 +93,8 @@ class StringToListRegexpTask(StringToListTask):
         elif value is None and self.ignore_missing is True:
             return data
 
-        separators = [s for s in self.separators if re.search(s, value)]
-        if len(separators) > 0:
+        separators = self.separators
+        if separators and len(separators) > 0:
             value = self._recursive_split(value, separators)
         else:
             value = [value]
