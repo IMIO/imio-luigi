@@ -517,6 +517,47 @@ class TransformArchitect(ucore.TransformContact):
         return self._fix_term(data["ARCHI"]), None
 
 
+class AddValuesInDescription(ucore.AddValuesInDescription):
+    task_namespace = "lierneux"
+    key = luigi.Parameter()
+    title = "Info complémentaire"
+    key_to_description = [
+        'EcheanceAction',
+        'EcheanceDate',
+        'EcheanceStatus',
+        'Auteur_projet',
+        'AvisFonctionnaire'
+    ]
+    key_dict = {
+        'EcheanceAction': 'Echeance action',
+        'EcheanceDate': 'Echeance date',
+        'EcheanceStatus': 'Echeance status',
+        'Auteur_projet' : "Auteur du projet",
+        'AvisFonctionnaire' : "Avis du fonctionnaire"
+    }
+    
+    def fix_key(self, key):
+        return self.key_dict.get(key, key)
+
+    def get_values(self, data):
+        result = []
+        for key, value in data.items():
+            if key in self.key_to_description and value is not None:
+                result.append(
+                    {"key": key, "value": value}
+                )
+        return result
+
+    def handle_value(self, value, data):
+        key = value["key"]
+        value = value["value"]
+        data["description"]["data"] += f"{self.fix_key(key)} : {value}"
+        return data
+
+    def requires(self):
+        return TransformArchitect(key=self.key)
+
+
 class DropColumns(core.DropColumnInMemoryTask):
     task_namespace = "lierneux"
     key = luigi.Parameter()
@@ -563,7 +604,7 @@ class DropColumns(core.DropColumnInMemoryTask):
     ]
 
     def requires(self):
-        return TransformArchitect(key=self.key)
+        return AddValuesInDescription(key=self.key)
 
 
 class ValidateData(core.JSONSchemaValidationTask):
