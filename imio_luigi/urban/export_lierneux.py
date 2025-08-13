@@ -601,6 +601,10 @@ class DropColumns(core.DropColumnInMemoryTask):
         'AvisFonctionnaire',
         'ArchiFax',
         'ArchiTel',
+        'Auteur_adresse',
+        'Auteur_code',
+        'Auteur_commune',
+        'Auteur_projet'
     ]
 
     def requires(self):
