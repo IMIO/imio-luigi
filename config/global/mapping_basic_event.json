@@ -2,6 +2,7 @@
   "recepisse": {
     "BuildLicence": ["depot-de-la-demande", "UrbanEvent"],
     "CODT_BuildLicence": ["depot-de-la-demande-codt", "UrbanEvent"],
+    "CODT_Article127": ["reception-demande-dgo4-codt", "UrbanEvent"],
     "Article127": ["depot-de-la-demande", "UrbanEvent"],
     "IntegratedLicence": ["depot-de-la-demande", "UrbanEvent"],
     "CODT_IntegratedLicence": ["depot-de-la-demande-codt", "UrbanEvent"],
@@ -30,6 +31,10 @@
     "BuildLicence": ["delivrance-du-permis-octroi-ou-refus", "UrbanEvent"],
     "CODT_BuildLicence": [
       "delivrance-du-permis-octroi-ou-refus-codt",
+      "UrbanEvent"
+    ],
+    "CODT_Article127": [
+      "permis-decision-fd-codt",
       "UrbanEvent"
     ],
     "CODT_UrbanCertificateOne": [
