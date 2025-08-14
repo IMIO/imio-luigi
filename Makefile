@@ -141,7 +141,7 @@ run-local-lierneux:
 
 .PHONY: import-lierneux
 import-lierneux:
-	LUIGI_CONFIG_PATH=./lierneux.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./results/result-lierneux --local-scheduler
+	LUIGI_CONFIG_PATH=./lierneux.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./results/result-lierneux --local-scheduler --logging-conf-file logging_lierneux.ini
 
 
 # Acropole
