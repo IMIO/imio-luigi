@@ -167,7 +167,7 @@ class TransformWorkLocationMultiParams(core.GetFromRESTServiceInMemoryTask):
         with open(self.report_path, "a") as f:
             f.write(f"{self.key} : result : {result}, expectation : {expectation}\n")
 
-    def request_params(self, params, params_obj):
+    def request_params(self, params, params_obj, raw_worklocation):
         r = self.request(parameters=params)
         if r.status_code != 200:
             return None, f"Response code is '{r.status_code}', expected 200"
@@ -178,8 +178,7 @@ class TransformWorkLocationMultiParams(core.GetFromRESTServiceInMemoryTask):
                 error += " pour le code de rue: "
             elif params_obj["key"] == "term":
                 error += " pour l'adresse: "
-            value = params_obj['value']
-            error += f"'{value}'"
+            error += f"'{raw_worklocation}'"
             return None, error
         elif result["items_total"] > 1:
             match, similarity_error = find_address_similarity(result["items"], params_obj["value"])
@@ -189,8 +188,7 @@ class TransformWorkLocationMultiParams(core.GetFromRESTServiceInMemoryTask):
                     error += " pour le code de rue: "
                 elif params_obj["key"] == "term":
                     error += " pour l'adresse: "
-                value = params_obj['value']
-                error += f"'{value}'"
+                error += f"'{raw_worklocation}'"
                 return None, error
             if similarity_error:
                 return None, similarity_error
@@ -214,7 +212,7 @@ class TransformWorkLocationMultiParams(core.GetFromRESTServiceInMemoryTask):
                 params = base_params
                 params[params_obj["key"]] = params_obj["value"]
 
-                result, error = self.request_params(params, params_obj)
+                result, error = self.request_params(params, params_obj, worklocation)
 
                 if error:
                     handle_error = params_obj.get("handle_error", None)
