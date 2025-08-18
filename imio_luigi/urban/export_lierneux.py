@@ -384,16 +384,56 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
         return CreateApplicant(key=self.key)
 
 
-class TransformWorkLocation(ucore.TransformWorkLocation):
+class TransformWorkLocation(ucore.TransformWorkLocationMultiParams):
     task_namespace = "lierneux"
     key = luigi.Parameter()
     log_failure = True
+    towns = [
+        "Odrimont",
+        "Villettes",
+        "Jevigné",
+        "Trou de Bra",
+        "Les Villettes",
+        "Arbrefontaine",
+        "Bra",
+        "4990 LIERNEUX"
+    ]
 
     def requires(self):
         return CreateWorkLocation(key=self.key)
 
-    def _generate_term(self, worklocation, data):
-        return worklocation.get("street", None), None
+    def remove_town_prefix(self, street):
+        for town in self.towns:
+            if not street.startswith(town):
+                continue
+            return street.replace(town, "")
+        return street
+
+    def _generate_params(self, worklocation, data):
+        street = worklocation.get("street", None)
+        if street is None:
+            return None, None
+        street_without_town = self.remove_town_prefix(street)
+        params = [
+            {
+                "key" : "term",
+                "value": street
+            },
+            {
+                "key" : "term",
+                "value": street_without_town
+            },
+        ]
+        street_split = street_without_town.split(" ")
+        if len(street_split) > 1:
+            for street_part in street_without_town.split(" "):
+                params.append(
+                    {
+                        "key" : "term",
+                        "value": street_part
+                    }
+                )
+        return params, None
 
     def get_range_number(self, number):
         number_list = number.split("-")
