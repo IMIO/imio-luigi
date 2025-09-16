@@ -61,6 +61,8 @@ class GetFromAccess(core.GetFromAccessJSONTask):
         # __import__('pdb').set_trace()
         # res = [row.get("Numero", "---No Ref---") for row in self.query()]
         for row in self.query(min_range=min_range, max_range=max_range):
+            # if row["REF"] not in ["2001/U019"]:
+            #     continue
             # with open("./data/lierneux/all_ref_to_import.txt", "a") as f:
             #     f.write(f"{row.get('Numero', '---No Ref---')}\n")
             if "TYPE" not in row:
@@ -646,7 +648,8 @@ class DropColumns(core.DropColumnInMemoryTask):
         'Auteur_adresse',
         'Auteur_code',
         'Auteur_commune',
-        'Auteur_projet'
+        'Auteur_projet',
+        "ArchiBureau"
     ]
 
     def requires(self):
