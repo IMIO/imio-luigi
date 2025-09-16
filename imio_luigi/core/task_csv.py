@@ -27,7 +27,8 @@ class GetFromCSVFile(luigi.Task):
             self.filepath,
             delimiter=self.delimiter,
             usecols=self._col_filter,
-            dtype=self.dtype
+            dtype=self.dtype,
+            header=0
         )
         pdata = pdata.replace({np.nan: None})
 
