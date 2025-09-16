@@ -294,7 +294,8 @@
           "enum": [
             "UrbanEvent",
             "UrbanEventOpinionRequest",
-            "UrbanEventInquiry"
+            "UrbanEventInquiry",
+            "UrbanEventAnnouncement"
           ]
         },
         "title": {
