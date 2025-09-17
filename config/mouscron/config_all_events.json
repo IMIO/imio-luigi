@@ -1,23 +1,50 @@
 {
   "annonce_projet_fk": {
     "title": "Annonce projet",
-    "date_keys": ["cre_date", "date_debut_affichage", "date_pv_enquete"]
+    "date_keys": [
+      "date_debut_affichage",
+      "date_echeance_debut_affichage",
+      "date_premiere_consultation",
+      "date_reunion"
+    ]
   },
   "assainissement_fk": {
     "title": "Assainissement",
-    "date_keys": ["cre_date", "date_annonce"]
-  },
-  "audition_souhaitee_fk": {
-    "title": "Audition souhaitee",
-    "date_keys": ["cre_date", "date_audition", "date_pv"]
+    "date_keys": [
+      "date_annonce",
+      "date_autorisation_college",
+      "date_constatation",
+      "date_demande"
+    ]
   },
   "autorisation_codt_fk": {
     "title": "Autorisation codt",
     "date_keys": [
-      "cre_date",
+      "date_avis_prorogation",
+      "date_confirmation_recours_demandeur_saisine_gvt",
+      "date_debut_affichage_decision",
       "date_decision_college",
       "date_decision_gvt_suspension",
-      "date_decision_saisine_gvt"
+      "date_decision_saisine_gvt",
+      "date_demande_prorogation",
+      "date_envoi_confirmation_gvt",
+      "date_fin_affichage_decision",
+      "date_notification_college_urbanisme",
+      "date_notification_retrait",
+      "date_nouvelle_decision",
+      "date_prise_acte_avis_fd",
+      "date_prise_acte_college",
+      "date_prise_acte_delivre_par_gvt",
+      "date_prise_acte_saisine_fd",
+      "date_prise_acte_saisine_gvt",
+      "date_reception_decision",
+      "date_reception_nouvelle_decision",
+      "date_reception_suspension_college",
+      "date_redevance",
+      "date_redevance_equipement",
+      "date_decision_prorogation",
+      "date_notification_decision_prorogation",
+      "date_expiration_permis_duree_limitee"
     ],
     "decision_keys": [
       "decision_college_",
@@ -29,202 +56,540 @@
   "autorisation_cu_fk": {
     "title": "Autorisation de certificat d'urbanisme",
     "date_keys": [
-      "cre_date",
       "date_autorisation_college",
       "date_autorisation_college2",
       "date_avis_college",
-      "date_refus_college"
+      "date_connaissance_college",
+      "date_delivrance_college",
+      "date_echeance_envoi_decision",
+      "date_notification_college",
+      "date_rapport_college",
+      "date_redevance",
+      "date_refus_college",
+      "date_echeance_paiement_redevance",
+      "date_paiement_redevance"
     ],
     "avis_keys": ["avis_college_fk/libelle_f", "avis_fk/libelle_f"]
   },
   "autorisation_fk": {
     "title": "Autorisation",
     "date_keys": [
-      "cre_date",
       "date_autorisation_college",
       "date_autorisation_college2",
       "date_autorisation_tutelle",
       "date_avis_college",
       "date_avis_prorogation",
+      "date_caution",
+      "date_connaissance_college",
+      "date_delivrance_college",
+      "date_demande_prorogation",
+      "date_echeance_envoi_decision",
+      "date_notification_college",
+      "date_notification_college_urbanisme",
+      "date_notification_urbanisme",
+      "date_prise_possession",
+      "date_rapport_college",
+      "date_redevance",
       "date_refus_college",
-      "date_refus_tutelle"
+      "date_refus_tutelle",
+      "date_retrait_college",
+      "date_echeance_paiement_redevance",
+      "date_rapport_college2",
+      "date_avis_prealable_college",
+      "date_prise_acte_college",
+      "date_paiement_redevance",
+      "date_transmis",
+      "date_presumee"
     ],
     "avis_keys": ["avis_college_fk/libelle_f", "avis_fk/libelle_f"]
   },
-  "autorisation_notaire_fk": {
-    "title": "Autorisation notaire",
-    "date_keys": ["cre_date", "date_delibe_college"]
-  },
   "cessation_fk": {
     "title": "Cessation",
-    "date_keys": ["cre_date", "date_cessation_prevue"]
+    "date_keys": [
+      "date_cessation_prevue",
+      "date_confirmation_accuse_reception",
+      "date_courrie",
+      "date_prise_acte_colleg",
+      "date_reception_courrie",
+      "date_infractio",
+      "date_arret_volontaire_activite"
+    ]
   },
   "charge_imposee_fk": {
     "title": "Charge imposee",
-    "date_keys": ["cre_date", "date_execution"]
+    "date_keys": [
+      "date_echeance_execution",
+      "date_execution"
+    ]
   },
   "commission_consultative_fk": {
     "title": "Commission consultative",
-    "date_keys": ["cre_date", "date_seance"],
+    "date_keys": [
+      "date_contact",
+      "date_echeance",
+      "date_recu",
+      "date_seance"
+    ],
     "avis_keys": ["avis_fk/libelle_f"]
   },
   "completude_fk": {
     "title": "Completude",
-    "date_keys": ["cre_date", "date_statut_completude"]
+    "date_keys": [
+      "date_demande_piece_manquante",
+      "date_recu_piece_manquante",
+      "date_echeance_reception_piece_manquante",
+      "date_statut_completude",
+      "date_reception_releve_par_demandeur"
+    ]
   },
   "decision_environnement_classe3_fk": {
     "title": "Decision environnement classe 3",
     "date_keys": [
-      "cre_date",
+      "date_autorisation_tutelle",
+      "date_caution",
+      "date_delivrance_college",
+      "date_echeance_envoi_decision",
+      "date_envoi_fonctionnaire_delegue",
+      "date_envoi_fonctionnaire_technique",
+      "date_executoire",
+      "date_expiration",
+      "date_non_recevable",
+      "date_notification_college",
+      "date_prise_possession",
       "date_recevable",
       "date_recevable_avec_condition",
+      "date_notification_dnf",
+      "date_retour_dnf",
+      "date_prise_acte_college",
       "date_decision",
-      "date_non_recevable",
-      "date_delivrance_college"
+      "date_reception_decision_conditions_complementaires",
+      "date_inscription_au_registre"
     ],
     "avis_keys": ["avis_college_fk/libelle_f"],
     "decision_keys": ["decision"]
   },
   "decision_environnement_fk": {
     "title": "Decision environnement",
-    "date_keys": ["cre_date", "date_avis_college"],
+    "date_keys": [
+      "date_affichage_decision",
+      "date_avis_college",
+      "date_caution",
+      "date_echeance_affichage_decision",
+      "date_echeance_envoi_decision",
+      "date_echeance_fin_decision",
+      "date_executoire",
+      "date_expiration",
+      "date_fin_affichage_decision",
+      "date_notification_college",
+      "date_prise_possession",
+      "date_retrait_permis",
+      "date_suspension_permis",
+      "date_consultation",
+      "date_prise_acte_college",
+      "date_notification_mise_en_oeuvre",
+      "date_reception_decision_demandeur",
+      "date_notification_fonctionnaire_technique",
+      "date_reception_decision_fonctionnaire_technique",
+      "date_reception_rs_vaut_decision",
+      "date_envoi_avis_college",
+      "date_decision_autorite",
+      "date_notification_decision_autre",
+      "date_reception_decision_autre",
+      "date_reception_decision_college",
+      "date_envoi_rs_valant_decision",
+      "date_attestation_affichage",
+      "date_expiration_permis_duree_limitee",
+      "date_inscription_registre",
+      "date_notification_prorogation",
+      "date_echeance_prorogation",
+      "date_transmis_sri",
+      "date_echeance_envoi_avis_college",
+      "date_echeance_decision_eie"
+    ],
     "avis_keys": ["avis_college_fk/libelle_f"],
     "decision_keys": ["decision_autorite"]
   },
   "decision_fk": {
     "title": "Decision",
-    "date_keys": ["cre_date", "date_avis_college"],
-    "avis_keys": ["avis_college_fk/libelle_f"]
+    "date_keys": [
+      "date_affichage_decision",
+      "date_attestation_affichage",
+      "date_autorisation_tutelle",
+      "date_avis_college",
+      "date_caution",
+      "date_consultation",
+      "date_decision_autorite",
+      "date_echeance_affichage_decision",
+      "date_echeance_envoi_decision",
+      "date_echeance_fin_decision",
+      "date_echeance_prorogation",
+      "date_envoi_rs_valant_decision",
+      "date_envoi_avis_college",
+      "date_executoire",
+      "date_expiration",
+      "date_expiration_permis_duree_limitee",
+      "date_fin_affichage_decision",
+      "date_inscription_registre",
+      "date_notification_college",
+      "date_notification_decision_autre",
+      "date_notification_fonctionnaire_technique",
+      "date_notification_mise_en_oeuvre",
+      "date_notification_prorogation",
+      "date_prise_acte_college",
+      "date_prise_possession",
+      "date_reception_decision_autre",
+      "date_reception_decision_college",
+      "date_reception_decision_demandeur",
+      "date_reception_decision_fonctionnaire_technique",
+      "date_reception_rs_vaut_decision",
+      "date_refus_tutelle",
+      "date_retrait_permis",
+      "date_suspension_permis",
+      "date_envoi_fonctionnaire_delegue",
+      "date_envoi_fonctionnaire_technique",
+      "date_echeance_necessite_permis",
+      "date_notification_decision_fic",
+      "date_reception_decision_fic",
+      "date_echeance_envoi_avis_college",
+      "date_echeance_decision_eie"
+    ],
+    "avis_keys": ["avis_college_fk/libelle_f"],
+    "decision_keys": ["decision_autorite"]
+
   },
   "decision_unique_fk": {
     "title": "Decision unique",
-    "date_keys": ["cre_date", "date_avis_college"],
+    "date_keys": [
+      "date_affichage_decision",
+      "date_avis_college",
+      "date_caution",
+      "date_echeance_affichage_decision",
+      "date_echeance_envoi_decision",
+      "date_echeance_fin_decision",
+      "date_envoi_fonctionnaire_delegue",
+      "date_envoi_fonctionnaire_technique",
+      "date_executoire",
+      "date_expiration",
+      "date_fin_affichage_decision",
+      "date_notification_college",
+      "date_prise_possession",
+      "date_retrait_permis",
+      "date_suspension_permis",
+      "date_prise_acte_college",
+      "date_reception_decision_demandeur",
+      "date_notification_fonctionnaire_technique",
+      "date_reception_decision_fonctionnaire_technique",
+      "date_consultation",
+      "date_reception_rs_vaut_decision",
+      "date_envoi_avis_college",
+      "date_notification_mise_en_oeuvre",
+      "date_decision_autorite",
+      "date_notification_decision_autre",
+      "date_reception_decision_autre",
+      "date_reception_decision_college",
+      "date_envoi_rs_valant_decision",
+      "date_attestation_affichage",
+      "date_expiration_permis_duree_limitee",
+      "date_inscription_registre",
+      "date_notification_prorogation",
+      "date_echeance_prorogation",
+      "date_echeance_decision_eie"
+    ],
     "avis_keys": ["avis_college_fk/libelle_f"],
     "decision_keys": ["decision_autorite"]
   },
-  "directive_fk": {
-    "title": "Directive",
-    "date_keys": ["cre_date"]
-  },
   "ech_observation_exploitant_fk": {
     "title": "Echeance observation exploitant",
-    "date_keys": ["cre_date"]
+    "date_keys": ["date_debut","date_echeance","date_fin"]
   },
   "ech_peremption_fk": {
     "title": "Echeance peremption",
-    "date_keys": ["cre_date"]
+    "date_keys": ["date_debut","date_echeance","date_fin"]
   },
   "echeance_envoi_irrecevable_fk": {
     "title": "Echeance envoi irrecevable",
-    "date_keys": ["cre_date"]
+    "date_keys": ["date_debut","date_echeance","date_fin"]
   },
   "enquete_publique_eu_fk": {
     "title": "Enquete publique europeen",
     "date_keys": [
-      "cre_date",
-      "date_premiere_consultation",
-      "date_deuxieme_consultation",
+      "date_college",
       "date_debut",
-      "date_fin"
+      "date_debut_affichage",
+      "date_deuxieme_consultation",
+      "date_echeance",
+      "date_echeance_debut_affichage",
+      "date_echeance_debut_enquete",
+      "date_echeance_envoi_pv",
+      "date_envoi_pv",
+      "date_fin",
+      "date_premiere_consultation",
+      "date_reunion",
+      "date_echeance_notification_voisin",
+      "date_notification_voisin",
+      "date_frais",
+      "date_echeance_frais",
+      "date_paiement_frais",
+      "date_pv_enquete",
+      "date_echeance_pv_enquete",
+      "date_reception_pv"
     ]
   },
   "enquete_publique_fk": {
     "title": "Enquete Publique",
-    "date_keys": ["cre_date", "date_consultation", "date_debut", "date_fin"]
+    "date_keys": [
+      "date_college",
+      "date_conseil",
+      "date_consultation",
+      "date_debut",
+      "date_echeance",
+      "date_fin",
+      "date_reunion",
+      "date_frais",
+      "date_echeance_frais",
+      "date_paiement_frais",
+      "date_notification_voisin",
+      "date_echeance_notification_voisin",
+      "date_debut_affichage",
+      "date_echeance_debut_affichage",
+      "date_premiere_consultation",
+      "date_deuxieme_consultation",
+      "date_pv_enquete",
+      "date_echeance_pv_enquete"
+    ]
   },
   "etude_incidence_fk": {
     "title": "Etude incidence",
-    "date_keys": ["cre_date", "date_accuse"]
+    "date_keys": [
+      "date_accuse",
+      "date_affichage_reunion_prealable",
+      "date_college",
+      "date_designation_bureau",
+      "date_echeance",
+      "date_preuve_publication",
+      "date_reponse_college",
+      "date_reunion_prealable"
+    ]
   },
   "fonctionnaire_delegue_fk": {
     "title": "Fonctionnaire delegue",
-    "date_keys": ["cre_date", "date_envoi"]
+    "date_keys": [
+      "date_decision_demande1",
+      "date_decision_demande2",
+      "date_demande_document_manquant",
+      "date_echeance_decision_demande1",
+      "date_echeance_envoi_document_manquant",
+      "date_echeance_envoi_rapport_synthese",
+      "date_envoi",
+      "date_envoi_courrier_irrecevable",
+      "date_envoi_document_manquant",
+      "date_envoi_rapport_synthese",
+      "date_reception",
+      "date_reception_decision_demande1",
+      "date_reception_decision_demande2",
+      "date_reception_document_manquant",
+      "date_reception_rapport",
+      "date_recevable",
+      "date_irrecevable",
+      "date_reception_demande_avis",
+      "date_echeance_envoi_complements_ft"
+    ]
   },
   "fonctionnaire_technique_fk": {
     "title": "Fonctionnaire technique",
-    "date_keys": ["cre_date", "date_recevable", "date_irrecevable"],
-    "decision_keys": ["decision_avis_demande1", "decision_avis_demande2"]
+    "date_keys": [
+      "date_decision_demande1",
+      "date_decision_demande2",
+      "date_demande_document_manquant",
+      "date_echeance_decision_demande1",
+      "date_echeance_envoi_document_manquant",
+      "date_echeance_envoi_rapport_synthese",
+      "date_envoi",
+      "date_envoi_courrier_irrecevable",
+      "date_envoi_document_manquant",
+      "date_envoi_rapport_synthese",
+      "date_reception",
+      "date_reception_decision_demande1",
+      "date_reception_decision_demande2",
+      "date_reception_document_manquant",
+      "date_reception_rapport",
+      "date_recevable",
+      "date_irrecevable",
+      "date_reception_demande_avis",
+      "date_echeance_envoi_complements_ft"
+    ],
+    "decision_keys": ["decision_avis_demande1", "decision_avis_demande2"],
+    "avis_keys": ["avis_rapport_synthese"]
   },
   "infraction_fk": {
     "title": "Infraction",
-    "date_keys": ["cre_date", "date_pv"],
+    "date_keys": [
+      "date_avertissement",
+      "date_constatation",
+      "date_notification_decision",
+      "date_notification_pv",
+      "date_pv",
+      "date_rapport_college"
+    ],
     "decision_keys": ["decision"]
-  },
-  "instruction_codt_fk": {
-    "title": "Instruction codt",
-    "date_keys": ["cre_date", "date_pv"]
-  },
-  "instruction_infraction_urbanistique_fk": {
-    "title": "Instruction infraction urbanistique",
-    "date_keys": ["cre_date", "date_decision_college"],
-    "decision_keys": ["decision_college_sur_transaction_"]
-  },
-  "instruction_insalubrite_logement_fk": {
-    "title": "Instruction insalubrite logement",
-    "date_keys": ["cre_date", "date_decision"],
-    "decision_keys": ["decision"]
-  },
-  "instruction_permis_location_fk": {
-    "title": "Instruction permis location",
-    "date_keys": ["cre_date", "date_decision"],
-    "decision_keys": ["decision"],
-    "avis_keys": ["avis_enqueteur_fk/libelle_f"]
-  },
-  "instruction_reclamation_plainte_fk": {
-    "title": "Instruction reclamation plainte",
-    "date_keys": ["cre_date", "date_decision"]
-  },
-  "instruction_reunion_fk": {
-    "title": "Instruction reunion",
-    "date_keys": ["cre_date"]
   },
   "performance_energetique_batiment_fk": {
     "title": "Performance energetique batiment",
-    "date_keys": ["cre_date"]
+    "date_keys": [
+      "date_declaration_finale",
+      "date_declaration_initiale",
+      "date_echeance_declaration_finale",
+      "date_echeance_declaration_initiale",
+      "date_engagement_peb",
+      "date_etude",
+      "date_reception_declaration_peb_simplifiee",
+      "date_reception_formulaire1",
+      "date_reception_formulaire2",
+      "date_controle_engagement_peb",
+      "date_controle_declaration_initiale",
+      "date_controle_declaration_finale",
+      "date_domiciliation",
+      "date_controle_declaration_peb_simplifiee",
+      "date_controle_formulaire1"
+    ],
+    "avis_keys": ["performance_energetique_batiment_avis_fk/libelle_f"]
   },
   "rapport_technique_fk": {
     "title": "Rapport technique",
-    "date_keys": ["cre_date"]
-  },
-  "recevabilite_fk": {
-    "title": "Recevabilite",
-    "date_keys": [
-      "cre_date",
-      "date_autorisation_college",
-      "date_irrecevable",
-      "date_recevable"
-    ]
+    "date_keys": ["date_rapport_service"],
+    "avis_keys": ["avis_service"]
   },
   "recour_eu_fk": {
     "title": "Recour europeen",
-    "date_keys": ["cre_date", "date_decision_gouvernement"],
+    "date_keys": [
+      "date_decision_gouvernement",
+      "date_echeance_envoi",
+      "date_echeance_gouvernement",
+      "date_fin_affichage_decision_recours",
+      "date_fin_affichage_recour",
+      "date_reception_gouvernement",
+      "date_echeance_envoi_recours_fonctionnaire_technique",
+      "date_echeance_envoi_recours_demandeur",
+      "date_prise_acte_college",
+      "date_introduction",
+      "date_reception_copie_recours_college",
+      "date_attestation_affichage_recours",
+      "date_reception_decision_recours",
+      "date_attestation_affichage_decision_recours",
+      "date_executoire_recours",
+      "date_expiration_permis_sur_recours",
+      "date_inscription_registre_recours",
+      "date_expiration_duree_limitee_recours",
+      "date_echeance_peremption_sur_recours",
+      "date_echeance_envoi_recours_college",
+      "date_audience",
+      "date_consultation",
+      "date_consultation_decision"
+    ],
     "decision_keys": ["decision_recours_gouvernement"]
   },
   "recour_fk": {
     "title": "Recour",
-    "date_keys": ["cre_date", "date_decision_tutelle"],
+    "date_keys": [
+      "date_retour",
+      "date_avertissement_reclamant",
+      "date_reception_complet",
+      "date_debut_affichage",
+      "date_fin_affichage",
+      "date_audience",
+      "date_depot_plan_modificatif",
+      "date_debut_affichage_decision",
+      "date_fin_affichage_decision",
+      "date_decision_tutelle",
+      "date_echeance_decision_tutelle",
+      "date_reception_copie_recours_college",
+      "date_prise_acte_college",
+      "date_echeance_peremption_sur_recours"
+    ],
     "avis_keys": ["avis_fk/libelle_f"],
     "decision_keys": ["decision_tutelle"]
   },
-  "resume_eu_fk": {
-    "title": "Resume europeen",
-    "date_keys": ["cre_date"]
-  },
   "travaux_fk": {
     "title": "Travaux",
-    "date_keys": ["cre_date", "date_debut", "date_fin"]
+    "date_keys": [
+      "date_annonce",
+      "date_caution",
+      "date_constatation_commune",
+      "date_controle",
+      "date_controlez",
+      "date_debut",
+      "date_demande_controle_implantation",
+      "date_fin",
+      "date_visite_college",
+      "date_visite_conformite",
+      "date_visite_conformite_college",
+      "date_debut_prevue",
+      "date_notification_demandeur",
+      "date_decision_conseil",
+      "date_demande_passage_service_incendie",
+      "date_passage_service_incendie",
+      "date_reception_rapport_service_incendie",
+      "date_redevance",
+      "date_echeance_redevance",
+      "date_paiement_redevance",
+      "date_redevance2",
+      "date_paiement_redevance2"
+    ],
+    "avis_keys": ["avis_voirie_fk/libelle_f"]
   },
   "urbanisme_fk": {
     "title": "Urbanisme",
-    "date_keys": ["cre_date"],
+    "date_keys": [
+      "date_delai_recour",
+      "date_transmis_phase_1",
+      "date_transmis_piece_manquante",
+      "date_transmission_dossier_au_fd"
+    ],
     "avis_keys": ["avis_fk/libelle_f", "avis_phase_3_fk/libelle_f"]
   },
   "voirie_fk": {
     "title": "Voirie",
-    "date_keys": ["cre_date"]
-  },
-  "voirie_rt_fk": {
-    "title": "Voirie rt",
-    "date_keys": ["cre_date"]
+    "date_keys": [
+      "date_approbation_pv_bornage",
+      "date_debut_affichage",
+      "date_debut_affichage_recours",
+      "date_decision_recours",
+      "date_fin_affichage",
+      "date_fin_affichage_recours",
+      "date_notification_prise_acte",
+      "date_pv_bornage",
+      "date_prise_acte_voirie",
+      "date_reception_decision_definitive",
+      "date_reception_decision_demandeur",
+      "date_reception_dossier_voirie",
+      "date_reception_rappel_voirie",
+      "date_reception_recours",
+      "date_transmis_decision_demandeur",
+      "date_transmis_decision_spw",
+      "date_transmis_pv_bornage_riverain",
+      "date_echeance_decision_voirie",
+      "date_decision_voirie",
+      "date_echeance_notification_decision",
+      "date_echeance_decision_rappel_voirie",
+      "date_reception_decision_rappel_voirie_demandeur",
+      "date_decision_rappel_voirie",
+      "date_echeance_recours_demandeur",
+      "date_echeance_recours_tiers",
+      "date_echeance_decision_recours",
+      "date_echeance_notification_prise_acte",
+      "date_debut_affichage_decision_recours",
+      "date_fin_affichage_decision_recours",
+      "date_introduction",
+      "date_reception_copie_recours_college",
+      "date_audience",
+      "date_prise_acte_college",
+      "date_reception_decision_recours"
+    ],
+    "decision_keys": [
+      "voirie_decision_plan_fk",
+      "voirie_decision_rappel_plan_fk",
+      "voirie_decision_rappel_voirie_fk",
+      "voirie_decision_recours_fk"
+    ]
   }
 }

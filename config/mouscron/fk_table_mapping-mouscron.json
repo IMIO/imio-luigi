@@ -96,927 +96,927 @@
         "key": "id_"
     },
     "environnement_effet_recour_fk": {
-        "table": "c_environnement_effet_recour",
+        "table": "c/c_environnement_effet_recour.csv",
         "key": "id"
     },
     "type_permis_id": {
-        "table": "c_type_permis",
+        "table": "c/c_type_permis.csv",
         "key": "id"
     },
     "enquete_publique_auteur_demande_id": {
-        "table": "c_enquete_publique_auteur_demande",
+        "table": "c/c_enquete_publique_auteur_demande.csv",
         "key": "id"
     },
     "permis_fk": {
-        "table": "p_permis",
+        "table": "p/p_permis.csv",
         "key": "id"
     },
     "autorisation_type_permis_id": {
-        "table": "c_autorisation_type_permis",
+        "table": "c/c_autorisation_type_permis.csv",
         "key": "id"
     },
     "services_a_consulter_id": {
-        "table": "p_services_a_consulter",
+        "table": "p/p_services_a_consulter.csv",
         "key": "id"
     },
     "service_consulte_id": {
-        "table": "p_service_consulte",
+        "table": "p/p_service_consulte.csv",
         "key": "id"
     },
     "utilisateur_id": {
-        "table": "c_utilisateur",
+        "table": "c/c_utilisateur.csv",
         "key": "id"
     },
     "utilisateur_champ_perso_id": {
-        "table": "c_utilisateur_champ_perso",
+        "table": "c/c_utilisateur_champ_perso.csv",
         "key": "id"
     },
     "type_permis_fk": {
-        "table": "c_type_permis",
+        "table": "c/c_type_permis.csv",
         "key": "id"
     },
     "cwatup_fk": {
-        "table": "c_cwatup",
+        "table": "c/c_cwatup.csv",
         "key": "id"
     },
     "localite_fk": {
-        "table": "c_localite",
+        "table": "c/c_localite.csv",
         "key": "id"
     },
     "environnement_classe_id": {
-        "table": "c_environnement_classe",
+        "table": "c/c_environnement_classe.csv",
         "key": "id"
     },
     "avis_fk": {
-        "table": "c_avis_college",
+        "table": "c/c_avis_college.csv",
         "key": "id"
     },
     "motif_avis_service_fk": {
-        "table": "c_motif_avis_service",
+        "table": "c/c_motif_avis_service.csv",
         "key": "id"
     },
     "organisme_consulte_fk": {
-        "table": "c_organisme_consulte",
+        "table": "c/c_organisme_consulte.csv",
         "key": "id"
     },
     "motif_demande_service_fk": {
-        "table": "c_motif_demande_service",
+        "table": "c/c_motif_demande_service.csv",
         "key": "id"
     },
     "enquete_publique_id": {
-        "table": "p_enquete_publique",
+        "table": "p/p_enquete_publique.csv",
         "key": "id"
     },
     "reclamant_id": {
-        "table": "p_reclamant",
+        "table": "p/p_reclamant.csv",
         "key": "id"
     },
     "nature_id": {
-        "table": "c_nature",
+        "table": "c/c_nature.csv",
         "key": "id"
     },
     "utilisateur_type_permis_autorisation_id": {
-        "table": "c_utilisateur_type_permis_autorisation",
+        "table": "c/c_utilisateur_type_permis_autorisation.csv",
         "key": "id"
     },
     "avis_college_fk": {
-        "table": "c_avis_college",
+        "table": "c/c_avis_college.csv",
         "key": "id"
     },
     "etude_incidence_id": {
-        "table": "p_etude_incidence",
+        "table": "p/p_etude_incidence.csv",
         "key": "id"
     },
     "rue_fk": {
-        "table": "c_rue",
+        "table": "c/c_rue.csv",
         "key": "id"
     },
     "modele_procedure_fk": {
-        "table": "c_modele_procedure",
+        "table": "c/c_modele_procedure.csv",
         "key": "id"
     },
     "code_urbain_fk": {
-        "table": "c_code_urbain",
+        "table": "c/c_code_urbain.csv",
         "key": "id"
     },
     "type_nature_fk": {
-        "table": "c_type_nature",
+        "table": "c/c_type_nature.csv",
         "key": "id"
     },
     "organisme_consulte_id": {
-        "table": "c_organisme_consulte",
+        "table": "c/c_organisme_consulte.csv",
         "key": "id"
     },
     "environnement_localisation_fk": {
-        "table": "c_environnement_localisation",
+        "table": "c/c_environnement_localisation.csv",
         "key": "id"
     },
     "enquete_publique_unique_id": {
-        "table": "p_enquete_publique_eu",
+        "table": "p/p_enquete_publique_eu.csv",
         "key": "id"
     },
     "raison_demande_fk": {
-        "table": "c_enquete_publique_raison_demande",
+        "table": "c/c_enquete_publique_raison_demande.csv",
         "key": "id"
     },
     "auteur_demande_fk": {
-        "table": "c_enquete_publique_auteur_demande",
+        "table": "c/c_enquete_publique_auteur_demande.csv",
         "key": "id"
     },
     "piece_manquante_fk": {
-        "table": "c_piecemanquante",
+        "table": "c/c_piecemanquante.csv",
         "key": "id"
     },
     "parcelle_donnee_proprietaire_id": {
-        "table": "c_parcelle_donnee_proprietaire",
+        "table": "c/c_parcelle_donnee_proprietaire.csv",
         "key": "id"
     },
     "parcelle_donnee_id": {
-        "table": "c_parcelle_donnee",
+        "table": "c/c_parcelle_donnee.csv",
         "key": "id"
     },
     "courrier_fk": {
-        "table": "p_courrier",
+        "table": "p/p_courrier.csv",
         "key": "id"
     },
     "document_info_permis_fk": {
-        "table": "p_document_info_permis",
+        "table": "p/p_document_info_permis.csv",
         "key": "id"
     },
     "avis_enqueteur_fk": {
-        "table": "c_avis_enqueteur",
+        "table": "c/c_avis_enqueteur.csv",
         "key": "id"
     },
     "modele_id": {
-        "table": "c_modele",
+        "table": "c/c_modele.csv",
         "key": "id"
     },
     "commune_contact_id": {
-        "table": "p_commune_contact",
+        "table": "p/p_commune_contact.csv",
         "key": "id"
     },
     "pays_fk": {
-        "table": "c_pays",
+        "table": "c/c_pays.csv",
         "key": "id"
     },
     "civilite_fk": {
-        "table": "c_civilite",
+        "table": "c/c_civilite.csv",
         "key": "id"
     },
     "civilite2_fk": {
-        "table": "c_civilite",
+        "table": "c/c_civilite.csv",
         "key": "id"
     },
     "bureau_etude_fk": {
-        "table": "c_organisme",
+        "table": "c/c_organisme.csv",
         "key": "id"
     },
     "permis_dyn_meta_fk": {
-        "table": "c_permis_dyn_meta",
+        "table": "c/c_permis_dyn_meta.csv",
         "key": "id"
     },
     "commune_champ_perso_id": {
-        "table": "c_commune_champ_perso",
+        "table": "c/c_commune_champ_perso.csv",
         "key": "id"
     },
     "commune_id": {
-        "table": "c_commune",
+        "table": "c/c_commune.csv",
         "key": "id"
     },
     "securite_groupe_fk": {
-        "table": "s_securite_groupe",
+        "table": "s/s_securite_groupe.csv",
         "key": "id"
     },
     "rapport_technique_mode_implantation_fk": {
-        "table": "c_rapport_technique_mode_implantation",
+        "table": "c/c_rapport_technique_mode_implantation.csv",
         "key": "id"
     },
     "piece_manquante_id": {
-        "table": "c_piecemanquante",
+        "table": "c/c_piecemanquante.csv",
         "key": "id"
     },
     "piece_manquante_type_permis_autorisation_id": {
-        "table": "c_piece_manquante_type_permis_autorisation",
+        "table": "c/c_piece_manquante_type_permis_autorisation.csv",
         "key": "id"
     },
     "service_consulte_fk": {
-        "table": "p_service_consulte",
+        "table": "p/p_service_consulte.csv",
         "key": "id"
     },
     "directive_fk": {
-        "table": "p_directive",
+        "table": "p/p_directive.csv",
         "key": "id"
     },
     "echeance_debut_reclamations_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_notification_pv_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_courrier_bourgmestre_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "signature_fk": {
-        "table": "p_signature",
+        "table": "p/p_signature.csv",
         "key": "id"
     },
     "ech_reception_avis_fd_vaut_decision_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_envoi_nouvelle_decision_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "type_paiement_fk": {
-        "table": "c_type_paiement",
+        "table": "c/c_type_paiement.csv",
         "key": "id"
     },
     "ech_decision_saisine_fd_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "demandeur_fk": {
-        "table": "p_demandeur",
+        "table": "p/p_demandeur.csv",
         "key": "id"
     },
     "utilisateur_fk": {
-        "table": "c_utilisateur",
+        "table": "c/c_utilisateur.csv",
         "key": "id"
     },
     "echeance_envoi_conditions_complementaires_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "voirie_decision_recours_fk": {
-        "table": "c_voirie_decision_recours",
+        "table": "c/c_voirie_decision_recours.csv",
         "key": "id"
     },
     "echeance_envoi_irrecevable_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "echeance_reclamations_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "autorisationcodt_fk": {
-        "table": "p_autorisation_codt",
+        "table": "p/p_autorisation_codt.csv",
         "key": "id"
     },
     "ech_envoi_decision_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "audit_log_fk": {
-        "table": "c_audit_log",
+        "table": "c/c_audit_log.csv",
         "key": "id"
     },
     "ech_invitation_reunion_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_envoi_mise_en_demeure_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_avis_college_pv_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "type_outil_amenagement_fk": {
-        "table": "c_type_outil_amenagement",
+        "table": "c/c_type_outil_amenagement.csv",
         "key": "id"
     },
     "parcelle_info_fk": {
-        "table": "c_parcelle_info",
+        "table": "c/c_parcelle_info.csv",
         "key": "id"
     },
     "outil_amenagement_affectation_fk": {
-        "table": "c_outil_amenagement_affectation",
+        "table": "c/c_outil_amenagement_affectation.csv",
         "key": "id"
     },
     "outil_amenagement_liste_fk": {
-        "table": "c_outil_amenagement_liste",
+        "table": "c/c_outil_amenagement_liste.csv",
         "key": "id"
     },
     "parcelle_info_outil_amenagement_fk": {
-        "table": "c_parcelle_info_outil_amenagement",
+        "table": "c/c_parcelle_info_outil_amenagement.csv",
         "key": "id"
     },
     "type_outil_amenagement_attribut_fk": {
-        "table": "c_type_outil_amenagement_attribut",
+        "table": "c/c_type_outil_amenagement_attribut.csv",
         "key": "id"
     },
     "particularite_liste_fk": {
-        "table": "c_particularite_liste",
+        "table": "c/c_particularite_liste.csv",
         "key": "id"
     },
     "type_particularite_fk": {
-        "table": "c_type_particularite",
+        "table": "c/c_type_particularite.csv",
         "key": "id"
     },
     "parcelle_info_particularite_fk": {
-        "table": "c_parcelle_info_particularite",
+        "table": "c/c_parcelle_info_particularite.csv",
         "key": "id"
     },
     "type_particularite_attribut_fk": {
-        "table": "c_type_particularite_attribut",
+        "table": "c/c_type_particularite_attribut.csv",
         "key": "id"
     },
     "deliberation_fk": {
-        "table": "p_deliberation",
+        "table": "p/p_deliberation.csv",
         "key": "id"
     },
     "deliberation_doc_type_fk": {
-        "table": "p_deliberation_document_type",
+        "table": "p/p_deliberation_document_type.csv",
         "key": "id"
     },
     "cedant_cession_fk": {
-        "table": "p_cession",
+        "table": "p/p_cession.csv",
         "key": "id"
     },
     "cession_fk": {
-        "table": "p_cession",
+        "table": "p/p_cession.csv",
         "key": "id"
     },
     "cessionnaire_fk": {
-        "table": "p_cessionnaire",
+        "table": "p/p_cessionnaire.csv",
         "key": "id"
     },
     "ech_affichage_decisions_recours": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_reunion_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "instruction_insalubrite_logement_fk": {
-        "table": "p_instruction_insalubrite_logement",
+        "table": "p/p_instruction_insalubrite_logement.csv",
         "key": "id"
     },
     "objet_demande_id": {
-        "table": "c_objet_demande",
+        "table": "c/c_objet_demande.csv",
         "key": "id"
     },
     "type_notice_bo_fk": {
-        "table": "c_type_notice_bo",
+        "table": "c/c_type_notice_bo.csv",
         "key": "id"
     },
     "type_paiement_equipement_fk": {
-        "table": "c_type_paiement",
+        "table": "c/c_type_paiement.csv",
         "key": "id"
     },
     "echeance_fin_affichage_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_paiement_redevance_equipement_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "constatant_fk": {
-        "table": "c_constatant",
+        "table": "c/c_constatant.csv",
         "key": "id"
     },
     "type_rappel_id": {
-        "table": "c_type_rappel",
+        "table": "c/c_type_rappel.csv",
         "key": "id"
     },
     "ech_mise_en_oeuvre_tribunal_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_retrait_college_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "annonce_projet_id": {
-        "table": "p_annonce_projet",
+        "table": "p/p_annonce_projet.csv",
         "key": "id"
     },
     "permis_id": {
-        "table": "p_permis",
+        "table": "p/p_permis.csv",
         "key": "id"
     },
     "cession_id": {
-        "table": "p_cession",
+        "table": "p/p_cession.csv",
         "key": "id"
     },
     "enquete_publique_eu_id": {
-        "table": "p_enquete_publique_eu",
+        "table": "p/p_enquete_publique_eu.csv",
         "key": "id"
     },
     "environnement_arrete_rubrique_id": {
-        "table": "c_environnement_arrete_rubrique",
+        "table": "c/c_environnement_arrete_rubrique.csv",
         "key": "id"
     },
     "infraction_id": {
-        "table": "p_infraction",
+        "table": "p/p_infraction.csv",
         "key": "id"
     },
     "notaire_liste_permis_id": {
-        "table": "p_notaire_liste_permis",
+        "table": "p/p_notaire_liste_permis.csv",
         "key": "id"
     },
     "recours_eu_id": {
-        "table": "p_recour_eu",
+        "table": "p/p_recour_eu.csv",
         "key": "id"
     },
     "recours_id": {
-        "table": "p_recour",
+        "table": "p/p_recour.csv",
         "key": "id"
     },
     "registre_modification_id": {
-        "table": "p_registre_modification",
+        "table": "p/p_registre_modification.csv",
         "key": "id"
     },
     "suspension_id": {
-        "table": "p_suspension",
+        "table": "p/p_suspension.csv",
         "key": "id"
     },
     "ech_suspension_fd_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_peremption_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_mise_en_conformite_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_paiement_redevance_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "entete_fk": {
-        "table": "c_modele",
+        "table": "c/c_modele.csv",
         "key": "id"
     },
     "pied_page_fk": {
-        "table": "c_modele",
+        "table": "c/c_modele.csv",
         "key": "id"
     },
     "echeance_introduction_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "ech_retour_parquet_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "permis_target_fk": {
-        "table": "p_permis",
+        "table": "p/p_permis.csv",
         "key": "id"
     },
     "cadastre_construction_indication_fk": {
-        "table": "c_cadastre_construction_indication",
+        "table": "c/c_cadastre_construction_indication.csv",
         "key": "id"
     },
     "cadastre_construction_quality_fk": {
-        "table": "c_cadastre_construction_quality",
+        "table": "c/c_cadastre_construction_quality.csv",
         "key": "id"
     },
     "cadastre_construction_type_fk": {
-        "table": "c_cadastre_construction_type",
+        "table": "c/c_cadastre_construction_type.csv",
         "key": "id"
     },
     "cadastre_construction_year_fk": {
-        "table": "c_cadastre_construction_year",
+        "table": "c/c_cadastre_construction_year.csv",
         "key": "id"
     },
     "cadastre_nature_fk": {
-        "table": "c_cadastre_nature",
+        "table": "c/c_cadastre_nature.csv",
         "key": "id"
     },
     "environnement_classe_fk": {
-        "table": "c_environnement_classe",
+        "table": "c/c_environnement_classe.csv",
         "key": "id"
     },
     "environnement_type_etablissement_fk": {
-        "table": "c_environnement_type_etablissement",
+        "table": "c/c_environnement_type_etablissement.csv",
         "key": "id"
     },
     "notaire_type_acte_fk": {
-        "table": "c_notaire_type_acte",
+        "table": "c/c_notaire_type_acte.csv",
         "key": "id"
     },
     "notaire_type_dossier_fk": {
-        "table": "c_notaire_type_dossier",
+        "table": "c/c_notaire_type_dossier.csv",
         "key": "id"
     },
     "notaire_type_payement_fk": {
-        "table": "c_notaire_type_paiement",
+        "table": "c/c_notaire_type_paiement.csv",
         "key": "id"
     },
     "organisme_fk": {
-        "table": "c_organisme",
+        "table": "c/c_organisme.csv",
         "key": "id"
     },
     "surface_fk": {
-        "table": "c_pic_surface",
+        "table": "c/c_pic_surface.csv",
         "key": "id"
     },
     "type_constat_fk": {
-        "table": "c_type_constat",
+        "table": "c/c_type_constat.csv",
         "key": "id"
     },
     "annonce_projet_fk": {
-        "table": "p_annonce_projet",
+        "table": "p/p_annonce_projet.csv",
         "key": "id"
     },
     "assainissement_fk": {
-        "table": "p_assainissement",
+        "table": "p/p_assainissement.csv",
         "key": "id"
     },
     "audition_souhaitee_fk": {
-        "table": "p_audition_souhaitee",
+        "table": "p/p_audition_souhaitee.csv",
         "key": "id"
     },
     "autorisation_fk": {
-        "table": "p_autorisation",
+        "table": "p/p_autorisation.csv",
         "key": "id"
     },
     "autorisation_codt_fk": {
-        "table": "p_autorisation_codt",
+        "table": "p/p_autorisation_codt.csv",
         "key": "id"
     },
     "autorisation_cu_fk": {
-        "table": "p_autorisation_cu",
+        "table": "p/p_autorisation_cu.csv",
         "key": "id"
     },
     "autorisation_notaire_fk": {
-        "table": "p_autorisation_notaire",
+        "table": "p/p_autorisation_notaire.csv",
         "key": "id"
     },
     "cessation_fk": {
-        "table": "p_cessation",
+        "table": "p/p_cessation.csv",
         "key": "id"
     },
     "commission_consultative_fk": {
-        "table": "p_commission_consultative",
+        "table": "p/p_commission_consultative.csv",
         "key": "id"
     },
     "completude_fk": {
-        "table": "p_completude",
+        "table": "p/p_completude.csv",
         "key": "id"
     },
     "decision_environnement_fk": {
-        "table": "p_decision_environnement",
+        "table": "p/p_decision_environnement.csv",
         "key": "id"
     },
     "decision_environnement_classe3_fk": {
-        "table": "p_decision_environnement_classe3",
+        "table": "p/p_decision_environnement_classe3.csv",
         "key": "id"
     },
     "decision_fk": {
-        "table": "p_decision_implantation_commerciale",
+        "table": "p/p_decision_implantation_commerciale.csv",
         "key": "id"
     },
     "decision_unique_fk": {
-        "table": "p_decision_unique",
+        "table": "p/p_decision_unique.csv",
         "key": "id"
     },
     "ech_observation_exploitant_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "enquete_publique_fk": {
-        "table": "p_enquete_publique",
+        "table": "p/p_enquete_publique.csv",
         "key": "id"
     },
     "enquete_publique_eu_fk": {
-        "table": "p_enquete_publique_eu",
+        "table": "p/p_enquete_publique_eu.csv",
         "key": "id"
     },
     "etude_incidence_fk": {
-        "table": "p_etude_incidence",
+        "table": "p/p_etude_incidence.csv",
         "key": "id"
     },
     "fonctionnaire_delegue_fk": {
-        "table": "p_fonctionnaire_delegue",
+        "table": "p/p_fonctionnaire_delegue.csv",
         "key": "id"
     },
     "fonctionnaire_technique_fk": {
-        "table": "p_fonctionnaire_technique",
+        "table": "p/p_fonctionnaire_technique.csv",
         "key": "id"
     },
     "infraction_fk": {
-        "table": "p_infraction",
+        "table": "p/p_infraction.csv",
         "key": "id"
     },
     "instruction_infraction_urbanistique_fk": {
-        "table": "p_instruction_infraction_urbanistique",
+        "table": "p/p_instruction_infraction_urbanistique.csv",
         "key": "id"
     },
     "instruction_codt_fk": {
-        "table": "p_instruction_infraction_urbanistique_codt",
+        "table": "p/p_instruction_infraction_urbanistique_codt.csv",
         "key": "id"
     },
     "instruction_permis_location_fk": {
-        "table": "p_instruction_permis_location",
+        "table": "p/p_instruction_permis_location.csv",
         "key": "id"
     },
     "instruction_reclamation_plainte_fk": {
-        "table": "p_instruction_reclamation_plainte",
+        "table": "p/p_instruction_reclamation_plainte.csv",
         "key": "id"
     },
     "instruction_reunion_fk": {
-        "table": "p_instruction_reunion",
+        "table": "p/p_instruction_reunion.csv",
         "key": "id"
     },
     "performance_energetique_batiment_fk": {
-        "table": "p_performance_energetique_batiment",
+        "table": "p/p_performance_energetique_batiment.csv",
         "key": "id"
     },
     "recevabilite_fk": {
-        "table": "p_recevabilite",
+        "table": "p/p_recevabilite.csv",
         "key": "id"
     },
     "recour_fk": {
-        "table": "p_recour",
+        "table": "p/p_recour.csv",
         "key": "id"
     },
     "recour_eu_fk": {
-        "table": "p_recour_eu",
+        "table": "p/p_recour_eu.csv",
         "key": "id"
     },
     "resume_eu_fk": {
-        "table": "p_resume_eu",
+        "table": "p/p_resume_eu.csv",
         "key": "id"
     },
     "travaux_fk": {
-        "table": "p_travaux",
+        "table": "p/p_travaux.csv",
         "key": "id"
     },
     "urbanisme_fk": {
-        "table": "p_urbanisme",
+        "table": "p/p_urbanisme.csv",
         "key": "id"
     },
     "voirie_fk": {
-        "table": "p_voirie",
+        "table": "p/p_voirie.csv",
         "key": "id"
     },
     "voirie_rt_fk": {
-        "table": "p_voirie_rt",
+        "table": "p/p_voirie_rt.csv",
         "key": "id"
     },
     "type_permis_reunion_fk": {
-        "table": "c_type_permis",
+        "table": "c/c_type_permis.csv",
         "key": "id"
     },
     "type_rappel_fk": {
-        "table": "c_type_rappel",
+        "table": "c/c_type_rappel.csv",
         "key": "id"
     },
     "parcelle_fk": {
-        "table": "p_parcelle",
+        "table": "p/p_parcelle.csv",
         "key": "id"
     },
     "parcelle_outil_amenagement_fk": {
-        "table": "p_parcelle_outil_amenagement",
+        "table": "p/p_parcelle_outil_amenagement.csv",
         "key": "id"
     },
     "parcelle_particularite_fk": {
-        "table": "p_parcelle_particularite",
+        "table": "p/p_parcelle_particularite.csv",
         "key": "id"
     },
     "echeance_reception_renseignements_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "voirie_auteur_recours_fk": {
-        "table": "c_voirie_auteur_recours",
+        "table": "c/c_voirie_auteur_recours.csv",
         "key": "id"
     },
     "ech_reparation_regularisation_fk": {
-        "table": "p_echeance",
+        "table": "p/p_echeance.csv",
         "key": "id"
     },
     "reclamant_fk": {
-        "table": "p_reclamant",
+        "table": "p/p_reclamant.csv",
         "key": "id"
     },
     "rapport_technique_fk": {
-        "table": "p_rapport_technique",
+        "table": "p/p_rapport_technique.csv",
         "key": "id"
     },
     "charge_imposee_fk": {
-        "table": "p_charge_imposee",
+        "table": "p/p_charge_imposee.csv",
         "key": "id"
     },
     "agent_technique_fk": {
-        "table": "c_agent_technique",
+        "table": "c/c_agent_technique.csv",
         "key": "id"
     },
     "nature_fk": {
-        "table": "c_nature",
+        "table": "c/c_nature.csv",
         "key": "id"
     },
     "type_dossier_fk": {
-        "table": "c_type_dossier",
+        "table": "c/c_type_dossier.csv",
         "key": "id"
     },
     "voirie_regime_assainissement_fk": {
-        "table": "c_voirie_regime_assainissement",
+        "table": "c/c_voirie_regime_assainissement.csv",
         "key": "id"
     },
     "voirie_nature_travaux_fk": {
-        "table": "c_voirie_nature_travaux",
+        "table": "c/c_voirie_nature_travaux.csv",
         "key": "id"
     },
     "voirie_prescription_fk": {
-        "table": "c_voirie_prescription",
+        "table": "c/c_voirie_prescription.csv",
         "key": "id"
     },
     "voirie_equipement_eau_electricite_fk": {
-        "table": "c_voirie_equipement_eau_electricite",
+        "table": "c/c_voirie_equipement_eau_electricite.csv",
         "key": "id"
     },
     "voirie_type_reseau_fk": {
-        "table": "c_voirie_type_reseau",
+        "table": "c/c_voirie_type_reseau.csv",
         "key": "id"
     },
     "voirie_decision_plan_fk": {
-        "table": "c_voirie_decision_plan",
+        "table": "c/c_voirie_decision_plan.csv",
         "key": "id"
     },
     "voirie_extrait_pcge_fk": {
-        "table": "c_voirie_extrait_pcge",
+        "table": "c/c_voirie_extrait_pcge.csv",
         "key": "id"
     },
     "voirie_trottoir_fk": {
-        "table": "c_voirie_trottoir",
+        "table": "c/c_voirie_trottoir.csv",
         "key": "id"
     },
     "voirie_decision_rappel_plan_fk": {
-        "table": "c_voirie_decision_rappel_plan",
+        "table": "c/c_voirie_decision_rappel_plan.csv",
         "key": "id"
     },
     "voirie_situation_avale_fk": {
-        "table": "c_voirie_situation_avale",
+        "table": "c/c_voirie_situation_avale.csv",
         "key": "id"
     },
     "voirie_amenagement_sens_cwatupe_fk": {
-        "table": "c_voirie_amenagement_sens_cwatupe",
+        "table": "c/c_voirie_amenagement_sens_cwatupe.csv",
         "key": "id"
     },
     "voirie_systeme_evacuation_eaux_pluviales_fk": {
-        "table": "c_voirie_systeme_evacuation_eaux_pluviales",
+        "table": "c/c_voirie_systeme_evacuation_eaux_pluviales.csv",
         "key": "id"
     },
     "voirie_dispositif_evacuation_eaux_fk": {
-        "table": "c_voirie_dispositif_evacuation_eaux",
+        "table": "c/c_voirie_dispositif_evacuation_eaux.csv",
         "key": "id"
     },
     "voirie_systeme_evacuation_eaux_usees_fk": {
-        "table": "c_voirie_systeme_evacuation_eaux_usees",
+        "table": "c/c_voirie_systeme_evacuation_eaux_usees.csv",
         "key": "id"
     },
     "voirie_type_action_fk": {
-        "table": "c_voirie_type_action",
+        "table": "c/c_voirie_type_action.csv",
         "key": "id"
     },
     "voirie_statut_voirie_fk": {
-        "table": "c_voirie_statut_voirie",
+        "table": "c/c_voirie_statut_voirie.csv",
         "key": "id"
     },
     "voirie_decision_rappel_voirie_fk": {
-        "table": "c_voirie_decision_rappel_voirie",
+        "table": "c/c_voirie_decision_rappel_voirie.csv",
         "key": "id"
     },
     "voirie_revetement_prescrit_fk": {
-        "table": "c_voirie_revetement_prescrit",
+        "table": "c/c_voirie_revetement_prescrit.csv",
         "key": "id"
     },
     "voirie_nature_revetement_fk": {
-        "table": "c_voirie_nature_revetement",
+        "table": "c/c_voirie_nature_revetement.csv",
         "key": "id"
     },
     "document_permis_fk": {
-        "table": "p_document_permis",
+        "table": "p/p_document_permis.csv",
         "key": "id"
     },
     "fk_champ_fusion": {
-        "table": "c_champ_fusion",
+        "table": "c/c_champ_fusion.csv",
         "key": "id"
     },
     "permis_dyn_meta_id": {
-        "table": "c_permis_dyn_meta",
+        "table": "c/c_permis_dyn_meta.csv",
         "key": "id"
     },
     "enquete_publique_raison_demande_id": {
-        "table": "c_enquete_publique_raison_demande",
+        "table": "c/c_enquete_publique_raison_demande.csv",
         "key": "id"
     },
     "avis_phase_3_fk": {
-        "table": "c_avis_college",
+        "table": "c/c_avis_college.csv",
         "key": "id"
     },
     "auteur_etude_fk": {
-        "table": "c_organisme",
+        "table": "c/c_organisme.csv",
         "key": "id"
     },
     "performance_energetique_batiment_procedure_fk": {
-        "table": "c_performance_energetique_batiment_procedure",
+        "table": "c/c_performance_energetique_batiment_procedure.csv",
         "key": "id"
     },
     "performance_energetique_batiment_avis_fk": {
-        "table": "c_performance_energetique_batiment_avis",
+        "table": "c/c_performance_energetique_batiment_avis.csv",
         "key": "id"
     },
     "agent_traitant_fk": {
-        "table": "c_agent_technique",
+        "table": "c/c_agent_technique.csv",
         "key": "id"
     },
     "responsable_fk": {
-        "table": "c_organisme",
+        "table": "c/c_organisme.csv",
         "key": "id"
     },
     "organisme_cloturant_fk": {
-        "table": "c_organisme_cloturant",
+        "table": "c/c_organisme_cloturant.csv",
         "key": "id"
     },
     "cessionnaire_id": {
-        "table": "p_cessionnaire",
+        "table": "p/p_cessionnaire.csv",
         "key": "id"
     },
     "securite_groupe_id": {
-        "table": "s_securite_groupe",
+        "table": "s/s_securite_groupe.csv",
         "key": "id"
     },
     "organisme_controleur_fk": {
-        "table": "c_organisme",
+        "table": "c/c_organisme.csv",
         "key": "id"
     },
     "type_redevance2_fk": {
-        "table": "c_type_redevance",
+        "table": "c/c_type_redevance.csv",
         "key": "id"
     },
     "avis_voirie_fk": {
-        "table": "c_avis_voirie",
+        "table": "c/c_avis_voirie.csv",
         "key": "id"
     },
     "type_paiement_redevance2_fk": {
-        "table": "c_type_paiement",
+        "table": "c/c_type_paiement.csv",
         "key": "id"
     },
     "controleur_fk": {
-        "table": "c_controleur",
+        "table": "c/c_controleur.csv",
         "key": "id"
     },
     "resultat_controleur_fk": {
-        "table": "c_resultat_controleur",
+        "table": "c/c_resultat_controleur.csv",
         "key": "id"
     },
     "division_fk": {
-        "table": "c_division",
+        "table": "c/c_division.csv",
         "key": "id"
     },
     "onglet_personnalise_ressource_fk": {
-        "table": "c_onglet_personnalise_ressource",
+        "table": "c/c_onglet_personnalise_ressource.csv",
         "key": "id"
     },
     "fk_type_permis": {
-        "table": "c_type_permis",
+        "table": "c/c_type_permis.csv",
         "key": "id"
     },
     "categorie_demandeur_fk": {
-        "table": "c_categorie_demandeur",
+        "table": "c/c_categorie_demandeur.csv",
         "key": "id"
     },
     "decision_college_id": {
-        "table": "c_decision_college",
+        "table": "c/c_decision_college.csv",
         "key": "id"
     },
     "assainissement_pcge_fk": {
-        "table": "c_assainissement_pcge",
+        "table": "c/c_assainissement_pcge.csv",
         "key": "id"
     },
     "assainissement_rejet_eaux_fk": {
-        "table": "c_assainissement_rejet_eaux",
+        "table": "c/c_assainissement_rejet_eaux.csv",
         "key": "id"
     },
     "assainissement_rga_fk": {
-        "table": "c_assainissement_rga",
+        "table": "c/c_assainissement_rga.csv",
         "key": "id"
     },
     "resume_id": {
-        "table": "p_completude",
+        "table": "p/p_completude.csv",
         "key": "id"
     },
     "piece_manquante_completude_id": {
-        "table": "p_piece_manquante_completude",
+        "table": "p/p_piece_manquante_completude.csv",
         "key": "id"
     },
     "permis_workflow_log_fk": {
-        "table": "p_permis_workflow_log",
+        "table": "p/p_permis_workflow_log.csv",
         "key": "id"
     }
 }
