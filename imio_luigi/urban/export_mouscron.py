@@ -134,7 +134,7 @@ class Transform(luigi.Task):
     def get_table(self, table, id, key, orient="dict"):
         folder = table[0]
         pdata = pd.read_csv(
-            f"./data/mouscron/{folder}/{table}.csv", delimiter=";", dtype="string"
+            f"./data/mouscron/{table}", delimiter=";", dtype="string"
         )
         pdata = pdata.replace({np.nan: None})
         result = pdata.loc[pdata[key] == id]
@@ -142,13 +142,18 @@ class Transform(luigi.Task):
             return result.squeeze().to_dict()
         return result.to_dict(orient=orient)
 
-    def add_outside_data(self, data, table, key):
+    def add_outside_data(self, data, table, key, name=None):
         values = self.get_table(table, data["id"], key, orient="records")
         values = [
             self.populate_cross_data(value, whitelist=self.whitelist)
             for value in values
         ]
-        data[table] = values
+        key_name = table
+        if name:
+            key_name = name
+
+        data[key_name] = values
+
         return data
 
     def populate_cross_data(self, data, blacklist=[], whitelist=[]):
@@ -178,13 +183,13 @@ class Transform(luigi.Task):
                 # if self.key == "2018/159":
                 #     __import__('pdb').set_trace()
                 data = self.populate_cross_data(data, whitelist=self.whitelist)
-                data = self.add_outside_data(data, "p_demandeur", "permis_fk")
-                data = self.add_outside_data(data, "p_parcelle", "permis_fk")
+                data = self.add_outside_data(data, "p/p_demandeur.csv", "permis_fk", name="p_demandeur")
+                data = self.add_outside_data(data, "p/p_parcelle.csv", "permis_fk", name="p_parcelle")
                 # data = self.add_outside_data(data, "p_echeancier", "permis_fk")
                 # data = self.add_outside_data(data, "p_document_info_permis", "permis_fk")
                 # data = self.add_outside_data(data, "p_parcelle_lotissement", "permis_fk")
                 data = self.add_outside_data(
-                    data, "p_permis_adresse_commune", "permis_fk"
+                    data, "p/p_permis_adresse_commune.csv", "permis_fk", name="p_permis_adresse_commune"
                 )
                 # data = self.add_outside_data(data, "p_permis_dyn_value", "permis_fk")
                 # data = self.add_outside_data(data, "p_services_a_consulter", "permis_fk")
@@ -256,7 +261,31 @@ class MakeTitle(core.InMemoryTask):
 class ConvertDates(core.ConvertDateInMemoryTask):
     task_namespace = "mouscron"
     key = luigi.Parameter()
-    keys = ("cre_date", "date_demande", "date_recepisse", "date_cloture")
+    keys = (
+        "cre_date",
+        "date_demande",
+        "date_recepisse",
+        "date_cloture",
+        "annonce_projet_fk/date_debut_affichage",
+        "annonce_projet_fk/echeance_debut_reclamations_fk/date_debut",
+        "annonce_projet_fk/echeance_fin_affichage_fk/date_fin",
+        "enquete_publique_eu_fk/date_debut",
+        "enquete_publique_eu_fk/date_fin"
+        "enquete_publique_fk/date_debut",
+        "enquete_publique_fk/date_fin",
+        "autorisation_cu_fk/date_avis_college",
+        "autorisation_fk/date_avis_college",
+        "decision_environnement_fk/date_avis_college",
+        "decision_fk/date_avis_college",
+        "decision_unique_fk/date_avis_college",
+        "autorisation_codt_fk/date_decision_college",
+        "autorisation_codt_fk/date_decision_gvt_suspension",
+        "autorisation_codt_fk/date_decision_saisine_gvt",
+        "decision_environnement_classe3_fk/date_decision",
+        "decision_environnement_fk/date_decision_autorite",
+        "decision_environnement_fk/date_avis_college",
+        "decision_unique_fk/date_decision_autorite",
+    )
     date_format_input = "%Y-%m-%d"
     date_format_output = "%Y-%m-%dT%H:%M:%S"
     log_failure = True
@@ -300,6 +329,18 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
         "Article127"
     ]
     codt_start_date = datetime(2017, 6, 1)
+    public_lic_triggers = [
+        "ville de mouscron",
+        "administration communale",
+        "domaine de la societe publique d'administration des batiments scolaires du hainaut",
+        "société publique d'administration des bâtiments scolaires du hainaut",
+        "ieg",
+        "ores-asset",
+        "ores asset",
+        "cpas",
+        "slm",
+        "société de logements de mouscron"
+    ]
 
     def hanlde_article127(self, data):
         date_autorisation_tutelle = utils.get_value_from_path(
@@ -309,9 +350,39 @@ class MappingType(core.MappingValueWithFileInMemoryTask):
             data["@type"] = "Article127"
         return data
 
+    def hanlde_public_licence(self, data):
+        applicants = data.get("p_demandeur", None)
+        if applicants is None:
+            return data
+        for applicant in applicants:
+            applicant_name = applicant.get("name", None)
+            if applicant_name is None:
+                return data
+            for trigger in self.public_lic_triggers:
+                if trigger in applicant_name.lower():
+                    data["@type"] = "Article127"
+        return data
+
+    def handle_unique_integrated_licence(self, data):
+        p_fonctionnaire_delegue = data.get("p_fonctionnaire_delegue", None)
+        if p_fonctionnaire_delegue is None:
+            return data
+        date_envoi = p_fonctionnaire_delegue.get("date_envoi", None)
+        if date_envoi is None:
+            return data
+        reference = data.get("reference", None)
+        for ref in ["/pu", "-pu"]:
+            if ref in reference.lower():
+                data["@type"] = "UniqueLicence"
+        if "piur" in reference.lower():
+            data["@type"] = "IntegratedLicence"
+        return data
+
     def transform_data(self, data):
         data = super().transform_data(data)
         data = self.hanlde_article127(data)
+        data = self.hanlde_public_licence(data)
+        data = self.handle_unique_integrated_licence(data)
 
         date = data.get("date_demande", None)
         if not date:
@@ -372,10 +443,10 @@ class AddEvents(ucore.AddUrbanEvent):
 
     # recipisse
     def get_recepisse_check(self, data):
-        return "date_recepisse" in data or data["date_recepisse"]
+        return "date_demande" in data or data["date_demande"]
 
     def get_recepisse_date(self, data):
-        return data["date_recepisse"]
+        return data["date_demande"]
 
     def handle_numeral_descision(self, value, _):
         if value == 0:
@@ -405,32 +476,68 @@ class AddEvents(ucore.AddUrbanEvent):
     # delivery
     def get_delivery_check(self, data):
         columns = [
-            {
+            {#autorisation_codt_fk
                 "date": "autorisation_codt_fk/date_decision_college",
                 "decision": "autorisation_codt_fk/decision_college_",
                 "decision_adapter": self.handle_numeral_descision
             },
             {
-                "date": "autorisation_fk/date_autorisation_tutelle",
-                "decision": "autorisation_fk/avis_fk/libelle_f",
+                "date": "autorisation_codt_fk/date_decision_gvt_suspension",
+                "decision": "autorisation_codt_fk/decision_gvt_suspension_",
+                "decision_adapter": self.handle_numeral_descision
+            },
+            {
+                "date": "autorisation_codt_fk/date_decision_saisine_gvt",
+                "decision": "autorisation_codt_fk/decision_saisine_fd",
+                "decision_adapter": self.handle_numeral_descision
+            },
+
+            {#autorisation_fk
+                "date": "autorisation_fk/date_avis_college",
+                "decision": "autorisation_fk/avis_college_fk/libelle_f",
                 "decision_adapter": self.handle_avis_descision
             },
             {
+                "date": "autorisation_fk/date_avis_college",
+                "decision": "autorisation_fk/avis_fk/libelle_f",
+                "decision_adapter": self.handle_avis_descision
+            },
+
+            {#decision_environnement_classe3_fk
                 "date": "decision_environnement_classe3_fk/date_decision",
                 "decision": "decision_environnement_classe3_fk/decision",
                 "decision_adapter": self.handle_numeral_descision
             },
-            {
-                "date": "decision_environnement_fk/date_avis_college",
+
+            {#decision_environnement_fk
+                "date": "decision_environnement_fk/date_decision_autorite",
                 "decision": "decision_environnement_fk/decision_autorite",
                 "decision_adapter": self.handle_numeral_descision
             },
             {
-                "date": "decision_unique_fk/date_avis_college",
+                "date": "decision_environnement_fk/date_avis_college",
+                "decision": "decision_environnement_fk/avis_college_fk/libelle_f",
+                "decision_adapter": self.handle_avis_descision
+            },
+
+            {#decision_unique_fk
+                "date": "decision_unique_fk/date_decision_autorite",
                 "decision": "decision_unique_fk/decision_autorite",
                 "decision_adapter": self.handle_numeral_descision
             },
             {
+                "date": "decision_unique_fk/date_avis_college",
+                "decision": "decision_unique_fk/avis_college_fk/libelle_f",
+                "decision_adapter": self.handle_avis_descision
+            },
+
+            {#decision_fk
+                "date": "decision_fk/date_decision_autorite",
+                "decision": "decision_fk/decision_autorite",
+                "decision_adapter": self.handle_numeral_descision
+            },
+
+            {#date_cloture
                 "date": "date_cloture",
                 "decision": "wf_transitions",
                 "decision_adapter": self.handle_transition_descision
@@ -454,7 +561,7 @@ class AddEvents(ucore.AddUrbanEvent):
 
 
 class AddOtherEvent(ucore.AddEvents):
-    task_namespace = "gracehollogne_env"
+    task_namespace = "mouscron"
     key = luigi.Parameter()
     event_config = {
         "rapport": {
@@ -463,24 +570,29 @@ class AddOtherEvent(ucore.AddEvents):
             "date_mapping": {"decisionDate": "date_avis_college", "eventDate": "date_avis_college"},
             "decision_mapping": {"decision": "avis_college_fk/libelle_f"},
             "decision_value_mapping": {
-                # "Attente": "",
-                # "Abstention": "",
-                # "Conditionné": "",
-                "Défavorable": "defavorable",
-                "Favorable": "favorable",
-                "Favorable et Abstention": "favorable",
-                "Favorable Conditionné": "favorable",
-                # "Favorable & Défavorable": "",
-                "Réputé Favovable": "favorable",
-                # "s'abstient": "",
+                "decision" : {
+                    "Attente": "favorable-defaut",
+                    "Abstention": "favorable-defaut",
+                    "Conditionné": "favorable-conditionnel",
+                    "Défavorable": "defavorable",
+                    "Favorable": "favorable",
+                    "Favorable et Abstention": "favorable",
+                    "Favorable Conditionné": "favorable",
+                    "Favorable & Défavorable": "favorable-conditionnel",
+                    "Réputé Favovable": "favorable",
+                    "s'abstient": "favorable-defaut",
+                }
             },
             "mapping": {
                 "Article127": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
                 "BuildLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "CODT_BuildLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
                 "CODT_CommercialLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
                 "CODT_IntegratedLicence": {"urban_type": "rapport-synthese", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "CODT_ParceloutLicence": {"urban_type": "copy_of_rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
                 "CODT_UniqueLicence": {"urban_type": "rapport-synthese", "date": ["eventDate", "decisionDate"], "decision": "decision"},
                 "EnvClassTwo": {"urban_type": "rapport-synthese", "date": ["eventDate", "decisionDate"], "decision": "decision"},
+                "IntegratedLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
                 "ParcelOutLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
                 "UniqueLicence": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
                 "UrbanCertificateTwo": {"urban_type": "rapport-du-college", "date": ["eventDate", "decisionDate"], "decision": "decision"},
@@ -488,9 +600,9 @@ class AddOtherEvent(ucore.AddEvents):
         },
         "enquete": {
             "parents_keys": ["enquete_publique_eu_fk", "enquete_publique_fk"],
-            "check_key": ["date_debut", "date_fin"],
+            "check_any_key": ["date_debut", "date_fin"],
             "date_mapping": {"investigationStart": "date_debut", "investigationEnd": "date_fin"},
-            "mapping": {               
+            "mapping": {
                 "Article127": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
                 "BuildLicence": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
                 "CODT_BuildLicence": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique-codt", "date": ["investigationStart", "investigationEnd"]},
@@ -498,6 +610,84 @@ class AddOtherEvent(ucore.AddEvents):
                 "CODT_UrbanCertificateTwo": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
                 "ParcelOutLicence": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
                 "UrbanCertificateTwo": {"@type": "UrbanEventInquiry", "urban_type": "enquete-publique", "date": ["investigationStart", "investigationEnd"]},
+            }
+        },
+        "annonce": {
+            "parents_keys": ["annonce_projet_fk"],
+            "check_any_key": ["date_debut_affichage", "echeance_debut_reclamations_fk/date_debut", "echeance_fin_affichage_fk/date_fin"],
+            "date_mapping": {"investigationStart": ["date_debut_affichage", "echeance_debut_reclamations_fk/date_debut"], "investigationEnd": "echeance_fin_affichage_fk/date_fin"},
+            "mapping": {
+                "CODT_Article127": {"@type": "UrbanEventAnnouncement", "urban_type": "annonce-de-projet-codt", "date": ["investigationStart", "investigationEnd"]},
+                "CODT_BuildLicence": {"@type": "UrbanEventAnnouncement", "urban_type": "annonce-de-projet-codt", "date": ["investigationStart", "investigationEnd"]},
+                "CODT_CommercialLicence": {"@type": "UrbanEventAnnouncement", "urban_type": "annonce-de-projet-codt", "date": ["investigationStart", "investigationEnd"]},
+                "CODT_IntegratedLicence": {"@type": "UrbanEventAnnouncement", "urban_type": "annonce-de-projet-codt", "date": ["investigationStart", "investigationEnd"]},
+                "CODT_ParceloutLicence": {"@type": "UrbanEventAnnouncement", "urban_type": "annonce-de-projet-codt", "date": ["investigationStart", "investigationEnd"]},
+                "CODT_UrbanCertificateOne": {"@type": "UrbanEventAnnouncement", "urban_type": "annonce-de-projet-codt", "date": ["investigationStart", "investigationEnd"]},
+                "CODT_UrbanCertificateTwo": {"@type": "UrbanEventAnnouncement", "urban_type": "annonce-de-projet", "date": ["investigationStart", "investigationEnd"]},
+            }
+        },
+        "voirie": {
+            "check_any_key": ["voirie_fk/date_decision_voirie"],
+            "date_mapping": { "eventDate": "voirie_fk/date_decision_voirie"},
+            "mapping": {
+                "Article127" : {"urban_type": "passage-conseil-communal", "date": ["eventDate"]},
+                "BuildLicence" : {"urban_type": "passage-conseil-communal", "date": ["eventDate"]},
+                "EnvClassOne" : {"urban_type": "township-council", "date": ["eventDate"]},
+                "EnvClassTwo" : {"urban_type": "township-council", "date": ["eventDate"]},
+                "IntegratedLicence" : {"urban_type": "passage-conseil-communal", "date": ["eventDate"]},
+                "ParceloutLicence" : {"urban_type": "passage-conseil-communal", "date": ["eventDate"]},
+                "UniqueLicence" : {"urban_type": "passage-conseil-communal", "date": ["eventDate"]},
+            }
+        },
+        "avis_college": {
+            "check_any_key": [
+                "decision_fk/date_avis_college",
+                "decision_unique_fk/date_avis_college",
+                "decision_environnement_fk/date_avis_college",
+                "decision_environnement_classe3_fk/date_prise_acte_college",
+                "autorisation_fk/date_avis_college",
+                "autorisation_cu_fk/date_avis_college"
+            ],
+            "date_mapping": {
+                "eventDate": ["*"],
+                "decisionDate": ["*"]
+            },
+            "decision_mapping": {
+                "externalDecision": [
+                    "autorisation_fk/avis_college_fk/libelle_f",
+                    "autorisation_fk/avis_fk/libelle_f",
+                    "autorisation_cu_fk/avis_college_fk/libelle_f",
+                    "autorisation_cu_fk/avis_fk/libelle_f"
+                ],
+                "decision": [
+                    "decision_fk/decision_autorite",
+                    "decision_unique_fk/decision_autorite",
+                    "decision_environnement_fk/decision_autorite",
+                    "decision_environnement_classe3_fk/decision"
+                ]
+            },
+            "decision_value_mapping": {
+                "externalDecision": {
+                    "Attente": "favorable-defaut",
+                    "Abstention": "favorable-defaut",
+                    "Conditionné": "favorable-conditionnel",
+                    "Défavorable": "defavorable",
+                    "Favorable": "favorable",
+                    "Favorable et Abstention": "favorable",
+                    "Favorable Conditionné": "favorable",
+                    "Favorable & Défavorable": "favorable-conditionnel",
+                    "Réputé Favovable": "favorable",
+                    "s'abstient": "favorable-defaut",
+                },
+                "decision": {
+                    "0": "favorable",
+                    "2": "defavorable",
+                }
+            },
+            "mapping": {
+                "CODT_IntegratedLicence" :  {"urban_type": "avis-prealable-college", "date": ["eventDate"], "decision": "externalDecision"},
+                "CODT_UniqueLicence" :  {"urban_type": "avis-college", "date": ["decisionDate"], "decision": "externalDecision"},
+                "Declaration" :  {"urban_type": "deliberation-college", "date": ["eventDate"], "decision": "decision"},
             }
         }
     }
@@ -645,7 +835,13 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
             new_element = {
                 "street": f"{self._remove_end_parenthesis(element['info_rue_f'])} ({element['localite_fk']['code_postal']} - {element['localite_fk']['libelle_f']})"
             }
-            new_element["number"] = element["numero"]
+            number = element.get("numero", None)
+            if number is None:
+                number = ""
+            boite = element.get("boite", None)
+            if boite is not None:
+                number = f"{number} {boite}"
+            new_element["number"] = number
             data[self.subelements_destination_key].append(new_element)
         return data
 
@@ -833,15 +1029,15 @@ class AddEventInDescription(ucore.AddValuesInDescription):
         return [
             {
                 "key": key,
-                "value": data[key]
+                "value": value
             }
-            for key in data
-            if key in self.event_list and data[key] is not None
+            for key, value in data.items()
+            if key in self.event_list and value is not None
         ]
 
     def handle_key_title(self, key):
-        if key == "cre_date":
-            return "Date de création"
+        if key.endswith("/libelle_f"):
+            key = key.replace("/libelle_f", "")
         if key.endswith("_fk"):
             key = key.replace("_fk", "")
         key = key.replace("_", " ")
@@ -868,16 +1064,11 @@ class AddEventInDescription(ucore.AddValuesInDescription):
         return f"<li>Les dates :\n<ul>{joiner.join(dates)}</ul></li>"
 
     def handle_avis(self, value, config):
-        avis_list = []
-        for key in config:
-            key_value, key_child = key.split("/")
-            child = value.get(key_value, None)
-            if child is None:
-                continue
-            avis = child.get(key_child, None)
-            if avis is None:
-                continue
-            avis_list.append(f"<li>{self.handle_key_title(key_value)} : {avis}</li>")
+        avis_list = [
+            f"<li>{self.handle_key_title(key)} : {utils.get_value_from_path(value, key)}</li>" 
+            for key in config
+            if utils.get_value_from_path(value, key) is not None
+        ]
         if len(avis_list) < 1:
             return None
         joiner = "\n"
@@ -899,7 +1090,6 @@ class AddEventInDescription(ucore.AddValuesInDescription):
         value = value["value"]
         config = self.event_list[key]
         title = config["title"]
-
         output_text = []
         if "date_keys" in config:
             result = self.handle_date(
@@ -1146,7 +1336,7 @@ class ValidateData(core.JSONSchemaValidationTask):
 
 class WriteToJSON(core.WriteToJSONTask):
     task_namespace = "mouscron"
-    export_filepath = "./result-mouscron"
+    export_filepath = "./results/result-mouscron"
     key = luigi.Parameter()
 
     def requires(self):
