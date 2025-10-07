@@ -515,7 +515,7 @@ class AddValuesInDescription(core.InMemoryTask):
     def transform_data(self, data):
         values = self.get_values(data)
 
-        if values is None:
+        if not values:
             return data
 
         values = self.transform_value(values)

@@ -1026,14 +1026,30 @@ class AddEventInDescription(ucore.AddValuesInDescription):
         return output
 
     def get_values(self, data):
-        return [
+        outputs = [
             {
                 "key": key,
-                "value": value
+                "value": self.get_sub_values(utils.get_value_from_path(data, key), self.event_list[key])
             }
             for key, value in data.items()
             if key in self.event_list and value is not None
         ]
+        return [
+            output
+            for output in outputs
+            if len(output["value"]) > 0
+        ]
+
+    def get_sub_values(self, data, config):
+        all_keys_config = []
+        for key, value in config.items():
+            if key.endswith("_keys") and isinstance(value, list):
+                all_keys_config += value
+        return {
+            key: utils.get_value_from_path(data, key)
+            for key in all_keys_config
+            if utils.get_value_from_path(data, key) is not None
+        }
 
     def handle_key_title(self, key):
         if key.endswith("/libelle_f"):
@@ -1054,7 +1070,7 @@ class AddEventInDescription(ucore.AddValuesInDescription):
 
     def handle_date(self, value, config):
         dates = [
-            f"<li>{self.handle_key_title(date)}: {self.pretify_date(value[date])}</li>"
+            f"<li>{self.handle_key_title(date)} : {self.pretify_date(value[date])}</li>"
             for date in config
             if value.get(date, None) is not None
         ]
@@ -1076,7 +1092,7 @@ class AddEventInDescription(ucore.AddValuesInDescription):
 
     def handle_decision(self, value, config):
         decisions = [
-            f"<li>{self.handle_key_title(key)}: {value[key]}</li>"
+            f"<li>{self.handle_key_title(key)} : {value[key]}</li>"
             for key in config
             if value.get(key, None) is not None
         ]
