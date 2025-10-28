@@ -157,7 +157,7 @@ import-lierneux-architecte:
 # ---Mouscron---
 .PHONY: run-local-mouscron
 run-local-mouscron:
-	LUIGI_CONFIG_PATH=$(CURDIR)/mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_mouscron mouscron.GetFromCSV --filepath ./data/mouscron/p/p_permis_rename.csv --local-scheduler --path-ref-to-import ./data/mouscron/missing_ref_to_export.json
+	LUIGI_CONFIG_PATH=$(CURDIR)/mouscron.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_mouscron mouscron.GetFromCSV --filepath ./data/mouscron/p/p_permis_rename.csv --local-scheduler
 
 .PHONY: run-local-mouscron-architecte
 run-local-mouscron-architecte:
