@@ -448,21 +448,33 @@ class AddEvents(ucore.AddUrbanEvent):
     def get_recepisse_date(self, data):
         return data["date_demande"]
 
-    def handle_numeral_descision(self, value, _):
-        if value == 0:
-            return "octroi"
-        return "refus"
+    def handle_numeral_descision(self, value, data):
+        mapping = {
+            "EnvClassTwo" : {"0": "octroi", "1": "refus"},
+            "default" : {"0": "favorable", "1": "defavorable"}
+        }
+        return mapping.get(data["@type"], mapping["default"]).get(str(value), None)
 
-    def handle_avis_descision(self, value, _):
-        if value in ["Favorable", "Favorable et Abstention", "Favorable Conditionné", "Réputé Favovable"]:
-            decision = "favorable"
-        elif value in ["Défavorable", "Refus direct"]:
-            decision = "defavorable"
-        elif value in ["Refus direct"]:
-            decision = "refus"
-        else:
-            decision = None
-        return decision
+    def handle_avis_descision(self, value, data):
+        mapping = {
+            "EnvClassTwo" : {
+                "Favorable": "octroi",
+                "Favorable et Abstention": "octroi",
+                "Favorable Conditionné": "octroi",
+                "Réputé Favovable": "octroi",
+                "Défavorable": "refus",
+                "Refus direct": "refus",
+            },
+            "default" : {
+                "Favorable": "favorable",
+                "Favorable et Abstention": "favorable",
+                "Favorable Conditionné": "favorable",
+                "Réputé Favovable": "favorable",
+                "Défavorable": "defavorable",
+                "Refus direct": "defavorable",
+            }
+        }
+        return mapping.get(data["@type"], mapping["default"]).get(value, None)
 
     def handle_transition_descision(self, _, data):
         if data.get("wf_transitions")[0] in ["accepted"]:
