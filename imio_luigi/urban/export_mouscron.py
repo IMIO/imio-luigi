@@ -575,7 +575,7 @@ class AddEvents(ucore.AddUrbanEvent):
 class AddOtherEvent(ucore.AddEvents):
     task_namespace = "mouscron"
     key = luigi.Parameter()
-    event_config = {
+    event_config = {  # type: ignore
         "rapport": {
             "parents_keys": ["autorisation_cu_fk", "autorisation_fk", "decision_environnement_fk", "decision_fk", "decision_unique_fk"],
             "check_key": ["date_avis_college"],
@@ -583,16 +583,16 @@ class AddOtherEvent(ucore.AddEvents):
             "decision_mapping": {"decision": "avis_college_fk/libelle_f"},
             "decision_value_mapping": {
                 "decision" : {
-                    "Attente": "favorable-defaut",
-                    "Abstention": "favorable-defaut",
-                    "Conditionné": "favorable-conditionnel",
+                    "Attente": None,
+                    "Abstention": None,
+                    "Conditionné": None,
                     "Défavorable": "defavorable",
                     "Favorable": "favorable",
                     "Favorable et Abstention": "favorable",
                     "Favorable Conditionné": "favorable",
-                    "Favorable & Défavorable": "favorable-conditionnel",
+                    "Favorable & Défavorable": None,
                     "Réputé Favovable": "favorable",
-                    "s'abstient": "favorable-defaut",
+                    "s'abstient": None,
                 }
             },
             "mapping": {
@@ -693,6 +693,7 @@ class AddOtherEvent(ucore.AddEvents):
                 },
                 "decision": {
                     "0": "favorable",
+                    "1": "defavorable",
                     "2": "defavorable",
                 }
             },
