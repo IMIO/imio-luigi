@@ -782,12 +782,18 @@ class AddValuesInDescription(ucore.AddValuesInDescription):
         data["description"]["data"] += f"{self.fix_key(key)} : {value}"
         return data
 
+    def format_date(self, key, value):
+        if key in self.keys_date:
+            date = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S")
+            value = date.strftime(self.date_format)
+        return value
+
     def pretify_date(self, date):
         if date is None:
             return None
         try:
             iso_date = datetime.strptime(date, "%m/%d/%y %H:%M:%S")
-            export_date = iso_date.strftime("%d/%m/%Y")
+            export_date = iso_date.strftime(self.date_format)
         except Exception:
             export_date = f"Erreur avec la date : {date}"
 
