@@ -131,6 +131,12 @@
     "validityDelay": {
       "type": "number"
     },
+    "referenceDGATLP": {
+      "type": "string"
+    },
+    "additionalReference": {
+      "type": "string"
+    },
     "__children__": {
       "type": "array",
       "minItems": 0,
