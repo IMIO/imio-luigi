@@ -7,6 +7,7 @@ import abc
 import json
 import luigi
 
+
 class RelationBaseTask(luigi.Task):
     """
     Link relationel files
@@ -58,7 +59,7 @@ class RelationBaseTask(luigi.Task):
             f.write(json.dumps(error))
 
     @property
-    def config_dict(self):
+    def config_dict(self) -> dict | None:
         """Dictionary with config"""
         return None
 
@@ -93,15 +94,16 @@ class RelationBaseTask(luigi.Task):
 
     def get_fk_in_data(self, data, fk_value, pk):
         if isinstance(data, dict):
-            return data.get(fk_value, None)
+            return data.get(fk_value.lower(), None)
         if isinstance(data, list):
             output = []
             for item in data:
                 pk_value = item.get(pk, None)
                 if pk_value is None:
                     continue
-                if fk_value == pk_value:
+                if fk_value.lower() == pk_value.lower():
                     output.append(item)
+            return output
         return None
 
     def get_additonal_keys(self, config):
@@ -134,14 +136,15 @@ class RelationBaseTask(luigi.Task):
 
         if bound:
             if isinstance(values, dict):
-                bound_values = self.handle_config(add_config, data, values)
+                bound_values = self.handle_config(bound, data, values)
                 if bound_values:
                     values = bound_values
             if isinstance(values, list):
                 new_values = []
                 for value in values:
-                    bound_value = self.handle_config(add_config, data, value)
+                    bound_value = self.handle_config(bound, data, value)
                     if not bound_value:
+                        bound_value = self.handle_config(bound, data, value)
                         raise KeyError("Can't find key in file")
                     new_values.append(bound_value)
                 values = new_values
@@ -197,7 +200,7 @@ class RelationAcessTask(RelationBaseTask):
                         raise KeyError(f"PK ({pk}) not found in data")
                     if data[pk] in output:
                         raise KeyError(f"PK ({pk}) already in output values")
-                    output[data[pk]] = data
+                    output[data[pk].lower()] = data
                 else:
                     output.append(data)
         return output
