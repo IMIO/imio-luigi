@@ -90,6 +90,9 @@ class CreateSubElementTask(luigi.Task):
         """The output target"""
         return None
 
+    def modify_value(self, value):
+        return value
+
     def transform_data(self, data):
         if self.subelement_container_key not in data:
             if self.create_container is False:
@@ -100,7 +103,7 @@ class CreateSubElementTask(luigi.Task):
             if key not in data and self.ignore_missing is False:
                 raise KeyError(f"Missing key {key}")
             if key in data:
-                new_element[destination] = data[key]
+                new_element[destination] = self.modify_value(data[key])
                 del data[key]
         data[self.subelement_container_key].append(new_element)
         return data
