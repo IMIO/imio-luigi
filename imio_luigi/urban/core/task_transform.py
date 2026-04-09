@@ -209,7 +209,7 @@ class TransformWorkLocationMultiParams(core.GetFromRESTServiceInMemoryTask):
 
             error = None
             for params_obj in params_list:
-                params = base_params
+                params = base_params.copy()
                 params[params_obj["key"]] = params_obj["value"]
 
                 result, error = self.request_params(params, params_obj, worklocation)
