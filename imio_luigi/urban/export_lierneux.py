@@ -714,7 +714,7 @@ class AddValuesInDescription(ucore.AddValuesInDescription):
     title = "Info complémentaire"
     key_to_description = [
         "NumPermis",
-        "AdresseBien"
+        "AdresseBien",
         "RefLotDate",
         "RefLotNo",
         "RefBatiDate",
@@ -730,7 +730,7 @@ class AddValuesInDescription(ucore.AddValuesInDescription):
         "CadastreType",
         "MANDANT",
         "DGATLP",
-        "encours"
+        "encours",
     ]
     key_dict = {
         "AdresseBien": "Adresse du bien",
@@ -764,10 +764,11 @@ class AddValuesInDescription(ucore.AddValuesInDescription):
 
     def get_values(self, data):
         result = []
-        for key, value in data.items():
-            if key in self.key_to_description and value is not None:
+        for key in self.key_to_description:
+            value = data.get(key, None)
+            if value is not None:
                 result.append(
-                    {"key": key, "value": value}
+                    {"key": key, "value": data[key]}
                 )
         return result
 
