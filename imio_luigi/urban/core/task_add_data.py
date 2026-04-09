@@ -505,11 +505,11 @@ class AddValuesInDescription(core.InMemoryTask):
     def transform_value(self, values):
         result = []
         for value in values:
-            output = {}
-            for key, dict_value in value.items():
-                dict_value = self.format_date(key, dict_value)
-                output[key] = dict_value
-            result.append(output)
+            key = value["key"]
+            dict_value = value["value"]
+            dict_value = self.format_date(key, dict_value)
+            value["value"] = dict_value
+            result.append(value)
         return result
 
     def transform_data(self, data):
