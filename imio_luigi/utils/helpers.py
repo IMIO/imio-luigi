@@ -63,7 +63,7 @@ def get_value_from_path_with_parents(data, path, parents=None):
     :rtype: string list of string
     """
     if parents is None:
-        return get_value_from_path(path, path)
+        return get_value_from_path(data, path)
     for parent in parents:
         value = get_value_from_path(data, os.path.normpath(os.path.join(parent, path)))
         if value is None:
@@ -127,7 +127,8 @@ def find_most_similar_term(term, results, key=None):
     most_similar_result = None
 
     for result in results:
-        similarity_ratio = calculate_similarity(term, get_value_conditional(result, key))
+        full_value = get_value_conditional(result, key)
+        similarity_ratio = calculate_similarity(term, full_value)
 
         if similarity_ratio > highest_similarity:
             highest_similarity = similarity_ratio
@@ -148,10 +149,15 @@ def find_match(values, expected_value, key=None):
 
 
 def find_result_similarity(results, term=None, key=None):
-
     similarity_between_results, error = find_most_similar_result(results, key=key)
 
     if similarity_between_results:
+        if term:
+            exact = find_match(results, term, key=key)
+            if exact:
+                return exact, error
+            most_similar_result, _ = find_most_similar_term(term, results, key=key)
+            return most_similar_result, error
         return results[0], error
 
     if term:
