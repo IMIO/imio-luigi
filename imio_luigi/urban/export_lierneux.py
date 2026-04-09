@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from datetime import datetime
 from imio_luigi import core, utils
 from imio_luigi.urban import core as ucore
 from imio_luigi.urban import tools
@@ -61,7 +62,7 @@ class GetFromAccess(core.GetFromAccessJSONTask):
         # __import__('pdb').set_trace()
         # res = [row.get("Numero", "---No Ref---") for row in self.query()]
         for row in self.query(min_range=min_range, max_range=max_range):
-            # if row["REF"] not in ["2001/U019"]:
+            # if row["REF"] not in ["2000/U047"]:
             #     continue
             # with open("./data/lierneux/all_ref_to_import.txt", "a") as f:
             #     f.write(f"{row.get('Numero', '---No Ref---')}\n")
@@ -106,12 +107,14 @@ class ValueCleanup(core.ValueFixerInMemoryTask):
     def input(self):
         return core.InMemoryTarget(f"Transform-{self.key}", mirror_on_stderr=True)
 
+
 class AddRelation(core.RelationAcessInMemoryTask):
     task_namespace = "lierneux"
     key = luigi.Parameter()
+    log_failure = False
     config_dict = {
         "encours": {
-            "file": "./data/lierneux/json/Urbi7/enoucrs.json",
+            "file": "./data/lierneux/json/Urbi7/encours.json",
             "fk": "REF",
             "pk": "ref_dossier",
             "relation": "one_to_many",
@@ -142,6 +145,9 @@ class AddRelation(core.RelationAcessInMemoryTask):
         }
     }
 
+    def requires(self):
+        return ValueCleanup(key=self.key)
+
 class Mapping(core.MappingKeysInMemoryTask):
     task_namespace = "lierneux"
     key = luigi.Parameter()
@@ -149,11 +155,13 @@ class Mapping(core.MappingKeysInMemoryTask):
         "REF": "reference",
         "TYPE": "@type",
         "CADASTRE": "cadastre",
-        "OBJET": "licenceSubject"
+        "OBJET": "licenceSubject",
+        "urba": "referenceDGATLP",
+        "refcloture": "additionalReference"
     }
 
     def requires(self):
-        return ValueCleanup(key=self.key)
+        return AddRelation(key=self.key)
 
 
 class ConvertDates(core.ConvertDateInMemoryTask):
@@ -231,14 +239,12 @@ class AddEvents(ucore.AddUrbanEvent):
         return data["CLOTURE"]
 
     def get_delivery_decision(self, data):
-        if data.get("refuse") == 0:
+        if data.get("refuse") in [0, 1]:
             decision = "favorable"
-        elif data.get("refuse") == 1:
+        elif data.get("refuse") == -1:
             decision = "defavorable"
-        elif data.get("refuse") in [-1, 2]:
-            decision = None
         else:
-            raise ValueError("Pas de valeur correct pour la decisison de cloture")
+            decision = None
         return decision
 
 
@@ -252,34 +258,34 @@ class AddOtherEvent(ucore.AddEvents):
             "mapping": {
                 "Article127": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
                 "BuildLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
-                "CODT_BuildLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},  # todo
-                "CODT_CommercialLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},  # todo
-                "CODT_ParcelOutLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},  # todo
-                "CODT_UrbanCertificateOne": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},  # todo
-                "CODT_UrbanCertificateTwo": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},  # todo
-                "EnvClassTwo": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},  # todo
-                "MiscDemand": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},  # todo
+                "CODT_BuildLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
+                "CODT_CommercialLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
+                "CODT_ParcelOutLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
+                "CODT_UrbanCertificateOne": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
+                "CODT_UrbanCertificateTwo": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
+                "EnvClassTwo": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
+                "MiscDemand": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
                 "UniqueLicence": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
-                "UrbanCertificateOne": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},  # todo
-                "UrbanCertificateTwo": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},  # todo
+                "UrbanCertificateOne": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
+                "UrbanCertificateTwo": {"urban_type": "debut-des-travaux", "date": ["eventDate"]},
             }
         },
         "end_work": {
-            "check_key": ["Fin_enquete"],
+            "check_key": ["TravauxFin"],
             "date_mapping": {"eventDate": "TravauxFin"},
             "mapping": {
                 "Article127": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
                 "BuildLicence": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
-                "CODT_BuildLicence": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},  # todo
-                "CODT_CommercialLicence": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},  # todo
-                "CODT_ParcelOutLicence": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},  # todo
-                "CODT_UrbanCertificateOne": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},  # todo
-                "CODT_UrbanCertificateTwo": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},  # todo
-                "EnvClassTwo": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},  # todo
-                "MiscDemand": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},  # todo
+                "CODT_BuildLicence": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
+                "CODT_CommercialLicence": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
+                "CODT_ParcelOutLicence": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
+                "CODT_UrbanCertificateOne": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
+                "CODT_UrbanCertificateTwo": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
+                "EnvClassTwo": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
+                "MiscDemand": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
                 "UniqueLicence": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
-                "UrbanCertificateOne": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},  # todo
-                "UrbanCertificateTwo": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},  # todo
+                "UrbanCertificateOne": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
+                "UrbanCertificateTwo": {"urban_type": "fin-des-travaux", "date": ["eventDate"]},
             }
         }
     }
@@ -305,9 +311,9 @@ class AddTransitions(core.InMemoryTask):
 
     def transform_data(self, data):
         state = None
-        if data.get("refuse") == 0:
+        if data.get("refuse") in [0, 1]:
             state = "accepted"
-        elif data.get("refuse") == 1:
+        elif data.get("refuse") == -1:
             state = "refused"
         if state is not None:
             data["wf_transitions"] = [state]
@@ -322,7 +328,7 @@ class UrbanTransitionMapping(ucore.UrbanTransitionMapping):
         return AddTransitions(key=self.key)
 
 
-class CreateApplicant(ucore.CreateApplicant):
+class CreateApplicant(core.CreateSubElementInMemoryTask):
     task_namespace = "lierneux"
     key = luigi.Parameter()
     subelement_container_key = "__children__"
@@ -333,6 +339,26 @@ class CreateApplicant(ucore.CreateApplicant):
         "ADRESSE": "street",
     }
     subelement_base = {}
+
+    def modify_value(self, value):
+        if isinstance(value, str):
+            value = value.strip()
+        return value
+
+    def apply_subelement_base_type(self, data):
+        self.subelement_base["@type"] = ucore.config[data["@type"]]["contact_type"]
+
+    def check_if_applicant(self, data):
+        property = data.get("PROPRIET", None)
+        if property is None or property == "":
+            return False
+        return True
+
+    def transform_data(self, data):
+        if self.check_if_applicant(data):
+            self.apply_subelement_base_type(data)
+            data = super().transform_data(data)
+        return data
 
     def requires(self):
         return UrbanTransitionMapping(key=self.key)
@@ -346,6 +372,18 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
     mapping_keys = {}
     subelement_base = {}
     log_failure = True
+    known_villages = {
+        "odrimont",
+        "villettes",
+        "jevigné",
+        "trou de bra",
+        "les villettes",
+        "arbrefontaine",
+        "bra",
+        "lierneux",
+        "4990 lierneux",
+        "lansival"
+    }
 
     def safe_convert_string_to_int(self, string):
         try:
@@ -353,19 +391,124 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
         except ValueError:
             return string
 
+    def is_village(self, token: str) -> bool:
+        return token.strip().lower() in self.known_villages
+
     def split_street_number(self, worklocation):
-        pattern = r"^(?P<street>.*?)(?:,?\s?(?P<number>\d*(?:[\/-]|\b(?:bte|[a-zA-Z])\b)?\d*)?)?$"
-        match = re.match(pattern, worklocation.strip())
-        if not match:
-            raise ValueError(f"Ne trouve aucun pattern de rue dans {worklocation}")
-        result = match.groupdict()
-        if (
-            "number" in result
-            and len(result["number"]) == 1
-            and type(self.safe_convert_string_to_int(result["number"])) is str
-        ):
-            result["street"] += result["number"]
-            result["number"] = ""
+        s = worklocation.strip()
+        s = re.sub(r'\s*-\s*$', '', s)
+        s = re.sub(r'\s{2,}', ' ', s)
+        s = re.sub(r',\s*$', '', s)
+        s = re.sub(r'\s*\+\s*$', '', s)
+        s = re.sub(r'^\d{4}\s+[A-Z]+,?\s*', '', s)
+        s = re.sub(r'\s*\(lieu-dit', ', lieu-dit', s, flags=re.IGNORECASE)
+        s = re.sub(r'\s*\+\s*$', '', s)
+        s = re.sub(r',?\s*-?\s*\d{4}\s+[A-Z]+\s*$', '', s)
+        s = re.sub(r'\bSt-Jacques\b', 'Saint-Jacques', s, flags=re.IGNORECASE)
+        s = re.sub(r'\bRte\b', 'Route', s, flags=re.IGNORECASE)
+        s = re.sub(r'^R\s+(?=[A-Z])', 'Rue ', s)
+
+        NUMBER_RE = r'(?:s/n°|S/N|s/n|n°\s*\d+\s?[a-zA-Z]*(?:\s*/\s*[a-zA-Z\d]+)?(?:-\d+[a-zA-Z]*)*\+?|\d+\s?[a-zA-Z]*(?:\s*/\s*[a-zA-Z\d]+)?(?:-\d+[a-zA-Z]*)*\+?)'
+        LIEU_DIT_RE = r'(?:(?:au|en)\s+)?(?:lieux?-dits?|lieux?\s+dits?|lieudits?)\s+(?:["\u201c]([^"\u201d]*)["\u201d]|\S+)'
+        ROUTE_RE = r'[Rr]oute\s+de\s+[^,]+'
+
+        result = {"town": None, "street": None, "number": None, "note": None}
+
+        lieu_dit_match = re.search(LIEU_DIT_RE, s, flags=re.IGNORECASE)
+        if lieu_dit_match:
+            quoted = lieu_dit_match.group(1)
+            result["note"] = lieu_dit_match.group(0).strip()
+            before = s[:lieu_dit_match.start()].strip().rstrip(',').strip()
+
+            num_before = re.search(rf',?\s*({NUMBER_RE})\s*$', before, flags=re.IGNORECASE)
+            if num_before:
+                result["number"] = num_before.group(1)
+                before = before[:num_before.start()].strip().rstrip(',').strip()
+
+            parts_before = [p.strip() for p in before.split(',') if p.strip()]
+
+            if len(parts_before) == 0:
+                result["street"] = quoted
+            elif len(parts_before) == 1:
+                token = parts_before[0]
+                if self.is_village(token) or ' ' not in token and not re.match(
+                    r'^(?:Rue|Route|Avenue|Chemin)\b', token, re.IGNORECASE
+                ):
+                    result["town"] = token
+                    result["street"] = quoted
+                else:
+                    result["street"] = token
+            elif len(parts_before) >= 2:
+                result["town"] = parts_before[0]
+                result["street"] = parts_before[1]
+
+            s = ""
+
+        elif re.search(ROUTE_RE, s, flags=re.IGNORECASE):
+            route_match = re.search(ROUTE_RE, s, flags=re.IGNORECASE)
+            result["street"] = route_match.group(0).strip()
+            after = s[route_match.end():].strip()
+            num_after = re.search(rf',?\s*({NUMBER_RE})\s*$', after, flags=re.IGNORECASE)
+            if num_after:
+                result["number"] = num_after.group(1)
+            s = s[:route_match.start()].strip().rstrip(',').strip()
+
+        elif re.search(r'["\u201c]([^"\u201d]+)["\u201d]', s):
+            quoted_match = re.search(r'["\u201c]([^"\u201d]+)["\u201d]', s)
+            result["note"] = quoted_match.group(0).strip()
+            s = s[:quoted_match.start()].strip().rstrip(',').strip()
+            if not s:
+                result["street"] = quoted_match.group(1).strip()
+
+        if s:
+            num_match = re.search(rf',?\s*\+?\s*({NUMBER_RE})\s*$', s, flags=re.IGNORECASE)
+            if num_match:
+                result["number"] = num_match.group(1)
+                s = s[:num_match.start()].strip().rstrip(',').strip()
+            else:
+                num_match2 = re.search(rf'\s*\+?\s*({NUMBER_RE})\s*$', s, flags=re.IGNORECASE)
+                if num_match2:
+                    result["number"] = num_match2.group(1)
+                    s = s[:num_match2.start()].strip()
+
+        if result["number"]:
+            result["number"] = re.sub(r'^n°\s*', '', result["number"], flags=re.IGNORECASE)
+
+        if s:
+            parts = [p.strip() for p in s.split(',') if p.strip()]
+
+            if len(parts) == 0:
+                pass
+            elif len(parts) == 1:
+                token = parts[0]
+                if result["street"] is not None:
+                    result["town"] = token
+                elif self.is_village(token):
+                    result["town"] = token
+                elif ' ' not in token or result["number"] is not None or re.match(
+                    r'^(?:Rue|Route|Avenue|Chemin)\b', token, re.IGNORECASE
+                ):
+                    result["street"] = token
+                else:
+                    result["town"] = token
+            elif len(parts) == 2:
+                result["town"] = parts[0]
+                if result["street"] is None:
+                    result["street"] = parts[1]
+            elif len(parts) >= 3:
+                result["town"] = parts[0]
+                if result["street"] is None:
+                    result["street"] = ', '.join(parts[1:])
+
+        with open("export_street.txt", "a") as f:
+            f.write(f"{worklocation.strip()} : {result['town']} | {result['street']} | {result['number']} | {result['note']} \n")
+
+        result["street"] = result["street"] or ""
+        result["number"] = result["number"] or ""
+        del result["note"]
+        del result["town"]
+        if not result["street"]:
+            return None
         return result
 
     def transform_data(self, data):
@@ -379,7 +522,8 @@ class CreateWorkLocation(core.CreateSubElementsFromSubElementsInMemoryTask):
             return data
         worklocation = data[self.subelements_source_key]
         new_element = self.split_street_number(worklocation)
-        data[self.subelements_destination_key].append(new_element)
+        if new_element is not None:
+            data[self.subelements_destination_key].append(new_element)
         return data
 
     def requires(self):
@@ -390,56 +534,37 @@ class TransformWorkLocation(ucore.TransformWorkLocationMultiParams):
     task_namespace = "lierneux"
     key = luigi.Parameter()
     log_failure = True
-    towns = [
-        "Odrimont",
-        "Villettes",
-        "Jevigné",
-        "Trou de Bra",
-        "Les Villettes",
-        "Arbrefontaine",
-        "Bra",
-        "4990 LIERNEUX"
-    ]
 
     def requires(self):
         return CreateWorkLocation(key=self.key)
 
-    def remove_town_prefix(self, street):
-        for town in self.towns:
-            if not street.startswith(town):
-                continue
-            return street.replace(town, "")
-        return street
-
     def _generate_params(self, worklocation, data):
         street = worklocation.get("street", None)
+        town = worklocation.get("town", None)
         if street is None:
             return None, None
-        street_without_town = self.remove_town_prefix(street)
         params = [
             {
-                "key" : "term",
+                "key": "term",
                 "value": street
-            },
-            {
-                "key" : "term",
-                "value": street_without_town
-            },
-        ]
-        street_split = street_without_town.split(" ")
-        if len(street_split) > 1:
-            for street_part in street_without_town.split(" "):
-                params.append(
-                    {
-                        "key" : "term",
-                        "value": street_part
-                    }
-                )
+            }]
+        if street is not None and town is not None:
+            params.append({
+                "key": "term",
+                "value": f"{street} {town}"
+            })
         return params, None
 
     def get_range_number(self, number):
         number_list = number.split("-")
-        return int(number_list[0]), int(number_list[1])
+        if len(number_list) == 2:
+            try:
+                return list(range(int(number_list[0]), int(number_list[1]) + 1))
+            except ValueError:
+                return number_list
+        elif len(number_list) > 2:
+            return number_list
+        return number_list
 
     def transform_data(self, data):
         data, errors = super().transform_data(data)
@@ -451,13 +576,13 @@ class TransformWorkLocation(ucore.TransformWorkLocationMultiParams):
             return data, errors
         if "-" not in number:
             return data, errors
-        start, end = self.get_range_number(worklocation["number"])
+        numbers = self.get_range_number(number)
         data["workLocations"] = [
             {
                 "street": worklocation["street"],
-                "number": str(i)
+                "number": str(n)
             }
-            for i in range(start, end)
+            for n in numbers
         ]
         return data, errors
 
@@ -492,11 +617,20 @@ class ExtractDivAndSecFromCadastre(core.InMemoryTask):
         return TransformWorkLocation(key=self.key)
 
 
-class CadastreSplit(core.StringToListRegexpInMemoryTask):
+class CadastreSplit(core.InMemoryTask):
     task_namespace = "lierneux"
     key = luigi.Parameter()
-    attribute_key = "cadastre"
-    separators = [",", "et", "-", "&"]
+
+    def split_cadastres(self, cadastre_str):
+        cleaned = re.sub(r'^[nN]\s*°?\s*', '', cadastre_str.strip())
+        parts = re.split(r'\s+et\s+|\s*,\s*|\s*\.\.\.\s*', cleaned)
+        return [p.strip() for p in parts if p.strip() and re.match(r'^\d', p.strip())]
+
+    def transform_data(self, data):
+        if "cadastre" not in data:
+            return data
+        data["cadastre"] = self.split_cadastres(data["cadastre"])
+        return data
 
     def requires(self):
         return ExtractDivAndSecFromCadastre(key=self.key)
@@ -522,16 +656,31 @@ class TransformCadastre(ucore.TransformCadastre):
                 output[key] = value.upper()
         return output
 
-    def _generate_cadastre_dict(self, cadastre, data):
-        try:
-            params = tools.extract_cadastre(cadastre)
-        except ValueError:
-            return None, f"Valeur incorrecte pour la parcelle: {cadastre}"
-        if "division" in data:
-            params["division"] = self._mapping_division(data["division"])
-        if "section" in data:
-            params["section"] = data["section"]
+    def extract_cadastre(self, cadastre):
+        pattern = r"^(?P<radical>\d+)(?P<exposant>[a-zA-Z]?)(?P<puissance>\d?)(?:/(?P<bis>\w+))?$"
+        match = re.match(pattern, cadastre.strip())
+        if not match:
+            return None
+        result = match.groupdict()
+        return {k: (v or '') for k, v in result.items()}
+
+    def build_search_params(self, division, section, parcel):
+        extracted = self.extract_cadastre(parcel)
+        if not extracted:
+            return None, f"No parcel extract for {parcel}"
+        params = {
+            'division': division,
+            'section': section.upper(),
+            **extracted
+        }
         return self._fix_lower_chars(params), None
+
+    def _generate_cadastre_dict(self, cadastre, data):
+        return self.build_search_params(
+            self._mapping_division(data["division"]),
+            data["section"],
+            cadastre
+        )
 
 
 class TransformArchitect(ucore.TransformContact):
@@ -564,22 +713,52 @@ class AddValuesInDescription(ucore.AddValuesInDescription):
     key = luigi.Parameter()
     title = "Info complémentaire"
     key_to_description = [
-        'EcheanceAction',
-        'EcheanceDate',
-        'EcheanceStatus',
-        'Auteur_projet',
-        'AvisFonctionnaire',
+        "NumPermis",
+        "AdresseBien"
+        "RefLotDate",
+        "RefLotNo",
+        "RefBatiDate",
+        "RefBatiNo",
+        "EcheanceAction",
+        "EcheanceDate",
+        "EcheanceStatus",
+        "Auteur_projet",
+        "AvisFonctionnaire",
+        "ARCHI",
+        "ArchiBureau",
+        "REF_CAD",
+        "CadastreType",
+        "MANDANT",
         "DGATLP",
         "encours"
     ]
     key_dict = {
-        'EcheanceAction': 'Echeance action',
-        'EcheanceDate': 'Echeance date',
-        'EcheanceStatus': 'Echeance status',
-        'Auteur_projet' : "Auteur du projet",
-        'AvisFonctionnaire' : "Avis du fonctionnaire"
+        "AdresseBien": "Adresse du bien",
+        "EcheanceAction": "Echeance action",
+        "EcheanceDate": "Echeance date",
+        "EcheanceStatus": "Echeance status",
+        "Auteur_projet": "Auteur du projet",
+        "AvisFonctionnaire": "Avis du fonctionnaire",
+        "encours": "Encours",
+        "DGATLP": "DGATLP",
+        "ARCHI": "Architecte",
+        "CadastreType": "Type de cadastre",
+        "MANDANT": "Demandant",
+        "RefLotDate": "Ref Lot Date",
+        "RefLotNo": "Ref Lot No",
+        "ArchiBureau": "Bureau Archi",
+        "RefBatiNo": "Ref Bati No",
+        "NumPermis": "Num Permis",
+        "RefBatiDate": "Ref Bati Date",
+        "REF_CAD": "REF CAD"
     }
-    
+    keys_date = [
+        "EcheanceDate",
+        "RefLotDate",
+        "RefBatiDate"
+    ]
+    new_line = "\n"
+
     def fix_key(self, key):
         return self.key_dict.get(key, key)
 
@@ -595,8 +774,76 @@ class AddValuesInDescription(ucore.AddValuesInDescription):
     def handle_value(self, value, data):
         key = value["key"]
         value = value["value"]
+        if key == "encours":
+            value = self.handle_encours(value)
+        if key == "DGATLP":
+            value = self.handle_DGATLP(value)
         data["description"]["data"] += f"{self.fix_key(key)} : {value}"
         return data
+
+    def pretify_date(self, date):
+        if date is None:
+            return None
+        try:
+            iso_date = datetime.strptime(date, "%m/%d/%y %H:%M:%S")
+            export_date = iso_date.strftime("%d/%m/%Y")
+        except Exception:
+            export_date = f"Erreur avec la date : {date}"
+
+        return export_date
+
+    def handle_encours(self, value):
+        events = []
+        for event in value:
+            event_title = "Évènement sans titre"
+            action = event.get("actions", None)
+            if action is not None:
+                event_title = action.get("COMMENT", event_title)
+            output = {}
+            output["Document"] = event.get("DocumentName", None)
+            output["Commentaire de réception"] = event.get("comment_reception", None)
+            output["Date de réception"] = self.pretify_date(event.get("réception", None))
+            output["Commentaire d'envoi"] = event.get("comment_envoi", None)
+            output["Date d'envoi"] = self.pretify_date(event.get("envoi", None))
+            output["Date d'échéance"] = self.pretify_date(event.get("echeance", None))
+            output["Avis"] = event.get("avis", None)
+            data = []
+            for title, content in output.items():
+                if content is None or content == "":
+                    continue
+                data.append(f"<li>{title}: {content}</li>")
+            new_line = "\n"
+            events.append(
+                f"<li>{event_title} : <ul>{new_line.join(data)}</ul></li>"
+            )
+        return f"<ul>{self.new_line.join(events)}</ul>"
+
+    def pretify_camel_string(self, string):
+        return re.sub(r"(?<=[a-z])(?=[A-Z])", " ", string)
+
+    def handle_DGATLP(self, value):
+        output = []
+        keys = [
+            "Eau",
+            "TypeRevetement",
+            "Revetement",
+            "EpurationIndividuelle",
+            "Publicite",
+            "Egout",
+            "OuvertureVoirie",
+            "Lotissement",
+            "ZonePS",
+            "Dossiers",
+            "Electricite",
+            "REF",
+            "ResponsableVoirie",
+            "Reclamations"
+        ]
+        for key in keys:
+            if key in value and value[key] is not None:
+                output.append(f"<li>{self.pretify_camel_string(key)}: {value[key]}</li>")
+        value = f"<ul>{self.new_line.join(output)}</ul>"
+        return value
 
     def requires(self):
         return TransformArchitect(key=self.key)
@@ -649,7 +896,11 @@ class DropColumns(core.DropColumnInMemoryTask):
         'Auteur_code',
         'Auteur_commune',
         'Auteur_projet',
-        "ArchiBureau"
+        "ArchiBureau",
+        "DGATLP",
+        "encours",
+        "note",
+        "town"
     ]
 
     def requires(self):
