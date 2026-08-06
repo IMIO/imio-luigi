@@ -151,7 +151,7 @@ import-lierneux-staging:
 
 .PHONY: import-lierneux-prod
 import-lierneux-prod:
-	LUIGI_CONFIG_PATH=./lierneux-prod.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --limit-hour --path ./results/result-lierneux --local-scheduler --logging-conf-file logging_lierneux.ini
+	LUIGI_CONFIG_PATH=./lierneux_prod.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --limit-hour --path ./results/result-lierneux --local-scheduler --logging-conf-file logging_lierneux.ini
 
 .PHONY: import-lierneux-architecte
 import-lierneux-architecte:
