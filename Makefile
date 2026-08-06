@@ -145,9 +145,13 @@ run-local-lierneux:
 run-local-lierneux-architect:
 	LUIGI_CONFIG_PATH=./lierneux.cfg $(BIN_PATH)luigi --module imio_luigi.urban.export_lierneux_architect lierneux-architect.GetFromAccess --filepath ./data/lierneux/json/Urbi7/DOSSIERS.json  --local-scheduler
 
-.PHONY: import-lierneux
-import-lierneux:
+.PHONY: import-lierneux-staging
+import-lierneux-staging:
 	LUIGI_CONFIG_PATH=./lierneux.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --path ./results/result-lierneux --local-scheduler --logging-conf-file logging_lierneux.ini
+
+.PHONY: import-lierneux-prod
+import-lierneux-prod:
+	LUIGI_CONFIG_PATH=./lierneux-prod.cfg $(BIN_PATH)luigi --module imio_luigi.urban.importer urban.GetFiles --limit-hour --path ./results/result-lierneux --local-scheduler --logging-conf-file logging_lierneux.ini
 
 .PHONY: import-lierneux-architecte
 import-lierneux-architecte:
