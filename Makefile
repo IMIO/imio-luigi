@@ -4,7 +4,7 @@ VERSION=3.10.12
 VENV=${PROJECT}
 VENV_DIR=$(shell pyenv root)/versions/${VENV}
 PYTHON=${VENV_DIR}/bin/python
-BIN_PATH ?=
+BIN_PATH = bin/
 
 init:
 	pyenv virtualenv ${VERSION} ${VENV}
